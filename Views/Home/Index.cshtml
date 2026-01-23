@@ -1,8 +1,593 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà Sách Online - Uy Tín & Chất Lượng</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="wwwroot/css/site.css" rel="stylesheet">
+</head>
+<body>
+    @* <!-- Top Bar -->
+    <div class="top-bar">
+        <p>📚 Nhà sách online uy tín - Miễn phí vận chuyển cho đơn hàng từ 150.000đ</p>
+    </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <!-- Header -->
+    <header>
+        <div class="header-main">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <span>Nhà Sách Hải An</span>
+            </a>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Bạn muốn mua gì?">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="cart-info">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Giỏ hàng / <span id="cartTotal">0</span> ₫</span>
+                <span class="cart-badge" id="cartCount">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-main">
+        <div class="nav-container">
+            <div class="category-menu" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+                <span>Danh mục sản phẩm</span>
+            </div>
+
+            <div class="main-nav">
+                <a href="/">Trang chủ</a>
+                <a href="/cua-hang">Cửa hàng</a>
+                <a href="/tin-tuc">Tin tức</a>
+                <a href="/gioi-thieu">Giới thiệu</a>
+                <a href="/lien-he">Liên hệ</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Categories -->
+    <div class="sidebar-categories" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Danh mục sản phẩm</h3>
+            <button class="close-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="category-list">
+            <li><a href="#"><i class="fas fa-briefcase"></i> Sách kinh doanh</a></li>
+            <li><a href="#"><i class="fas fa-child"></i> Sách thiếu nhi</a></li>
+            <li><a href="#"><i class="fas fa-language"></i> Sách tiếng Anh</a></li>
+            <li><a href="#"><i class="fas fa-lightbulb"></i> Sách kỹ năng</a></li>
+            <li><a href="#"><i class="fas fa-rocket"></i> Sách khởi nghiệp</a></li>
+            <li><a href="#"><i class="fas fa-baby"></i> Sách nuôi dạy con</a></li>
+            <li><a href="#"><i class="fas fa-pen"></i> Văn phòng phẩm</a></li>
+            <li><a href="#"><i class="fas fa-book-open"></i> Sách văn học / truyện</a></li>
+            <li><a href="#"><i class="fas fa-gift"></i> Khuyến mãi</a></li>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div> *@
+
+    <!-- Hero Slider -->
+    <section class="hero-slider">
+        <div class="slider-container" id="sliderContainer">
+            <div class="slide slide-1">
+                <div class="slide-content">
+                    <h2>CẨM NANG CEO</h2>
+                    <p>Kiến tạo đầu tư xuất sắc cho doanh nghiệp</p>
+                    <button class="slide-btn">Khám phá ngay</button>
+                </div>
+                <div class="slide-image">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+            </div>
+            <div class="slide slide-2">
+                <div class="slide-content">
+                    <h2>TOP SÁCH TÀI CHÍNH</h2>
+                    <p>Học quản lý tài chính hiệu quả</p>
+                    <button class="slide-btn">Xem thêm</button>
+                </div>
+                <div class="slide-image">
+                    <i class="fas fa-coins"></i>
+                </div>
+            </div>
+            <div class="slide slide-3">
+                <div class="slide-content">
+                    <h2>MÓN QUÀ TRI THỨC</h2>
+                    <p>Đầu tư cho trí tuệ, đầu tư cho tương lai</p>
+                    <button class="slide-btn">Mua ngay</button>
+                </div>
+                <div class="slide-image">
+                    <i class="fas fa-gift"></i>
+                </div>
+            </div>
+        </div>
+        <div class="slider-controls">
+            <span class="slider-dot active" onclick="goToSlide(0)"></span>
+            <span class="slider-dot" onclick="goToSlide(1)"></span>
+            <span class="slider-dot" onclick="goToSlide(2)"></span>
+        </div>
+    </section>
+
+    <!-- Promotional Banners -->
+    <section class="promo-banners">
+        <div class="promo-card promo-1">
+            <div class="promo-card-content">
+                <h3>HỘI SÁCH ONLINE</h3>
+                <p>Siêu sale bão vũ trụ - Giảm đến 60%</p>
+            </div>
+        </div>
+        <div class="promo-card promo-2">
+            <div class="promo-card-content">
+                <h3>GIỚI THIỆU 10 SÁCH MỖI THÁNG</h3>
+                <p>Review sách hay nhất tháng</p>
+            </div>
+        </div>
+        <div class="promo-card promo-3">
+            <div class="promo-card-content">
+                <h3>COMBO SÁCH HOT</h3>
+                <p>Giảm sâu 40% cho combo</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Icons -->
+    <section class="category-icons">
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <p>Sách kinh doanh</p>
+        </div>
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-child"></i>
+            </div>
+            <p>Sách thiếu nhi</p>
+        </div>
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-language"></i>
+            </div>
+            <p>Sách tiếng Anh</p>
+        </div>
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <p>Sách kỹ năng</p>
+        </div>
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <p>Sách khởi nghiệp</p>
+        </div>
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-baby"></i>
+            </div>
+            <p>Sách nuôi dạy con</p>
+        </div>
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <p>Sách văn học</p>
+        </div>
+        <div class="category-icon-card">
+            <div class="category-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <p>Khuyến mãi</p>
+        </div>
+    </section>
+
+    <!-- Flash Sale Section -->
+    <section class="products-section">
+        <div class="section-header">
+            <h2>⚡ Flash Sale</h2>
+            <a href="#" class="view-more">Xem thêm <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="discount-badge">15%</div>
+                <div class="product-image">📘</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH VĂN HỌC / TRUYỆN</div>
+                    <div class="product-title">25 Độ Âm - Khi Trái Tim Lạnh Giá Cần Làm Ấm Hơi Âm</div>
+                    <div class="product-price">
+                        <span class="current-price">134.000 ₫</span>
+                        <span class="old-price">158.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(134000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">25%</div>
+                <div class="product-image">📙</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH VĂN HỌC / TRUYỆN</div>
+                    <div class="product-title">Cõi Rể - Hành Trình Tìm Lại Nguồn Gốc Và Bản Sắc Con Người</div>
+                    <div class="product-price">
+                        <span class="current-price">285.000 ₫</span>
+                        <span class="old-price">380.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(285000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">20%</div>
+                <div class="product-image">📕</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH VĂN HỌC / TRUYỆN</div>
+                    <div class="product-title">Chuyện Dụ Hành Vào Lòng Đất - Từ Thế Giới Bên Trên Đến Vương Quốc</div>
+                    <div class="product-price">
+                        <span class="current-price">111.000 ₫</span>
+                        <span class="old-price">139.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(111000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">42%</div>
+                <div class="product-image">📗</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH VĂN HỌC / TRUYỆN</div>
+                    <div class="product-title">Nanh Trắng - Từ Bóng Tối Của Rừng Sâu Đến Ánh Sáng Của Lòng</div>
+                    <div class="product-price">
+                        <span class="current-price">68.000 ₫</span>
+                        <span class="old-price">118.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(68000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">20%</div>
+                <div class="product-image">📓</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH VĂN HỌC / TRUYỆN</div>
+                    <div class="product-title">Nhà Thờ Đức Bà Paris - Bản Tình Ca Buồn Giữa Lòng Kinh Đô Ánh</div>
+                    <div class="product-price">
+                        <span class="current-price">124.000 ₫</span>
+                        <span class="old-price">155.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(124000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Books Section -->
+    <section class="products-section">
+        <div class="section-header">
+            <h2>📊 Sách Kinh Doanh</h2>
+            <a href="#" class="view-more">Xem thêm <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="discount-badge">15%</div>
+                <div class="product-image">💼</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH KINH DOANH</div>
+                    <div class="product-title">48 Nguyên Tắc Chủ Chốt Của Quyền Lực</div>
+                    <div class="product-price">
+                        <span class="current-price">170.000 ₫</span>
+                        <span class="old-price">200.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(170000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">15%</div>
+                <div class="product-image">🌊</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH KINH DOANH</div>
+                    <div class="product-title">Blue Ocean Strategy - Chiến Lược Đại Dương Xanh</div>
+                    <div class="product-price">
+                        <span class="current-price">203.000 ₫</span>
+                        <span class="old-price">239.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(203000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">15%</div>
+                <div class="product-image">💻</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH KINH DOANH</div>
+                    <div class="product-title">Digital Marketing Cho Nhà Quản Lý - 15 Năm "Đốt Tiền" Và Bài Học</div>
+                    <div class="product-price">
+                        <span class="current-price">169.000 ₫</span>
+                        <span class="old-price">199.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(169000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">15%</div>
+                <div class="product-image">🚀</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH KINH DOANH</div>
+                    <div class="product-title">Khởi Nghiệp Bán Lẻ - Bí Quyết Thành Công Và Giàu Có Bằng</div>
+                    <div class="product-price">
+                        <span class="current-price">188.000 ₫</span>
+                        <span class="old-price">199.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(188000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">15%</div>
+                <div class="product-image">🏪</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH KINH DOANH</div>
+                    <div class="product-title">Bí Quyết Kinh Doanh Của Hàng Thời Trang</div>
+                    <div class="product-price">
+                        <span class="current-price">152.000 ₫</span>
+                        <span class="old-price">179.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(152000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Children Books Section -->
+    <section class="products-section">
+        <div class="section-header">
+            <h2>👶 Sách Thiếu Nhi</h2>
+            <a href="#" class="view-more">Xem thêm <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="discount-badge">15%</div>
+                <div class="product-image">📚</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH THIẾU NHI</div>
+                    <div class="product-title">Tiểu Sử Các Quốc Gia Qua Các Nhà Lãnh Đạo</div>
+                    <div class="product-price">
+                        <span class="current-price">95.000 ₫</span>
+                        <span class="old-price">112.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(95000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">20%</div>
+                <div class="product-image">🌳</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH THIẾU NHI</div>
+                    <div class="product-title">Đất Rừng - Câu Chuyện Thần Kỳ Về Thiên Nhiên</div>
+                    <div class="product-price">
+                        <span class="current-price">88.000 ₫</span>
+                        <span class="old-price">110.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(88000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">10%</div>
+                <div class="product-image">🏠</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH THIẾU NHI</div>
+                    <div class="product-title">Con Sẽ Tự Giác - Câu Chuyện Về Sự Trưởng Thành</div>
+                    <div class="product-price">
+                        <span class="current-price">79.000 ₫</span>
+                        <span class="old-price">88.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(79000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">10%</div>
+                <div class="product-image">🗺️</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH THIẾU NHI</div>
+                    <div class="product-title">Xứ Sở Miền Hàn - Khám Phá Văn Hóa Hàn Quốc</div>
+                    <div class="product-price">
+                        <span class="current-price">92.000 ₫</span>
+                        <span class="old-price">102.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(92000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="discount-badge">18%</div>
+                <div class="product-image">🎀</div>
+                <div class="product-info">
+                    <div class="product-category">SÁCH THIẾU NHI</div>
+                    <div class="product-title">Tớ Tớ Chân Bẩn Của Xo Xo - Những Hành Trình Thú Vị</div>
+                    <div class="product-price">
+                        <span class="current-price">75.000 ₫</span>
+                        <span class="old-price">92.000 ₫</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart(75000)">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="newsletter-content">
+            <h2>Đăng ký nhận tin khuyến mãi</h2>
+            <p>Nhận ngay mã giảm giá 10% cho đơn hàng đầu tiên</p>
+            <form class="newsletter-form" onsubmit="return subscribeNewsletter(event)">
+                <input type="email" placeholder="Nhập email của bạn" required>
+                <button type="submit">ĐĂNG KÝ</button>
+            </form>
+        </div>
+    </section>
+
+    @* <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Về chúng tôi</h3>
+                <p>Nhà Sách Hải An - Nơi hội tụ tri thức, nơi lan tỏa đam mê đọc sách.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Hỗ trợ khách hàng</h3>
+                <ul>
+                    <li><a href="#">Chính sách đổi trả</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Phương thức thanh toán</a></li>
+                    <li><a href="#">Hướng dẫn mua hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Danh mục sản phẩm</h3>
+                <ul>
+                    <li><a href="#">Sách kinh doanh</a></li>
+                    <li><a href="#">Sách thiếu nhi</a></li>
+                    <li><a href="#">Sách kỹ năng</a></li>
+                    <li><a href="#">Văn học - Tiểu thuyết</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Liên hệ</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Q1, TP.HCM</li>
+                    <li><i class="fas fa-phone"></i> 1900 xxxx</li>
+                    <li><i class="fas fa-envelope"></i> contact@nhasach.com</li>
+                    <li><i class="fas fa-clock"></i> 8:00 - 22:00 (Hàng ngày)</li>
+                </ul>
+            </div>
+        </div>
+    </div> *@
+</body>

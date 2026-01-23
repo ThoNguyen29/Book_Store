@@ -9,38 +9,129 @@
     <link rel="stylesheet" href="~/Book_Store.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <p>📚 Nhà sách online uy tín - Miễn phí vận chuyển cho đơn hàng từ 150.000đ</p>
+    </div>
+
+    <!-- Header -->
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Book_Store</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+        <div class="header-main">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-book"></i>
                 </div>
+                <span>Nhà Sách Hải An</span>
+            </a>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Bạn muốn mua gì?">
+                <button><i class="fas fa-search"></i></button>
             </div>
-        </nav>
+
+            <div class="cart-info">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Giỏ hàng / <span id="cartTotal">0</span> ₫</span>
+                <span class="cart-badge" id="cartCount">0</span>
+            </div>
+        </div>
     </header>
+
+    <!-- Navigation -->
+    <nav class="nav-main">
+        <div class="nav-container">
+            <div class="category-menu" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+                <span>Danh mục sản phẩm</span>
+            </div>
+
+            <div class="main-nav">
+                <a href="/">Trang chủ</a>
+                <a href="/cua-hang">Cửa hàng</a>
+                <a href="/tin-tuc">Tin tức</a>
+                <a href="/gioi-thieu">Giới thiệu</a>
+                <a href="/lien-he">Liên hệ</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Categories -->
+    <div class="sidebar-categories" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Danh mục sản phẩm</h3>
+            <button class="close-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="category-list">
+            <li><a href="#"><i class="fas fa-briefcase"></i> Sách kinh doanh</a></li>
+            <li><a href="#"><i class="fas fa-child"></i> Sách thiếu nhi</a></li>
+            <li><a href="#"><i class="fas fa-language"></i> Sách tiếng Anh</a></li>
+            <li><a href="#"><i class="fas fa-lightbulb"></i> Sách kỹ năng</a></li>
+            <li><a href="#"><i class="fas fa-rocket"></i> Sách khởi nghiệp</a></li>
+            <li><a href="#"><i class="fas fa-baby"></i> Sách nuôi dạy con</a></li>
+            <li><a href="#"><i class="fas fa-pen"></i> Văn phòng phẩm</a></li>
+            <li><a href="#"><i class="fas fa-book-open"></i> Sách văn học / truyện</a></li>
+            <li><a href="#"><i class="fas fa-gift"></i> Khuyến mãi</a></li>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    @* <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2026 - Book_Store - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
+    </footer> *@
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Về chúng tôi</h3>
+                <p>Nhà Sách Hải An - Nơi hội tụ tri thức, nơi lan tỏa đam mê đọc sách.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Hỗ trợ khách hàng</h3>
+                <ul>
+                    <li><a href="#">Chính sách đổi trả</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Phương thức thanh toán</a></li>
+                    <li><a href="#">Hướng dẫn mua hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Danh mục sản phẩm</h3>
+                <ul>
+                    <li><a href="#">Sách kinh doanh</a></li>
+                    <li><a href="#">Sách thiếu nhi</a></li>
+                    <li><a href="#">Sách kỹ năng</a></li>
+                    <li><a href="#">Văn học - Tiểu thuyết</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Liên hệ</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Q1, TP.HCM</li>
+                    <li><i class="fas fa-phone"></i> 1900 xxxx</li>
+                    <li><i class="fas fa-envelope"></i> contact@nhasach.com</li>
+                    <li><i class="fas fa-clock"></i> 8:00 - 22:00 (Hàng ngày)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

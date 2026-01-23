@@ -25,3 +25,30 @@ C:\Users\Hi\OneDrive\Desktop\Book_Store\Book_Store\obj\Debug\net6.0\Book_Store.d
 C:\Users\Hi\OneDrive\Desktop\Book_Store\Book_Store\obj\Debug\net6.0\ref\Book_Store.dll
 C:\Users\Hi\OneDrive\Desktop\Book_Store\Book_Store\obj\Debug\net6.0\Book_Store.pdb
 C:\Users\Hi\OneDrive\Desktop\Book_Store\Book_Store\obj\Debug\net6.0\Book_Store.genruntimeconfig.cache
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\appsettings.Development.json
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\appsettings.json
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\global.json
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\Book_Store.staticwebassets.runtime.json
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\Book_Store.exe
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\Book_Store.deps.json
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\Book_Store.runtimeconfig.json
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\Book_Store.dll
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\ref\Book_Store.dll
+E:\Đồ án LWTNC\Book_Store\bin\Debug\net6.0\Book_Store.pdb
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.csproj.AssemblyReference.cache
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.GeneratedMSBuildEditorConfig.editorconfig
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.AssemblyInfoInputs.cache
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.AssemblyInfo.cs
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.csproj.CoreCompileInputs.cache
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.MvcApplicationPartsAssemblyInfo.cache
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.RazorAssemblyInfo.cache
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.RazorAssemblyInfo.cs
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\staticwebassets.build.json
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\staticwebassets.development.json
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\scopedcss\bundle\Book_Store.styles.css
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\scopedcss\projectbundle\Book_Store.bundle.scp.css
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.dll
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\ref\Book_Store.dll
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.pdb
+E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.genruntimeconfig.cache
