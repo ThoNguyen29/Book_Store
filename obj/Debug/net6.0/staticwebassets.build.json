@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "+4lYFz99tOd19j7GGcUR6xKRhPrcZ+pdsHxOIrOYaTg=",
+  "Hash": "rWd9SwjwWNWpYZl9e7RyZGo5kJUkR20anBYxJ10UPtA=",
   "Source": "Book_Store",
   "BasePath": "_content/Book_Store",
   "Mode": "Default",
@@ -17,40 +17,6 @@
   ],
   "Assets": [
     {
-      "Identity": "E:\\Đồ án LWTNC\\Book_Store\\obj\\Debug\\net6.0\\scopedcss\\bundle\\Book_Store.styles.css",
-      "SourceId": "Book_Store",
-      "SourceType": "Computed",
-      "ContentRoot": "E:\\Đồ án LWTNC\\Book_Store\\obj\\Debug\\net6.0\\scopedcss\\bundle\\",
-      "BasePath": "_content/Book_Store",
-      "RelativePath": "Book_Store.styles.css",
-      "AssetKind": "All",
-      "AssetMode": "CurrentProject",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "ScopedCss",
-      "AssetTraitValue": "ApplicationBundle",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "E:\\Đồ án LWTNC\\Book_Store\\obj\\Debug\\net6.0\\scopedcss\\bundle\\Book_Store.styles.css"
-    },
-    {
-      "Identity": "E:\\Đồ án LWTNC\\Book_Store\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\Book_Store.bundle.scp.css",
-      "SourceId": "Book_Store",
-      "SourceType": "Computed",
-      "ContentRoot": "E:\\Đồ án LWTNC\\Book_Store\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\",
-      "BasePath": "_content/Book_Store",
-      "RelativePath": "Book_Store.bundle.scp.css",
-      "AssetKind": "All",
-      "AssetMode": "Reference",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "ScopedCss",
-      "AssetTraitValue": "ProjectBundle",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "E:\\Đồ án LWTNC\\Book_Store\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\Book_Store.bundle.scp.css"
-    },
-    {
       "Identity": "E:\\Đồ án LWTNC\\Book_Store\\wwwroot\\css\\site.css",
       "SourceId": "Book_Store",
       "SourceType": "Discovered",
@@ -66,6 +32,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "E:\\Đồ án LWTNC\\Book_Store\\wwwroot\\css\\style_layout.css",
+      "SourceId": "Book_Store",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\Đồ án LWTNC\\Book_Store\\wwwroot\\",
+      "BasePath": "_content/Book_Store",
+      "RelativePath": "css/style_layout.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\style_layout.css"
     },
     {
       "Identity": "E:\\Đồ án LWTNC\\Book_Store\\wwwroot\\favicon.ico",

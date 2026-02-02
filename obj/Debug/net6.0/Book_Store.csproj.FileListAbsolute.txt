@@ -45,9 +45,7 @@ E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.RazorAssemblyInfo.cach
 E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.RazorAssemblyInfo.cs
 E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\staticwebassets.build.json
 E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\staticwebassets.development.json
-E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\scopedcss\bundle\Book_Store.styles.css
-E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\scopedcss\projectbundle\Book_Store.bundle.scp.css
 E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.dll
 E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\ref\Book_Store.dll
 E:\Đồ án LWTNC\Book_Store\obj\Debug\net6.0\Book_Store.pdb
