@@ -4,14 +4,19 @@ let cartTotal = 0;
 let cartCount = 0;
 let sliderInterval;
 
-// ===== SIDEBAR TOGGLE =====
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
+function toggleCategoryDropdown(e){
+  e.stopPropagation();
+  const dd = document.getElementById("categoryDropdown");
+  if (!dd) return;
+  dd.classList.toggle("active");
 }
+
+// Click ra ngoài thì tự đóng dropdown
+document.addEventListener("click", () => {
+  const dd = document.getElementById("categoryDropdown");
+  if (dd) dd.classList.remove("active");
+});
+
 
 // ===== HERO SLIDER =====
 function initSlider() {

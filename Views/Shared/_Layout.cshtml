@@ -1,20 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Book_Store</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Book_Store.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style_layout.css" asp-append-version="true" />
+    
 </head>
 <body>
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <p>📚 Nhà sách online uy tín - Miễn phí vận chuyển cho đơn hàng từ 150.000đ</p>
-    </div>
 
-    <!-- Header -->
+    <div class="header_nav">
+        <!-- Header -->
     <header>
         <div class="header-main">
             <a href="/" class="logo">
@@ -40,12 +38,28 @@
     <!-- Navigation -->
     <nav class="nav-main">
         <div class="nav-container">
-            <div class="category-menu" onclick="toggleSidebar()">
+                <div class="category-wrapper">
+            <div class="category-menu" onclick="toggleCategoryDropdown(event)">
                 <i class="fas fa-bars"></i>
                 <span>Danh mục sản phẩm</span>
             </div>
 
-            <div class="main-nav">
+            <div class="category-dropdown" id="categoryDropdown">
+                <ul class="category-list">
+                    <li><a href="#">Sách kinh doanh</a></li>
+                    <li><a href="#">Sách thiếu nhi</a></li>
+                    <li><a href="#">Sách tiếng Anh</a></li>
+                    <li><a href="#">Sách kỹ năng</a></li>
+                    <li><a href="#">Sách khởi nghiệp</a></li>
+                    <li><a href="#">Sách nuôi dạy con</a></li>
+                    <li><a href="#">Văn phòng phẩm</a></li>
+                    <li><a href="#">Sách văn học / truyện</a></li>
+                    <li><a href="#">Khuyến mãi</a></li>
+                </ul>
+            </div>
+            </div>
+
+            <div class="main-nav" >
                 <a href="/">Trang chủ</a>
                 <a href="/cua-hang">Cửa hàng</a>
                 <a href="/tin-tuc">Tin tức</a>
@@ -54,28 +68,9 @@
             </div>
         </div>
     </nav>
-
-    <!-- Sidebar Categories -->
-    <div class="sidebar-categories" id="sidebar">
-        <div class="sidebar-header">
-            <h3>Danh mục sản phẩm</h3>
-            <button class="close-sidebar" onclick="toggleSidebar()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <ul class="category-list">
-            <li><a href="#"><i class="fas fa-briefcase"></i> Sách kinh doanh</a></li>
-            <li><a href="#"><i class="fas fa-child"></i> Sách thiếu nhi</a></li>
-            <li><a href="#"><i class="fas fa-language"></i> Sách tiếng Anh</a></li>
-            <li><a href="#"><i class="fas fa-lightbulb"></i> Sách kỹ năng</a></li>
-            <li><a href="#"><i class="fas fa-rocket"></i> Sách khởi nghiệp</a></li>
-            <li><a href="#"><i class="fas fa-baby"></i> Sách nuôi dạy con</a></li>
-            <li><a href="#"><i class="fas fa-pen"></i> Văn phòng phẩm</a></li>
-            <li><a href="#"><i class="fas fa-book-open"></i> Sách văn học / truyện</a></li>
-            <li><a href="#"><i class="fas fa-gift"></i> Khuyến mãi</a></li>
-        </ul>
     </div>
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
