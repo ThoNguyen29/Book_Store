@@ -1,32 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Đồ án LWTNC\\Book_Store\\Book_Store.csproj": {}
+    "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\Book_Store.csproj": {}
   },
   "projects": {
-    "E:\\Đồ án LWTNC\\Book_Store\\Book_Store.csproj": {
+    "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\Book_Store.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Đồ án LWTNC\\Book_Store\\Book_Store.csproj",
+        "projectUniqueName": "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\Book_Store.csproj",
         "projectName": "Book_Store",
-        "projectPath": "E:\\Đồ án LWTNC\\Book_Store\\Book_Store.csproj",
-        "packagesPath": "C:\\Users\\Duc Huy\\.nuget\\packages\\",
-        "outputPath": "E:\\Đồ án LWTNC\\Book_Store\\obj\\",
+        "projectPath": "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\Book_Store.csproj",
+        "packagesPath": "C:\\Users\\Hi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Duc Huy\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Hi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
