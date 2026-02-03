@@ -1,0 +1,73 @@
+.promo-container {
+    display: flex;
+    gap: 15px; /* Khoảng cách giữa slider và banner */
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+/* Slider chiếm 70% chiều rộng */
+.slider-box {
+    flex: 7;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.slider-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Cụm banner bên phải chiếm 30% */
+.side-banners {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa 2 banner nhỏ */
+}
+
+.banner-item {
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.banner-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Chấm tròn trang trí trên slider */
+.dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+}
+
+.dot.active {
+    background: #fff;
+    width: 25px; /* Hiệu ứng chấm dài như trong ảnh */
+    border-radius: 10px;
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 768px) {
+    .promo-container {
+        flex-direction: column;
+    }
+}

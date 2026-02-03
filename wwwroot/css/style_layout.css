@@ -66,7 +66,7 @@ header {
 
 .search-bar button {
     position: absolute;
-    right: 5px;
+    right: 0.5px;
     top: 50%;
     transform: translateY(-50%);
     background: rgb(25, 125, 255);
@@ -74,12 +74,9 @@ header {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
-    transition: all 0.3s;
 }
 
-.search-bar button:hover {
-    transform: translateY(-50%) scale(1.05);
-}
+
 /* ===== CART INFO ===== */
 .cart-info {
     display: flex;
@@ -93,10 +90,7 @@ header {
     position: relative;
 }
 
-.cart-info:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
-}
+
 
 .cart-badge {
     position: absolute;
@@ -295,7 +289,7 @@ footer {
 
 .footer-section ul li i {
     margin-right: 8px;
-    color: #667eea;
+    color: black;
 }
 
 .social-links {

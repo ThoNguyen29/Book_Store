@@ -4,170 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhà Sách Online - Uy Tín & Chất Lượng</title>
+    <link rel="stylesheet" href="~/css/Ad_On_front_page.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <!-- Hero Slider -->
-    <section class="hero-slider">
-        <div class="slider-container" id="sliderContainer">
-            <div class="slide slide-1">
-                <div class="slide-content">
-                    <h2>CẨM NANG CEO</h2>
-                    <p>Kiến tạo đầu tư xuất sắc cho doanh nghiệp</p>
-                    <button class="slide-btn">Khám phá ngay</button>
-                </div>
-                <div class="slide-image">
-                    <i class="fas fa-book-reader"></i>
-                </div>
-            </div>
-            <div class="slide slide-2">
-                <div class="slide-content">
-                    <h2>TOP SÁCH TÀI CHÍNH</h2>
-                    <p>Học quản lý tài chính hiệu quả</p>
-                    <button class="slide-btn">Xem thêm</button>
-                </div>
-                <div class="slide-image">
-                    <i class="fas fa-coins"></i>
-                </div>
-            </div>
-            <div class="slide slide-3">
-                <div class="slide-content">
-                    <h2>MÓN QUÀ TRI THỨC</h2>
-                    <p>Đầu tư cho trí tuệ, đầu tư cho tương lai</p>
-                    <button class="slide-btn">Mua ngay</button>
-                </div>
-                <div class="slide-image">
-                    <i class="fas fa-gift"></i>
-                </div>
-            </div>
+@* --quảng cáo trên đầu trang *@
+<div class="promo-container">
+    <div class="slider-box">
+        <img src="~/images/Ad_slider1.jpg" alt="Cẩm nang CEO">
+        <div class="dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
         </div>
-        <div class="slider-controls">
-            <span class="slider-dot active" onclick="goToSlide(0)"></span>
-            <span class="slider-dot" onclick="goToSlide(1)"></span>
-            <span class="slider-dot" onclick="goToSlide(2)"></span>
-        </div>
-    </section>
+    </div>
 
-    <!-- Promotional Banners -->
-    <section class="promo-banners">
-        <div class="promo-card promo-1">
-            <div class="promo-card-content">
-                <h3>HỘI SÁCH ONLINE</h3>
-                <p>Siêu sale bão vũ trụ - Giảm đến 60%</p>
-            </div>
+    <div class="side-banners">
+        <div class="banner-item">
+            <img src="~/images/Ad1.jpg" alt="Top sách tài chính">
         </div>
-        <div class="promo-card promo-2">
-            <div class="promo-card-content">
-                <h3>GIỚI THIỆU 10 SÁCH MỖI THÁNG</h3>
-                <p>Review sách hay nhất tháng</p>
-            </div>
+        <div class="banner-item">
+            <img src="~/images/Ad2.jpg" alt="Món quà tri thức">
         </div>
-        <div class="promo-card promo-3">
-            <div class="promo-card-content">
-                <h3>COMBO SÁCH HOT</h3>
-                <p>Giảm sâu 40% cho combo</p>
-            </div>
-        </div>
-    </section>
+    </div>
+</div>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold">Sách Mới Xuất Bản</h2>
+        <a href="#" class="btn btn-outline-primary btn-sm">Xem tất cả</a>
+    </div>
 
-    <!-- Category Icons -->
-    <section class="category-icons">
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-briefcase"></i>
-            </div>
-            <p>Sách kinh doanh</p>
-        </div>
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-child"></i>
-            </div>
-            <p>Sách thiếu nhi</p>
-        </div>
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-language"></i>
-            </div>
-            <p>Sách tiếng Anh</p>
-        </div>
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-lightbulb"></i>
-            </div>
-            <p>Sách kỹ năng</p>
-        </div>
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-rocket"></i>
-            </div>
-            <p>Sách khởi nghiệp</p>
-        </div>
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-baby"></i>
-            </div>
-            <p>Sách nuôi dạy con</p>
-        </div>
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-book-open"></i>
-            </div>
-            <p>Sách văn học</p>
-        </div>
-        <div class="category-icon-card">
-            <div class="category-icon">
-                <i class="fas fa-gift"></i>
-            </div>
-            <p>Khuyến mãi</p>
-        </div>
-    </section>
-
-    
-    @* <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Về chúng tôi</h3>
-                <p>Nhà Sách Hải An - Nơi hội tụ tri thức, nơi lan tỏa đam mê đọc sách.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-tiktok"></i></a>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+        <div class="col">
+            <div class="card h-100 shadow-sm product-card">
+                <img src="/images/sach-kinh-te-1.jpg" class="card-img-top p-3" alt="Tên sách">
+                <div class="card-body text-center">
+                    <h6 class="card-title mb-1 text-truncate">Cẩm Nang CEO</h6>
+                    <p class="text-danger fw-bold mb-2">150.000đ</p>
+                    <button class="btn btn-sm btn-primary w-100">Thêm vào giỏ</button>
                 </div>
             </div>
-
-            <div class="footer-section">
-                <h3>Hỗ trợ khách hàng</h3>
-                <ul>
-                    <li><a href="#">Chính sách đổi trả</a></li>
-                    <li><a href="#">Chính sách bảo mật</a></li>
-                    <li><a href="#">Phương thức thanh toán</a></li>
-                    <li><a href="#">Hướng dẫn mua hàng</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h3>Danh mục sản phẩm</h3>
-                <ul>
-                    <li><a href="#">Sách kinh doanh</a></li>
-                    <li><a href="#">Sách thiếu nhi</a></li>
-                    <li><a href="#">Sách kỹ năng</a></li>
-                    <li><a href="#">Văn học - Tiểu thuyết</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h3>Liên hệ</h3>
-                <ul>
-                    <li><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Q1, TP.HCM</li>
-                    <li><i class="fas fa-phone"></i> 1900 xxxx</li>
-                    <li><i class="fas fa-envelope"></i> contact@nhasach.com</li>
-                    <li><i class="fas fa-clock"></i> 8:00 - 22:00 (Hàng ngày)</li>
-                </ul>
-            </div>
         </div>
-    </div> *@
+
+        </div>
+</div>
+
+<style>
+    .promo-container {
+    display: flex;
+    gap: 15px; /* Khoảng cách giữa slider và banner */
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+/* Slider chiếm 70% chiều rộng */
+.slider-box {
+    flex: 7;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.slider-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Cụm banner bên phải chiếm 30% */
+.side-banners {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa 2 banner nhỏ */
+}
+
+.banner-item {
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.banner-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Chấm tròn trang trí trên slider */
+.dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+}
+
+.dot.active {
+    background: #fff;
+    width: 25px; /* Hiệu ứng chấm dài như trong ảnh */
+    border-radius: 10px;
+}
+
+.product-card {
+        transition: transform 0.3s ease;
+        border: none;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+    }
+    .card-title {
+        font-size: 0.95rem;
+        height: 2.4rem;
+        overflow: hidden;
+    }
+</style>
+
 </body>
