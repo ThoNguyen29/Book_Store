@@ -17,6 +17,20 @@ public class HomeController : Controller
     {
         return View();
     }
+    public IActionResult GioiThieu()
+        {
+            return View();
+        }
+
+        public IActionResult LienHe()
+        {
+            return View();
+        }
+
+        public IActionResult TinTuc()
+        {
+            return View();
+        }
 
     public IActionResult Privacy()
     {
