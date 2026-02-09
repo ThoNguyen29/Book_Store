@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Hi\\.nuget\\packages\\": {}
+    "C:\\Users\\chinh\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\Book_Store.csproj",
+      "projectUniqueName": "D:\\test\\Book_Store\\Book_Store.csproj",
       "projectName": "Book_Store",
-      "projectPath": "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\Book_Store.csproj",
-      "packagesPath": "C:\\Users\\Hi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Hi\\OneDrive\\Desktop\\Book_Store1\\Book_Store\\obj\\",
+      "projectPath": "D:\\test\\Book_Store\\Book_Store.csproj",
+      "packagesPath": "C:\\Users\\chinh\\.nuget\\packages\\",
+      "outputPath": "D:\\test\\Book_Store\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Hi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\chinh\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
