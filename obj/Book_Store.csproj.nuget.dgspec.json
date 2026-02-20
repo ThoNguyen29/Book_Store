@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\test\\Book_Store\\Book_Store.csproj": {}
+    "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\Book_Store.csproj": {}
   },
   "projects": {
-    "D:\\test\\Book_Store\\Book_Store.csproj": {
+    "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\Book_Store.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\test\\Book_Store\\Book_Store.csproj",
+        "projectUniqueName": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\Book_Store.csproj",
         "projectName": "Book_Store",
-        "projectPath": "D:\\test\\Book_Store\\Book_Store.csproj",
-        "packagesPath": "C:\\Users\\chinh\\.nuget\\packages\\",
-        "outputPath": "D:\\test\\Book_Store\\obj\\",
+        "projectPath": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\Book_Store.csproj",
+        "packagesPath": "C:\\Users\\Hi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\chinh\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Hi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -37,6 +37,28 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

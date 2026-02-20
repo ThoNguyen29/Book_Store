@@ -1,0 +1,106 @@
+/* Reset toàn bộ cho full màn hình */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Container chính bao phủ toàn màn hình */
+.auth-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+/* Phần bên trái - Hình ảnh */
+.auth-side-image {
+    flex: 1; /* Chiếm 50% hoặc hơn */
+    background-color: #fdfdfd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.auth-side-image img {
+    max-width: 90%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Phần bên phải - Form */
+.auth-side-form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+/* Khung bọc Form cho gọn */
+.form-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.auth-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Style cho các ô input */
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.form-control {
+    height: 48px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* Nút bấm Đăng nhập */
+.btn-auth-submit {
+    width: 100%;
+    height: 48px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    background-color: #0d6efd;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-auth-submit:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-1px);
+}
+
+/* Mobile: Ẩn ảnh, cho form full màn */
+@media (max-width: 992px) {
+    .auth-side-image {
+        display: none;
+    }
+    .auth-side-form {
+        flex: 1;
+    }
+}

@@ -4,133 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhà Sách Online - Uy Tín & Chất Lượng</title>
-    <link rel="stylesheet" href="~/css/Ad_On_front_page.css" />
+    @* CSS *@
+    <link rel="stylesheet" href="~/css/Ad_On_front_page.css" asp-append-version="true"  />
+    @* --- *@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-@* --quảng cáo trên đầu trang *@
-<div class="promo-container">
-    <div class="slider-box">
-        <img src="~/images/Ad_slider1.jpg" alt="Cẩm nang CEO">
-        <div class="dots">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-        </div>
-    </div>
-
-    <div class="side-banners">
-        <div class="banner-item">
-            <img src="~/images/Ad1.jpg" alt="Top sách tài chính">
-        </div>
-        <div class="banner-item">
-            <img src="~/images/Ad2.jpg" alt="Món quà tri thức">
-        </div>
-    </div>
-</div>
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary fw-bold">Sách Mới Xuất Bản</h2>
-        <a href="#" class="btn btn-outline-primary btn-sm">Xem tất cả</a>
-    </div>
-
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
-        <div class="col">
-            <div class="card h-100 shadow-sm product-card">
-                <img src="/images/sach-kinh-te-1.jpg" class="card-img-top p-3" alt="Tên sách">
-                <div class="card-body text-center">
-                    <h6 class="card-title mb-1 text-truncate">Cẩm Nang CEO</h6>
-                    <p class="text-danger fw-bold mb-2">150.000đ</p>
-                    <button class="btn btn-sm btn-primary w-100">Thêm vào giỏ</button>
+    <div class="container my-4">
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="slider-box rounded overflow-hidden shadow-sm">
+                <div class="slides">
+                    <img src="~/images/Ad_slider1.jpg" class="slide active" alt="Những cuốn sách không nên bỏ lỡ">
+                    <img src="~/images/Ad_slider2.jpg" class="slide" alt="Khuyến mãi sách mới">
+                    
+                </div>
+                <div class="dots">
+                    <span class="dot active" onclick="currentSlide(0)"></span>
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    
                 </div>
             </div>
         </div>
-
+        
+        <div class="col-lg-4">
+            <div class="side-banners d-flex flex-column gap-3 h-100">
+                <a href="#" class="banner-item rounded overflow-hidden shadow-sm flex-fill">
+                    <img src="~/images/Ad1.jpg" alt="Top sách tài chính" class="img-hover-zoom">
+                </a>
+                <a href="#" class="banner-item rounded overflow-hidden shadow-sm flex-fill">
+                    <img src="~/images/Ad2.jpg" alt="Món quà tri thức" class="img-hover-zoom">
+                </a>
+            </div>
         </div>
+    </div>
+
+    <div class="row g-3 mt-2">
+        <div class="col-md-4 col-12">
+            <a href="#" class="d-block overflow-hidden rounded shadow-sm border-link">
+                <img src="~/images/Ad3.jpg" class="w-100 img-hover-zoom" alt="Hội Sách Online">
+            </a>
+        </div>
+        <div class="col-md-4 col-12">
+            <a href="#" class="d-block overflow-hidden rounded shadow-sm border-link">
+                <img src="~/images/Ad4.jpg" class="w-100 img-hover-zoom" alt="Giới Thiệu Sách">
+            </a>
+        </div>
+        <div class="col-md-4 col-12">
+            <a href="#" class="d-block overflow-hidden rounded shadow-sm border-link">
+                <img src="~/images/Ad5.jpg" class="w-100 img-hover-zoom" alt="Combo Giảm Sâu">
+            </a>
+        </div>
+    </div>
 </div>
 
-<style>
-    .promo-container {
-    display: flex;
-    gap: 15px; /* Khoảng cách giữa slider và banner */
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-}
 
-/* Slider chiếm 70% chiều rộng */
-.slider-box {
-    flex: 7;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-}
+    <div class="container mt-5" style="max-width: 1200px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary fw-bold">Sách Mới Xuất Bản</h2>
+            <a href="#" class="btn btn-outline-primary btn-sm">Xem tất cả</a>
+        </div>
 
-.slider-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Cụm banner bên phải chiếm 30% */
-.side-banners {
-    flex: 3;
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Khoảng cách giữa 2 banner nhỏ */
-}
-
-.banner-item {
-    flex: 1;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.banner-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Chấm tròn trang trí trên slider */
-.dots {
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    background: rgba(255,255,255,0.5);
-    border-radius: 50%;
-}
-
-.dot.active {
-    background: #fff;
-    width: 25px; /* Hiệu ứng chấm dài như trong ảnh */
-    border-radius: 10px;
-}
-
-.product-card {
-        transition: transform 0.3s ease;
-        border: none;
-    }
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
-    }
-    .card-title {
-        font-size: 0.95rem;
-        height: 2.4rem;
-        overflow: hidden;
-    }
-</style>
-
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+            <div class="col">
+                <div class="card h-100 shadow-sm product-card">
+                    <img src="/images/sach-kinh-te-1.jpg" class="card-img-top p-3" alt="Tên sách">
+                    <div class="card-body text-center">
+                        <h6 class="card-title mb-1 text-truncate">Cẩm Nang CEO</h6>
+                        <p class="text-danger fw-bold mb-2">150.000đ</p>
+                        <button class="btn btn-sm btn-primary w-100">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+<script src="~/js/Slider.js"></script>
 </body>

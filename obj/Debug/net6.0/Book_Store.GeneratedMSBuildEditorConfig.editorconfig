@@ -8,49 +8,77 @@ build_property.PlatformNeutralAssembly =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Book_Store
 build_property.RootNamespace = Book_Store
-build_property.ProjectDir = D:\test\Book_Store\
+build_property.ProjectDir = C:\Users\Hi\OneDrive\Desktop\Code_clone\Book_Store\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\test\Book_Store
+build_property.MSBuildProjectDirectory = C:\Users\Hi\OneDrive\Desktop\Code_clone\Book_Store
 build_property._RazorSourceGeneratorDebug = 
 
-[D:/test/Book_Store/Views/Home/GioiThieu.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Account/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Admin/Categories.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2F0ZWdvcmllcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Admin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Admin/Inventory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW52ZW50b3J5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Admin/OrderList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJMaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Admin/Products.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Admin/UserManagement.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlck1hbmFnZW1lbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Home/GioiThieu.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxHaW9pVGhpZXUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/test/Book_Store/Views/Home/Index.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/test/Book_Store/Views/Home/LienHe.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMaWVuSGUuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/test/Book_Store/Views/Home/Privacy.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/test/Book_Store/Views/Home/TinTuc.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUaW5UdWMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/test/Book_Store/Views/Shared/Error.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/test/Book_Store/Views/Shared/_Layout.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Shared/_Admin_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pbl9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/test/Book_Store/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/test/Book_Store/Views/_ViewImports.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/test/Book_Store/Views/_ViewStart.cshtml]
+[C:/Users/Hi/OneDrive/Desktop/Code_clone/Book_Store/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
