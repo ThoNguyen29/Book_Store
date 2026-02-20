@@ -1,81 +1,122 @@
 ﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    @* CSS *@
+    @* HeaderCSS *@
+    <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
+    @* CategoriesCSS *@
+    <link rel="stylesheet" href="~/css/categories.css" asp-append-version="true" />
+    @* --- *@
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Book_Store</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/style_layout.css" asp-append-version="true" />
-    
 </head>
 <body>
+    <header class="site-header">
+    <div class="container header-main">
+        
+        <a href="/" class="logo-wrapper">
+            <img src="~/images/logo.png" alt="Nhà Sách Hải An" class="logo-img">
+        </a>
 
-    <div class="header_nav">
-        <!-- Header -->
-    <header>
-        <div class="header-main">
-            <a href="/" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <span>Nhà Sách Dân Gian</span>
-            </a>
-
-            <div class="search-bar">
-                <input type="text" placeholder="Bạn muốn mua gì?">
-                <button><i class="fas fa-search"></i></button>
-            </div>
-
-            <div class="cart-info">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Giỏ hàng / <span id="cartTotal">0</span> ₫</span>
-                <span class="cart-badge" id="cartCount">0</span>
-            </div>
+        <div class="search-wrapper">
+            <form action="/Search" method="get" class="search-box">
+                <input type="text" name="q" placeholder="Bạn muốn tìm sách gì?">
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
         </div>
-    </header>
 
-    <!-- Navigation -->
-    <nav class="nav-main">
-        <div class="nav-container">
-                <div class="category-wrapper">
+        <div class="actions-wrapper">
+            
+            <div class="auth-section">
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <div class="dropdown">
+                        <a href="#" class="user-name dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> @User.Identity?.Name
+                        </a>
+                        <ul class="dropdown-menu">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Quản trị</a></li>
+                            }
+                            <li><a class="dropdown-item" href="/Order/History">Đơn hàng</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div class="guest-links">
+                        <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                        <span class="divider">|</span>
+                        <a asp-controller="Account" asp-action="Register">Đăng ký</a>
+                    </div>
+                }
+            </div>
+
+            <a href="/Cart" class="cart-icon-wrapper">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-badge" id="cartCount">0</span>
+</a>
+
+        </div>
+    </div>
+</header>
+
+        <nav class="nav-main">
+    <div class="container nav-container">
+        
+        <div class="category-wrapper">
             <div class="category-menu" onclick="toggleCategoryDropdown(event)">
                 <i class="fas fa-bars"></i>
-                <span>Danh mục sản phẩm</span>
+                <span>DANH MỤC SẢN PHẨM</span>
             </div>
 
             <div class="category-dropdown" id="categoryDropdown">
                 <ul class="category-list">
-                    <li><a href="#">Sách kinh doanh</a></li>
-                    <li><a href="#">Sách thiếu nhi</a></li>
-                    <li><a href="#">Sách tiếng Anh</a></li>
-                    <li><a href="#">Sách kỹ năng</a></li>
-                    <li><a href="#">Sách khởi nghiệp</a></li>
-                    <li><a href="#">Sách nuôi dạy con</a></li>
-                    <li><a href="#">Văn phòng phẩm</a></li>
-                    <li><a href="#">Sách văn học / truyện</a></li>
-                    <li><a href="#">Khuyến mãi</a></li>
-                </ul>
-            </div>
-            </div>
-
-<div class="main-nav">
-    <a asp-controller="Home" asp-action="Index">Trang chủ</a>
-    <a asp-controller="Home" asp-action="CuaHang">Cửa hàng</a>
-    <a asp-controller="Home" asp-action="TinTuc">Tin tức</a>
-    <a asp-controller="Home" asp-action="GioiThieu">Giới thiệu</a>
-    <a asp-controller="Home" asp-action="LienHe">Liên hệ</a>
-</div>
-
-        </div>
-    </nav>
-    </div>
-
+    <li><a href="#">Sách kinh doanh</a></li>
+    <li><a href="#">Sách thiếu nhi</a></li>
+    <li><a href="#">Sách tiếng Anh</a></li>
+    <li><a href="#">Sách kỹ năng</a></li>
     
+</ul>
+            </div>
+        </div>
+
+        <div class="main-nav-links">
+            <a href="/" class="nav-link active">Trang chủ</a>
+            <a href="/cua-hang" class="nav-link">Cửa hàng</a>
+            <a asp-controller="Home" asp-action="About" class="nav-link">Giới thiệu</a>
+        </div>
+    </div>
+</nav>
+
+               
+
+
     <main role="main" class="pb-3">
         @RenderBody()
     </main>
- <!-- Footer -->
+
+
+    @* <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - Book_Store - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> *@
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -112,10 +153,10 @@
             <div class="footer-section">
                 <h3>Liên hệ</h3>
                 <ul>
-                    <li><i class="fas fa-map-marker-alt"></i> 23 Đường Nguyễn Trãi, Q1, TP.HCM</li>
-                    <li><i class="fas fa-phone"></i> 1900 6534</li>
-                    <li><i class="fas fa-envelope"></i> contact@nhasachdangian.com</li>
-                    <li><i class="fas fa-clock"></i> 8:00 - 22:00 (Thứ 2 - Chủ nhật)</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Q1, TP.HCM</li>
+                    <li><i class="fas fa-phone"></i> 1900 xxxx</li>
+                    <li><i class="fas fa-envelope"></i> contact@nhasach.com</li>
+                    <li><i class="fas fa-clock"></i> 8:00 - 22:00 (Hàng ngày)</li>
                 </ul>
             </div>
         </div>

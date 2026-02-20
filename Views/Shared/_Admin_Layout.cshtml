@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Dashboard</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/statistical.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-layout.css" asp-append-version="true" />
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="admin-wrapper">
+        
+        <aside class="admin-sidebar">
+            <div class="sidebar-logo">
+                <a href="/Home/Index">
+                    <img src="~/images/logo.png" alt="Admin Logo" class="logo-img" style="width: auto; height: 40px;">  
+                </a>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a href="/Admin/Dashboard"><i class="fas fa-chart-pie"></i> Thống kê</a>
+                </li>
+                <li class="menu-item">
+                    <a href="/Admin/Products"><i class="fas fa-th-large"></i> Sản phẩm</a>
+                </li>
+                <li class="menu-item">
+                    <a href="/Admin/Categories"><i class="fas fa-clipboard-list"></i> Danh mục sản phẩm</a>
+                </li>
+                <li class="menu-item">
+                    <a href="/Admin/UserManagement"><i class="far fa-user"></i> Quản lý người dùng</a>
+                </li>
+                <li class="menu-item">
+                    <a href="/Admin/OrderList"><i class="fas fa-list-ul"></i> Danh sách đơn hàng</a>
+                </li>
+                <li class="menu-item">
+                    <a href="/Admin/Inventory"><i class="fas fa-box"></i> Kho</a>
+                </li>
+            </ul>
+
+            <ul class="sidebar-bottom">
+                <li class="menu-item">
+                    <a href="/Admin/Settings"><i class="fas fa-cog"></i> Cài đặt</a>
+                </li>
+                <li class="menu-item logout-item">
+                    <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-power-off"></i> Đăng xuất
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="admin-main">
+            
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+                    
+                    <div class="header-search">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" placeholder="Search">
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-name">@User.Identity?.Name</span>
+                            <span class="user-role">Admin</span>
+                        </div>
+                        <i class="far fa-user-circle avatar-icon"></i>
+                    </div>
+                </div>
+            </header>
+
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

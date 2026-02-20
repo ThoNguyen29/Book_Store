@@ -1,0 +1,139 @@
+/* ================= HEADER CONTAINER ================= */
+.site-header {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* ================= 1. LOGO (BÊN TRÁI) ================= */
+.logo-wrapper {
+    flex-shrink: 0;
+    display: block;
+    width: 220px; /* Độ rộng khu vực logo */
+}
+
+.logo-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    max-height: 60px; /* Giới hạn chiều cao logo */
+}
+
+/* ================= 2. SEARCH BAR (Ở GIỮA) ================= */
+.search-wrapper {
+    flex-grow: 1; /* Tự động giãn ra chiếm hết chỗ trống */
+    max-width: 700px;
+}
+
+.search-box {
+    display: flex;
+    width: 100%;
+    border: 2px solid #007bff; /* Viền xanh */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.search-box input {
+    flex-grow: 1;
+    border: none;
+    padding: 10px 15px;
+    font-size: 15px;
+    outline: none;
+}
+
+.search-box button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.3s;
+}
+
+.search-box button:hover {
+    background-color: #0056b3;
+}
+
+/* ================= 3. ACTIONS (BÊN PHẢI) ================= */
+.actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-shrink: 0;
+}
+
+/* --- Phần Đăng nhập / Đăng ký --- */
+.auth-section {
+    font-size: 15px;
+}
+
+.guest-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.guest-links a:hover {
+    color: #f36f21;
+}
+
+.divider {
+    margin: 0 8px;
+    color: #ccc;
+}
+
+.user-name {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+}
+
+/* --- Phần Giỏ hàng (ICON MỚI) --- */
+/* Xóa bỏ các class cũ như .cart-section, .cart-details... thay bằng cái này */
+
+.cart-icon-wrapper {
+    position: relative;
+    text-decoration: none;
+    color: #333;
+    font-size: 24px; /* Kích thước icon to rõ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    transition: color 0.3s;
+    border-left: 1px solid #e0e0e0; /* Đường gạch ngăn cách mờ bên trái */
+    padding-left: 20px; /* Cách đường gạch ra một chút */
+}
+
+.cart-icon-wrapper:hover {
+    color: #f36f21;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px; /* Treo số ở góc phải trên */
+    background-color: #f36f21; /* Nền cam */
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white; /* Viền trắng tách biệt icon */
+}

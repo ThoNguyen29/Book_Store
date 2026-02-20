@@ -1,0 +1,86 @@
+@model Book_Store.ViewModel.users.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = null;
+}
+<link rel="stylesheet" href="~/css/register.css" />
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<div class="auth-wrapper">
+    <div class="container">
+        <div class="row auth-card justify-content-center">
+            
+            <div class="col-md-6 px-0 d-none d-md-block">
+                <div class="auth-image-section h-100">
+                    <img src="~/images/dangnhap1.jpg" alt="Đăng ký">
+                </div>
+            </div>
+
+            <div class="col-md-6 p-5">
+                <h2 class="mb-4 text-center">Đăng ký tài khoản</h2>
+                
+                @* Hiển thị thông báo lỗi từ server *@
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @* Hiển thị lỗi validation *@
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                
+                <form asp-action="Register" asp-controller="Account" method="post">
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="form-label">Email:</label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="example@gmail.com" required>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="FullName" class="form-label">Họ và tên:</label>
+                        <input asp-for="FullName" type="text" class="form-control" placeholder="Nhập họ tên">
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="Password" class="form-label">Mật khẩu:</label>
+                        <input asp-for="Password" type="password" class="form-control" required>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">Xác nhận mật khẩu:</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" required>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Đăng ký</button>
+                    </div>
+                    
+                    <p class="text-center mt-3">
+                        Đã có tài khoản? <a asp-action="Login">Đăng nhập ngay</a>
+                    </p>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

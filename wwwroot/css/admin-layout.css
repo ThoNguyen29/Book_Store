@@ -1,0 +1,225 @@
+/* =========================================
+   1. RESET & VARIABLES
+   ========================================= */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f6fa; /* Màu nền xám nhạt cho toàn bộ trang */
+    color: #333;
+}
+
+a { text-decoration: none; }
+ul { list-style: none; padding: 0; margin: 0; }
+
+/* Bố cục tổng: Dùng Flexbox để chia cột trái/phải */
+.admin-wrapper {
+    display: flex;
+    height: 100vh; /* Cao bằng 100% màn hình */
+    overflow: hidden; /* Chống cuộn toàn trang, chỉ cuộn phần nội dung */
+}
+
+/* =========================================
+   2. SIDEBAR (CỘT TRÁI)
+   ========================================= */
+.admin-sidebar {
+    width: 260px;
+    background-color: #ffffff;
+    border-right: 1px solid #eaedf1;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+/* --- Logo --- */
+.sidebar-logo {
+    padding: 20px;
+    height: 80px; /* Bằng với chiều cao header bên phải */
+    display: flex;
+    align-items: center;
+}
+.sidebar-logo a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #f36f21;
+    font-weight: bold;
+    font-size: 18px;
+}
+.logo-icon {
+    background-color: #f36f21;
+    color: white;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 14px;
+}
+
+/* --- Menu Items --- */
+.sidebar-menu {
+    flex-grow: 1; /* Đẩy phần bottom xuống đáy */
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.menu-item {
+    margin-bottom: 5px;
+}
+
+.menu-item a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    color: #555;
+    border-radius: 8px; /* Bo góc nút menu */
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.menu-item a:hover {
+    background-color: #f8f9fa;
+    color: #4361ee;
+}
+
+/* Khi đang chọn (Active) */
+.menu-item.active a {
+    background-color: #4b7bec; /* Màu xanh dương giống hình */
+    color: white;
+    box-shadow: 0 4px 10px rgba(75, 123, 236, 0.3);
+}
+
+.menu-item a i {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* --- Menu Bottom (Cài đặt, Đăng xuất) --- */
+.sidebar-bottom {
+    padding: 15px;
+}
+
+.logout-item {
+    margin-top: 20px;
+    border-top: 1px solid #eaedf1;
+    padding-top: 15px;
+}
+
+.logout-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    color: #555;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background-color: #ffeeee;
+    color: #e74c3c;
+}
+
+/* =========================================
+   3. MAIN CONTENT (BÊN PHẢI)
+   ========================================= */
+.admin-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- Header --- */
+.admin-header {
+    height: 80px;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    border-bottom: 1px solid #eaedf1;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+}
+
+/* Thanh Search */
+.header-search {
+    display: flex;
+    align-items: center;
+    background-color: #f1f3f5;
+    padding: 10px 20px;
+    border-radius: 20px; /* Bo tròn thanh search */
+    width: 300px;
+}
+
+.header-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.search-icon {
+    color: #888;
+}
+
+/* User Profile */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Căn phải chữ */
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.user-role {
+    font-size: 12px;
+    color: #888;
+}
+
+.avatar-icon {
+    font-size: 35px;
+    color: #ccc;
+}
+
+/* --- Vùng chứa Nội dung RenderBody() --- */
+.admin-content {
+    padding: 30px;
+    flex-grow: 1;
+    overflow-y: auto; /* Nếu nội dung dài, chỉ cuộn vùng này */
+}
