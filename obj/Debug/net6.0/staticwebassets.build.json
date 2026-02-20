@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "lSzrkqgZ2Me+E1sPt4X8dfG3pkPNj4FICGYsn3bNInQ=",
+  "Hash": "QLVbWWu/XINhSs5ajPtF2n3+4lP9h5YDdc5Fn05uZZk=",
   "Source": "Book_Store",
   "BasePath": "_content/Book_Store",
   "Mode": "Default",
@@ -85,12 +85,12 @@
       "OriginalItemSpec": "wwwroot\\css\\categories.css"
     },
     {
-      "Identity": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\css\\Header.css",
+      "Identity": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\css\\header.css",
       "SourceId": "Book_Store",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\",
       "BasePath": "_content/Book_Store",
-      "RelativePath": "css/Header.css",
+      "RelativePath": "css/header.css",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -99,7 +99,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\Header.css"
+      "OriginalItemSpec": "wwwroot\\css\\header.css"
     },
     {
       "Identity": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\css\\inventory.css",
@@ -119,12 +119,12 @@
       "OriginalItemSpec": "wwwroot\\css\\inventory.css"
     },
     {
-      "Identity": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\css\\Login.css",
+      "Identity": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\css\\login.css",
       "SourceId": "Book_Store",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\",
       "BasePath": "_content/Book_Store",
-      "RelativePath": "css/Login.css",
+      "RelativePath": "css/login.css",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -133,7 +133,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\Login.css"
+      "OriginalItemSpec": "wwwroot\\css\\login.css"
     },
     {
       "Identity": "C:\\Users\\Hi\\OneDrive\\Desktop\\Code_clone\\Book_Store\\wwwroot\\css\\order-list.css",

@@ -3,9 +3,9 @@
 <head>
     @* CSS *@
     @* HeaderCSS *@
-    <link rel="stylesheet" href="~/css/Header.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
     @* CategoriesCSS *@
-    <link rel="stylesheet" href="~/css/Categories.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/categories.css" asp-append-version="true" />
     @* --- *@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -98,7 +98,7 @@
         <div class="main-nav-links">
             <a href="/" class="nav-link active">Trang chủ</a>
             <a href="/cua-hang" class="nav-link">Cửa hàng</a>
-            <a href="/gioi-thieu" class="nav-link">Giới thiệu</a>
+            <a asp-controller="Home" asp-action="About" class="nav-link">Giới thiệu</a>
         </div>
     </div>
 </nav>
