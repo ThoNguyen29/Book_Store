@@ -1,0 +1,68 @@
+@model Book_Store.Models.Category
+
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Xóa danh mục";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-forms.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <h1 class="page-title">Xóa danh mục</h1>
+        <a class="btn btn-ghost" asp-action="Index">Quay lại</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+
+            <div class="notice notice-danger">
+                <svg class="notice-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M10.3 3.6h3.4L22 20H2L10.3 3.6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+
+                <div>
+                    <strong>Xác nhận xóa</strong>
+                    <div>
+                        Danh mục: <strong>@Model.Name</strong> (id#@Model.CategoryID).
+                        Thao tác không thể hoàn tác.
+                    </div>
+                </div>
+            </div>
+
+            @* nếu controller trả lỗi ModelState (ví dụ category còn sách) *@
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="notice notice-danger" style="margin-top:12px;">
+                    <svg class="notice-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10.3 3.6h3.4L22 20H2L10.3 3.6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <div>
+                        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <div>@err.ErrorMessage</div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <form asp-action="Delete" method="post" style="margin-top:14px;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CategoryID" />
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                    <a class="btn btn-ghost" asp-action="Index">Hủy</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

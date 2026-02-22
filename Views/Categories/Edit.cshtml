@@ -1,0 +1,52 @@
+@model Book_Store.Models.Category
+
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Sửa danh mục";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-forms.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <h1 class="page-title">Sửa danh mục</h1>
+        <a class="btn btn-ghost" asp-action="Index">Quay lại</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+
+            <form class="form" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CategoryID" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="field">
+                    <div class="label">Tên danh mục</div>
+                    <input class="input" asp-for="Name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <div class="label">Slug</div>
+                    <input class="input" asp-for="Slug" />
+                    <span asp-validation-for="Slug" class="text-danger"></span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    <a class="btn btn-ghost" asp-action="Index">Hủy</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
