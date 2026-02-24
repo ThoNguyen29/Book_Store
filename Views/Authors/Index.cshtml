@@ -1,0 +1,259 @@
+@model List<Book_Store.Models.Author>
+
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Tác giả";
+    string q = Context.Request.Query["q"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-categories.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <h1 class="page-title">Tác giả</h1>
+
+        <div class="toolbar">
+            <form method="get" class="search-box" action="/Authors/Index">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 21l-4.3-4.3m1.3-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input name="q" value="@q" placeholder="Tìm kiếm" />
+            </form>
+
+            <a class="btn btn-primary" asp-action="Create">
+                + Thêm tác giả
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div style="margin-bottom:12px; color:#ef4444; font-weight:700;">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div id="bulkbar" class="bulkbar">
+        <div class="bulk-left">
+            <strong id="selectedCount">0</strong> đã chọn
+            <button type="button" class="btn btn-ghost" id="clearSelect">Bỏ chọn</button>
+        </div>
+
+        <form id="bulkDeleteForm" method="post" action="/Authors/BulkDelete">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ids" id="bulkIds" />
+            <button type="button" class="btn btn-danger" id="openBulkDelete">Xóa đã chọn</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="cell-check">
+                        <input type="checkbox" class="checkbox" id="checkAll" />
+                    </th>
+                    <th>Tên tác giả</th>
+                    <th class="cell-actions">Hành vi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            @if (Model == null || Model.Count == 0)
+            {
+                <tr>
+                    <td colspan="3" style="text-align:center; color:#667085; padding:28px;">
+                        Chưa có tác giả.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var a in Model)
+                {
+                    <tr>
+                        <td class="cell-check">
+                            <input type="checkbox" class="checkbox row-check" value="@a.AuthorID" />
+                        </td>
+
+                        <td>
+                            <div class="cat">
+                                <div class="badge">A</div>
+                                <div class="cat-name">
+                                    <strong>@a.Name</strong>
+                                    <span>id#@a.AuthorID</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="cell-actions">
+                            <div class="actions">
+                                <a class="icon-btn" asp-action="Edit" asp-route-id="@a.AuthorID" title="Sửa">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+
+                                <button type="button"
+                                        class="icon-btn btn-open-delete"
+                                        data-id="@a.AuthorID"
+                                        data-name="@a.Name"
+                                        title="Xóa">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none">
+                                        <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M6 6l1 16h10l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="confirmBar" class="confirmbar" aria-hidden="true">
+    <div class="confirmbar__icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10.3 3.6h3.4L22 20H2L10.3 3.6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <div class="confirmbar__content">
+        <div class="confirmbar__title">Xác nhận xóa</div>
+        <div class="confirmbar__text" id="cbText"></div>
+    </div>
+
+    <div class="confirmbar__actions">
+        <button type="button" class="btn btn-ghost" id="cbCancel">Hủy</button>
+
+        <form id="cbFormSingle" method="post" action="/Authors/Delete" style="display:none;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="cbSingleId" />
+            <button type="submit" class="btn btn-danger">Xóa</button>
+        </form>
+
+        <form id="cbFormBulk" method="post" action="/Authors/BulkDelete" style="display:none;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ids" id="cbBulkIds" />
+            <button type="submit" class="btn btn-danger">Xóa đã chọn</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+  const checkAll = document.getElementById('checkAll');
+  const checks = () => Array.from(document.querySelectorAll('.row-check'));
+  const bulkbar = document.getElementById('bulkbar');
+  const selectedCount = document.getElementById('selectedCount');
+  const bulkIds = document.getElementById('bulkIds');
+  const clearBtn = document.getElementById('clearSelect');
+
+  function refreshBulk() {
+    const selected = checks().filter(x => x.checked).map(x => x.value);
+    selectedCount.textContent = selected.length;
+    bulkIds.value = selected.join(',');
+    bulkbar.classList.toggle('show', selected.length > 0);
+    if (checkAll) checkAll.checked = selected.length > 0 && selected.length === checks().length;
+  }
+
+  if (checkAll) {
+    checkAll.addEventListener('change', function () {
+      checks().forEach(x => x.checked = checkAll.checked);
+      refreshBulk();
+    });
+  }
+
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('row-check')) refreshBulk();
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function () {
+      checks().forEach(x => x.checked = false);
+      if (checkAll) checkAll.checked = false;
+      refreshBulk();
+    });
+  }
+
+  refreshBulk();
+})();
+
+(function () {
+  const bar = document.getElementById('confirmBar');
+  const cbText = document.getElementById('cbText');
+  const cbCancel = document.getElementById('cbCancel');
+
+  const formSingle = document.getElementById('cbFormSingle');
+  const formBulk = document.getElementById('cbFormBulk');
+  const singleId = document.getElementById('cbSingleId');
+  const bulkIds = document.getElementById('cbBulkIds');
+
+  function showBar() {
+    bar.classList.add('show');
+    bar.setAttribute('aria-hidden', 'false');
+  }
+
+  function hideBar() {
+    bar.classList.remove('show');
+    bar.setAttribute('aria-hidden', 'true');
+    formSingle.style.display = 'none';
+    formBulk.style.display = 'none';
+  }
+
+  cbCancel.addEventListener('click', hideBar);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideBar(); });
+
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-open-delete');
+    if (!btn) return;
+
+    const id = btn.getAttribute('data-id');
+    const name = btn.getAttribute('data-name') || '';
+    cbText.textContent = `Xóa tác giả "${name}" (id#${id})? Thao tác không thể hoàn tác.`;
+
+    formBulk.style.display = 'none';
+    formSingle.style.display = 'inline-flex';
+    singleId.value = id;
+
+    showBar();
+  });
+
+  const openBulk = document.getElementById('openBulkDelete');
+  const bulkHidden = document.getElementById('bulkIds');
+
+  if (openBulk && bulkHidden) {
+    openBulk.addEventListener('click', function () {
+      const ids = (bulkHidden.value || '').trim();
+      if (!ids) return;
+
+      const count = ids.split(',').filter(Boolean).length;
+      cbText.textContent = `Xóa ${count} tác giả đã chọn? Thao tác không thể hoàn tác.`;
+
+      formSingle.style.display = 'none';
+      formBulk.style.display = 'inline-flex';
+      bulkIds.value = ids;
+
+      showBar();
+    });
+  }
+
+  document.addEventListener('change', function (e) {
+    if (e.target && (e.target.classList.contains('row-check') || e.target.id === 'checkAll')) {
+      hideBar();
+    }
+  });
+})();
+</script>
+}

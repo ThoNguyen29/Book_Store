@@ -15,19 +15,19 @@ public class AdminController : Controller
     {
         return View();
     }
-       public IActionResult Categories()
+    public IActionResult Categories()
     {
         return View();
     }
-       public IActionResult UserManagement()
+    public IActionResult UserManagement()
     {
         return View();
     }
-       public IActionResult OrderList()
+    public IActionResult OrderList()
     {
         return View();
     }
-       public IActionResult Inventory()
+    public IActionResult Inventory()
     {
         return View();
     }
