@@ -1,0 +1,253 @@
+@model List<Book_Store.Models.Book>
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Sách đang hiển thị";
+    string q = Context.Request.Query["q"];
+    string categoryId = Context.Request.Query["categoryId"];
+    string publisherId = Context.Request.Query["publisherId"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-categories.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+    <div class="page-header">
+        <h1 class="page-title">Sách đang hiển thị</h1>
+
+        <div class="toolbar">
+            <form method="get" class="search-box" asp-action="Index">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 21l-4.3-4.3m1.3-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <input name="q" value="@q" placeholder="Tìm kiếm theo tên, mô tả, ID" />
+
+                <select name="categoryId" class="input" style="min-width:160px; margin-left:8px;" asp-items="(SelectList)ViewBag.CategoryID">
+                    <option value="">-- Tất cả danh mục --</option>
+                </select>
+
+                <select name="publisherId" class="input" style="min-width:160px; margin-left:8px;" asp-items="(SelectList)ViewBag.PublisherID">
+                    <option value="">-- Tất cả NXB --</option>
+                </select>
+
+                <button type="submit" class="btn btn-ghost" style="margin-left:8px;">Lọc</button>
+            </form>
+
+            <a class="btn btn-primary" asp-action="Create">
+                + Thêm sách
+            </a>
+
+            <a class="btn btn-ghost" asp-action="Hidden" style="margin-left:8px;">
+                Sách đã ẩn
+            </a>
+        </div>
+    </div>
+
+    <div id="bulkbar" class="bulkbar">
+        <div class="bulk-left">
+            <strong id="selectedCount">0</strong> đã chọn
+            <button type="button" class="btn btn-ghost" id="clearSelect">Bỏ chọn</button>
+        </div>
+
+        <form id="bulkHideForm" method="post" asp-action="BulkHide">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ids" id="bulkIds" />
+            <button type="button" class="btn btn-danger" id="openBulkHide">Ẩn đã chọn</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="cell-check">
+                        <input type="checkbox" class="checkbox" id="checkAll" />
+                    </th>
+                    <th>Tên sách</th>
+                    <th>Danh mục</th>
+                    <th>NXB</th>
+                    <th>Giá</th>
+                    <th>Tồn kho</th>
+                    <th class="cell-actions">Hành vi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" style="text-align:center; color:#667085; padding:28px;">
+                            Chưa có sách nào.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var b in Model)
+                    {
+                        <tr>
+                            <td class="cell-check">
+                                <input type="checkbox" class="checkbox row-check" value="@b.BookID" />
+                            </td>
+                            <td>
+                                <div class="cat">
+                                    <div class="badge">B</div>
+                                    <div class="cat-name">
+                                        <strong>@b.Title</strong>
+                                        <span>id#@b.BookID</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="color:#667085;">
+                                @b.Category?.Name
+                            </td>
+                            <td style="color:#667085;">
+                                @b.Publisher?.Name
+                            </td>
+                            <td>
+                                @b.Price.ToString("N0") ₫
+                            </td>
+                            <td>
+                                @b.Stock
+                            </td>
+                            <td class="cell-actions">
+                                <div class="actions">
+                                    <a class="icon-btn" asp-action="Edit" asp-route-id="@b.BookID" title="Sửa">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none">
+                                            <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                            <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                        </svg>
+                                    </a>
+
+                                    <form asp-action="Hide" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@b.BookID" />
+                                        <button type="submit" class="icon-btn" title="Ẩn sách">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none">
+                                                <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                                <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                                <path d="M6 6l1 16h10l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="confirmBar" class="confirmbar" aria-hidden="true">
+    <div class="confirmbar__icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M10.3 3.6h3.4L22 20H2L10.3 3.6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+        </svg>
+    </div>
+
+    <div class="confirmbar__content">
+        <div class="confirmbar__title">Xác nhận ẩn sách</div>
+        <div class="confirmbar__text" id="cbText"></div>
+    </div>
+
+    <div class="confirmbar__actions">
+        <button type="button" class="btn btn-ghost" id="cbCancel">Hủy</button>
+
+        <form id="cbFormBulk" method="post" asp-action="BulkHide" style="display:none;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ids" id="cbBulkIds" />
+            <button type="submit" class="btn btn-danger">Ẩn đã chọn</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const checkAll = document.getElementById('checkAll');
+            const checks = () => Array.from(document.querySelectorAll('.row-check'));
+            const bulkbar = document.getElementById('bulkbar');
+            const selectedCount = document.getElementById('selectedCount');
+            const bulkIds = document.getElementById('bulkIds');
+            const clearBtn = document.getElementById('clearSelect');
+
+            function refreshBulk() {
+                const selected = checks().filter(x => x.checked).map(x => x.value);
+                selectedCount.textContent = selected.length;
+                bulkIds.value = selected.join(',');
+                bulkbar.classList.toggle('show', selected.length > 0);
+                if (checkAll) checkAll.checked = selected.length > 0 && selected.length === checks().length;
+            }
+
+            if (checkAll) {
+                checkAll.addEventListener('change', function () {
+                    checks().forEach(x => x.checked = checkAll.checked);
+                    refreshBulk();
+                });
+            }
+
+            document.addEventListener('change', function (e) {
+                if (e.target && e.target.classList.contains('row-check')) refreshBulk();
+            });
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function () {
+                    checks().forEach(x => x.checked = false);
+                    if (checkAll) checkAll.checked = false;
+                    refreshBulk();
+                });
+            }
+
+            refreshBulk();
+        })();
+
+        (function () {
+            const bar = document.getElementById('confirmBar');
+            const cbText = document.getElementById('cbText');
+            const cbCancel = document.getElementById('cbCancel');
+            const formBulk = document.getElementById('cbFormBulk');
+            const bulkIdsInput = document.getElementById('cbBulkIds');
+            const openBulk = document.getElementById('openBulkHide');
+            const bulkHidden = document.getElementById('bulkIds');
+
+            function showBar() {
+                bar.classList.add('show');
+                bar.setAttribute('aria-hidden', 'false');
+            }
+
+            function hideBar() {
+                bar.classList.remove('show');
+                bar.setAttribute('aria-hidden', 'true');
+                formBulk.style.display = 'none';
+            }
+
+            cbCancel.addEventListener('click', hideBar);
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideBar(); });
+
+            if (openBulk && bulkHidden) {
+                openBulk.addEventListener('click', function () {
+                    const ids = (bulkHidden.value || '').trim();
+                    if (!ids) return;
+
+                    const count = ids.split(',').filter(Boolean).length;
+                    cbText.textContent = `Ẩn ${count} sách đã chọn?`;
+
+                    formBulk.style.display = 'inline-flex';
+                    bulkIdsInput.value = ids;
+
+                    showBar();
+                });
+            }
+
+            document.addEventListener('change', function (e) {
+                if (e.target && (e.target.classList.contains('row-check') || e.target.id === 'checkAll')) {
+                    hideBar();
+                }
+            });
+        })();
+    </script>
+}
+

@@ -1,0 +1,124 @@
+@model Book_Store.Models.Book
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Thêm sản phẩm";
+    var staticImages = ViewBag.StaticImages as List<string> ?? new List<string>();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-forms.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+    <div class="page-header">
+        <h1 class="page-title">Thêm sản phẩm</h1>
+        <a class="btn btn-ghost" asp-action="Index">Quay lại</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form class="form" asp-action="Create" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="field">
+                    <div class="label">Trạng thái</div>
+                    <select class="input" asp-for="IsActive">
+                        <option value="true">Hiển thị</option>
+                        <option value="false">Ẩn</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <div class="label">Tên sản phẩm</div>
+                    <input class="input" asp-for="Title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <div class="label">Danh mục</div>
+                    <select class="input" asp-for="CategoryID" asp-items="ViewBag.CategoryID">
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <div class="label">Nhà xuất bản</div>
+                    <select class="input" asp-for="PublisherID" asp-items="ViewBag.PublisherID">
+                        <option value="">-- Chọn NXB --</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <div class="label">Giá</div>
+                    <input class="input" asp-for="Price" />
+                </div>
+
+                <div class="field">
+                    <div class="label">Tồn kho</div>
+                    <input class="input" asp-for="Stock" />
+                </div>
+
+                <div class="field">
+                    <div class="label">Mô tả</div>
+                    <input class="input" asp-for="Description" />
+                </div>
+
+                <hr />
+
+                <div class="field">
+                    <div class="label">Ảnh từ thiết bị (có thể chọn nhiều)</div>
+                    <input class="input" type="file" name="uploadFiles" multiple accept="image/*" />
+                    <div class="hint">Ảnh upload khi tạo sẽ được lưu vào /uploads/books/</div>
+                </div>
+
+                <div class="field">
+                    <div class="label">Ảnh từ URL (mỗi dòng 1 URL)</div>
+                    <textarea class="input" name="imageUrls" rows="4" placeholder="https://..."></textarea>
+
+                    <div class="hint">Chọn cách xử lý URL:</div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <label><input type="radio" name="urlMode" value="keep" checked /> Lưu link</label>
+                        <label><input type="radio" name="urlMode" value="download" /> Tải về lưu local</label>
+                    </div>
+
+                    <div class="hint">Chọn ảnh bìa từ nhóm URL (theo thứ tự dòng):</div>
+                    <input class="input" name="primaryChoice" placeholder="VD: url:0 (dòng 1), url:1 (dòng 2), hoặc auto" value="auto" />
+                    <div class="hint">Tạo mới chỉ chọn bìa từ URL/static. Ảnh upload bìa chọn ở Edit.</div>
+                </div>
+
+                <div class="field">
+                    <div class="label">Ảnh có sẵn trong project</div>
+                    @if (staticImages.Count == 0)
+                    {
+                        <div class="hint">Không có ảnh trong /wwwroot/images/books/</div>
+                    }
+                    else
+                    {
+                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:10px;">
+                            @for (int i = 0; i < staticImages.Count; i++)
+                            {
+                                var p = staticImages[i];
+                                <label style="border:1px solid #eaecf0; border-radius:12px; padding:10px; display:grid; gap:8px;">
+                                    <input type="checkbox" name="staticImages" value="@p" />
+                                    <img src="@p" style="width:100%; height:90px; object-fit:cover; border-radius:10px;" />
+                                    <div style="font-size:12px; color:#667085; word-break:break-all;">@p</div>
+                                    <div style="font-size:12px;">
+                                        <label><input type="radio" name="primaryChoice" value="static:@i" /> Chọn bìa</label>
+                                    </div>
+                                </label>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a class="btn btn-ghost" asp-action="Index">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

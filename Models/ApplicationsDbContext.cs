@@ -17,6 +17,7 @@ namespace Book_Store.Models
         public DbSet<Order> Orders { get; set; } = default!;
         public DbSet<OrderDetail> OrderDetails { get; set; } = default!;
         public DbSet<Payment> Payments { get; set; } = default!;
+        public DbSet<BookImage> BookImages { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

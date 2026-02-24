@@ -143,6 +143,8 @@ namespace Book_Store.Models
         public virtual Publisher? Publisher { get; set; }
 
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } = true;
+        public virtual ICollection<BookImage> BookImages { get; set; } = new HashSet<BookImage>();
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<BookAuthor> BookAuthors { get; set; }
@@ -229,5 +231,31 @@ namespace Book_Store.Models
         public string Status { get; set; } = "Unpaid";
 
         public DateTime? PaidAt { get; set; }
+    }
+    //Bảng 10: Danh sách hình ảnh
+    [Table("BookImages", Schema = "dbo")]
+    public class BookImage
+    {
+        [Key]
+        public int BookImageID { get; set; }
+
+        public int BookID { get; set; }
+
+        [ForeignKey(nameof(BookID))]
+        public virtual Book Book { get; set; } = default!;
+
+        [Required]
+        [StringLength(2048)]
+        public string ImagePath { get; set; } = string.Empty;
+        // URL: "https://..."
+        // local: "/uploads/books/xxx.jpg"
+        // static: "/images/books/xxx.jpg"
+
+        public bool IsPrimary { get; set; } = false;
+
+        public int SortOrder { get; set; } = 0;
+
+        [StringLength(20)]
+        public string? SourceType { get; set; } // "upload" | "url" | "download" | "static"
     }
 }

@@ -1,0 +1,149 @@
+@model Book_Store.Models.Book
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Sửa sản phẩm";
+    var staticImages = ViewBag.StaticImages as List<string> ?? new List<string>();
+    var images = Model.BookImages?.OrderBy(x => x.SortOrder).ToList() ?? new List<Book_Store.Models.BookImage>();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-forms.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+    <div class="page-header">
+        <h1 class="page-title">Sửa sản phẩm</h1>
+        <a class="btn btn-ghost" asp-action="Index">Quay lại</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form class="form" asp-action="Edit" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="BookID" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="field">
+                    <div class="label">Trạng thái</div>
+                    <select class="input" asp-for="IsActive">
+                        <option value="true">Hiển thị</option>
+                        <option value="false">Ẩn</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <div class="label">Tên sản phẩm</div>
+                    <input class="input" asp-for="Title" />
+                </div>
+
+                <div class="field">
+                    <div class="label">Danh mục</div>
+                    <select class="input" asp-for="CategoryID" asp-items="ViewBag.CategoryID">
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <div class="label">Nhà xuất bản</div>
+                    <select class="input" asp-for="PublisherID" asp-items="ViewBag.PublisherID">
+                        <option value="">-- Chọn NXB --</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <div class="label">Giá</div>
+                    <input class="input" asp-for="Price" />
+                </div>
+
+                <div class="field">
+                    <div class="label">Tồn kho</div>
+                    <input class="input" asp-for="Stock" />
+                </div>
+
+                <div class="field">
+                    <div class="label">Mô tả</div>
+                    <input class="input" asp-for="Description" />
+                </div>
+
+                <hr />
+
+                <div class="field">
+                    <div class="label">Ảnh hiện có (chọn bìa / chọn xóa)</div>
+
+                    @if (images.Count == 0)
+                    {
+                        <div class="hint">Chưa có ảnh.</div>
+                    }
+                    else
+                    {
+                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:10px;">
+                            @foreach (var img in images)
+                            {
+                                <label style="border:1px solid #eaecf0; border-radius:12px; padding:10px; display:grid; gap:8px;">
+                                    <img src="@img.ImagePath" style="width:100%; height:110px; object-fit:cover; border-radius:10px;" />
+                                    <div style="font-size:12px; color:#667085; word-break:break-all;">@img.ImagePath</div>
+
+                                    <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:12px;">
+                                        <label>
+                                            <input type="radio" name="primaryImageId" value="@img.BookImageID" checked="@(img.IsPrimary)" />
+                                            Ảnh bìa
+                                        </label>
+
+                                        <label style="color:#ef4444;">
+                                            <input type="checkbox" name="deleteImageIds" value="@img.BookImageID" />
+                                            Xóa
+                                        </label>
+                                    </div>
+                                </label>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <hr />
+
+                <div class="field">
+                    <div class="label">Thêm ảnh từ thiết bị</div>
+                    <input class="input" type="file" name="uploadFiles" multiple accept="image/*" />
+                </div>
+
+                <div class="field">
+                    <div class="label">Thêm ảnh từ URL (mỗi dòng 1 URL)</div>
+                    <textarea class="input" name="imageUrls" rows="4" placeholder="https://..."></textarea>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <label><input type="radio" name="urlMode" value="keep" checked /> Lưu link</label>
+                        <label><input type="radio" name="urlMode" value="download" /> Tải về lưu local</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">Thêm ảnh có sẵn trong project</div>
+                    @if (staticImages.Count == 0)
+                    {
+                        <div class="hint">Không có ảnh trong /wwwroot/images/books/</div>
+                    }
+                    else
+                    {
+                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:10px;">
+                            @foreach (var p in staticImages)
+                            {
+                                <label style="border:1px solid #eaecf0; border-radius:12px; padding:10px; display:grid; gap:8px;">
+                                    <input type="checkbox" name="staticImages" value="@p" />
+                                    <img src="@p" style="width:100%; height:90px; object-fit:cover; border-radius:10px;" />
+                                    <div style="font-size:12px; color:#667085; word-break:break-all;">@p</div>
+                                </label>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    <a class="btn btn-ghost" asp-action="Index">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

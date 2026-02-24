@@ -1,0 +1,42 @@
+@model Book_Store.Models.Publisher
+
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Thêm nhà xuất bản";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-forms.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+    <div class="page-header">
+        <h1 class="page-title">Thêm nhà xuất bản</h1>
+        <a class="btn btn-ghost" asp-action="Index">Quay lại</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form class="form" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="field">
+                    <div class="label">Tên nhà xuất bản</div>
+                    <input class="input" asp-for="Name" placeholder="VD: NXB Trẻ" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a class="btn btn-ghost" asp-action="Index">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
