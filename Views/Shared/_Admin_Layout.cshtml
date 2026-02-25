@@ -4,55 +4,79 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Admin Dashboard</title>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/statistical.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-layout.css" asp-append-version="true" />
-    
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
+
 <body>
+    @{
+        // active menu theo URL hiện tại
+        var path = (Context.Request.Path.Value ?? "").ToLowerInvariant();
+
+        bool IsActive(string startsWith) =>
+            path.StartsWith(startsWith.ToLowerInvariant());
+
+        string ActiveClass(string startsWith) =>
+            IsActive(startsWith) ? "active" : "";
+    }
+
     <div class="admin-wrapper">
-        
-        <aside class="admin-sidebar">
+
+        <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-logo">
-                <a href="/Home/Index">
-                    <img src="~/images/logo.png" alt="Admin Logo" class="logo-img" style="width: auto; height: 40px;">  
+                <a href="/Home/Index" class="home-link" title="Về trang chủ">
+                    <img src="~/images/logo.png" alt="Admin Logo" class="logo-img" style="width:auto; height:40px;">
                 </a>
             </div>
 
             <ul class="sidebar-menu">
-                <li class="menu-item active">
-                    <a href="/Admin/Dashboard"><i class="fas fa-chart-pie"></i> Thống kê</a>
+                <li class="menu-item @ActiveClass("/admin")">
+                    <a href="/Admin/Index"><i class="fas fa-chart-pie"></i> Thống kê</a>
                 </li>
-                <li class="menu-item">
+
+                <li class="menu-item @ActiveClass("/books")">
                     <a href="/Books/Index"><i class="fas fa-th-large"></i> Sản phẩm</a>
                 </li>
-                <li class="menu-item">
+
+                <li class="menu-item @ActiveClass("/authors")">
                     <a href="/Authors/Index"><i class="fas fa-user-pen"></i> Tác giả</a>
                 </li>
-                <li class="menu-item">
+
+                <li class="menu-item @ActiveClass("/publishers")">
                     <a href="/Publishers/Index"><i class="fas fa-building"></i> Nhà xuất bản</a>
                 </li>
-                <li class="menu-item">
+
+                <li class="menu-item @ActiveClass("/categories")">
                     <a href="/Categories/Index"><i class="fas fa-clipboard-list"></i> Danh mục sản phẩm</a>
                 </li>
-                <li class="menu-item">
+
+                <li class="menu-item @ActiveClass("/admin/usermanagement")">
                     <a href="/Admin/UserManagement"><i class="far fa-user"></i> Quản lý người dùng</a>
                 </li>
-                <li class="menu-item">
+
+                <li class="menu-item @ActiveClass("/admin/orderlist")">
                     <a href="/Admin/OrderList"><i class="fas fa-list-ul"></i> Danh sách đơn hàng</a>
                 </li>
-                <li class="menu-item">
+
+                <li class="menu-item @ActiveClass("/admin/inventory")">
                     <a href="/Admin/Inventory"><i class="fas fa-box"></i> Kho</a>
                 </li>
             </ul>
 
             <ul class="sidebar-bottom">
                 <li class="menu-item">
+                    <a href="/Home/Index"><i class="fas fa-house"></i> Về trang chủ</a>
+                </li>
+
+                <li class="menu-item @ActiveClass("/admin/settings")">
                     <a href="/Admin/Settings"><i class="fas fa-cog"></i> Cài đặt</a>
                 </li>
+
                 <li class="menu-item logout-item">
                     <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                         <button type="submit" class="logout-btn">
@@ -64,11 +88,13 @@
         </aside>
 
         <div class="admin-main">
-            
+
             <header class="admin-header">
                 <div class="header-left">
-                    <button class="menu-toggle"><i class="fas fa-bars"></i></button>
-                    
+                    <button class="menu-toggle" id="btnToggleSidebar" type="button" aria-label="Toggle sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
                     <div class="header-search">
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" placeholder="Search">
@@ -95,6 +121,39 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function () {
+        const btn = document.getElementById('btnToggleSidebar');
+        const sidebar = document.getElementById('adminSidebar');
+        const body = document.body;
+
+        function setCollapsed(collapsed) {
+        if (collapsed) {
+        sidebar.classList.add('collapsed');
+        body.classList.add('sidebar-collapsed');
+        localStorage.setItem('admin_sidebar', 'collapsed');
+        } else {
+        sidebar.classList.remove('collapsed');
+        body.classList.remove('sidebar-collapsed');
+        localStorage.setItem('admin_sidebar', 'expanded');
+        }
+        }
+
+        // restore
+        const saved = localStorage.getItem('admin_sidebar');
+        if (saved === 'collapsed') setCollapsed(true);
+
+        if (btn) {
+        btn.addEventListener('click', function () {
+        const collapsed = sidebar.classList.contains('collapsed');
+        setCollapsed(!collapsed);
+        });
+        }
+        })();
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
