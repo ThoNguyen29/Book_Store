@@ -137,6 +137,50 @@ namespace Book_Store.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Hidden));
         }
+        
+        // =========================
+        // DELETE (XÓA CỨNG) - chỉ cho sách đang ẩn và chưa có trong đơn hàng
+        // =========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var book = await _db.Books.FindAsync(id);
+            if (book == null) return NotFound();
+
+            // Chỉ cho phép xóa khi sách đang ẩn
+            if (book.IsActive)
+            {
+                TempData["Error"] = "Chỉ có thể xóa sách đang ở danh sách ẩn.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Không cho xóa nếu đã có trong đơn hàng
+            var hasOrder = await _db.OrderDetails.AnyAsync(od => od.BookID == id);
+            if (hasOrder)
+            {
+                TempData["Error"] = "Không thể xóa vì sách đã có trong đơn hàng.";
+                return RedirectToAction(nameof(Hidden));
+            }
+
+            // Xóa các liên kết phụ (ảnh, tác giả) nếu có
+            var images = await _db.BookImages.Where(bi => bi.BookID == id).ToListAsync();
+            if (images.Count > 0)
+            {
+                _db.BookImages.RemoveRange(images);
+            }
+
+            var links = await _db.BookAuthors.Where(ba => ba.BookID == id).ToListAsync();
+            if (links.Count > 0)
+            {
+                _db.BookAuthors.RemoveRange(links);
+            }
+
+            _db.Books.Remove(book);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Hidden));
+        }
         // ====== GET Create ======
         public async Task<IActionResult> Create()
         {

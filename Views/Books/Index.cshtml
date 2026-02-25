@@ -7,6 +7,18 @@
     string publisherId = Context.Request.Query["publisherId"];
 }
 
+@functions {
+    // lấy ảnh bìa: ưu tiên IsPrimary, fallback ảnh đầu tiên
+    string? GetCover(Book_Store.Models.Book b)
+    {
+        var imgs = b.BookImages;
+        if (imgs == null || imgs.Count == 0) return null;
+
+        var primary = imgs.FirstOrDefault(x => x.IsPrimary);
+        return (primary?.ImagePath) ?? imgs.OrderBy(x => x.SortOrder).FirstOrDefault()?.ImagePath;
+    }
+}
+
 @section Styles {
     <link rel="stylesheet" href="~/css/admin-categories.css" asp-append-version="true" />
 }
@@ -18,15 +30,18 @@
         <div class="toolbar">
             <form method="get" class="search-box" asp-action="Index">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 21l-4.3-4.3m1.3-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M21 21l-4.3-4.3m1.3-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" />
                 </svg>
                 <input name="q" value="@q" placeholder="Tìm kiếm theo tên, mô tả, ID" />
 
-                <select name="categoryId" class="input" style="min-width:160px; margin-left:8px;" asp-items="(SelectList)ViewBag.CategoryID">
+                <select name="categoryId" class="input" style="min-width:160px; margin-left:8px;"
+                        asp-items="(SelectList)ViewBag.CategoryID">
                     <option value="">-- Tất cả danh mục --</option>
                 </select>
 
-                <select name="publisherId" class="input" style="min-width:160px; margin-left:8px;" asp-items="(SelectList)ViewBag.PublisherID">
+                <select name="publisherId" class="input" style="min-width:160px; margin-left:8px;"
+                        asp-items="(SelectList)ViewBag.PublisherID">
                     <option value="">-- Tất cả NXB --</option>
                 </select>
 
@@ -63,7 +78,7 @@
                     <th class="cell-check">
                         <input type="checkbox" class="checkbox" id="checkAll" />
                     </th>
-                    <th>Tên sách</th>
+                    <th>Sách</th>
                     <th>Danh mục</th>
                     <th>NXB</th>
                     <th>Giá</th>
@@ -84,37 +99,55 @@
                 {
                     foreach (var b in Model)
                     {
+                        var cover = GetCover(b);
+
                         <tr>
                             <td class="cell-check">
                                 <input type="checkbox" class="checkbox row-check" value="@b.BookID" />
                             </td>
+
                             <td>
-                                <div class="cat">
-                                    <div class="badge">B</div>
+                                <div class="cat" style="gap:10px;">
+                                    @if (!string.IsNullOrWhiteSpace(cover))
+                                    {
+                                        <img src="@cover"                alt="cover"
+                                             style="width:44px; height:44px; border-radius:10px; object-fit:cover; border:1px solid #eaecf0;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="badge">B</div>
+                                    }
+
                                     <div class="cat-name">
                                         <strong>@b.Title</strong>
                                         <span>id#@b.BookID</span>
                                     </div>
                                 </div>
                             </td>
+
                             <td style="color:#667085;">
                                 @b.Category?.Name
                             </td>
+
                             <td style="color:#667085;">
                                 @b.Publisher?.Name
                             </td>
+
                             <td>
                                 @b.Price.ToString("N0") ₫
                             </td>
+
                             <td>
                                 @b.Stock
                             </td>
+
                             <td class="cell-actions">
                                 <div class="actions">
                                     <a class="icon-btn" asp-action="Edit" asp-route-id="@b.BookID" title="Sửa">
                                         <svg class="icon" viewBox="0 0 24 24" fill="none">
                                             <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                            <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                            <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor"
+                                                  stroke-width="2" stroke-linejoin="round" />
                                         </svg>
                                     </a>
 
@@ -122,10 +155,18 @@
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@b.BookID" />
                                         <button type="submit" class="icon-btn" title="Ẩn sách">
+                                            <!-- icon con mắt (eye-off) -->
                                             <svg class="icon" viewBox="0 0 24 24" fill="none">
-                                                <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                                <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                                <path d="M6 6l1 16h10l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                                <path d="M3 3l18 18" stroke="currentColor" stroke-width="2"
+                                                      stroke-linecap="round" />
+                                                <path d="M10.6 10.6a2.5 2.5 0 003.5 3.5" stroke="currentColor" stroke-width="2"
+                                                      stroke-linecap="round" />
+                                                <path d="M9.5 5.7A10.8 10.8 0 0112 5c5.5 0 9.7 5 10 7-.1.7-1.2 2.8-3.4 4.7"
+                                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                      stroke-linejoin="round" />
+                                                <path d="M6.2 7.5C3.9 9.5 2.2 11.6 2 12c.3 2 4.5 7 10 7a10.8 10.8 0 003.2-.5"
+                                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                      stroke-linejoin="round" />
                                             </svg>
                                         </button>
                                     </form>
@@ -166,88 +207,87 @@
 
 @section Scripts {
     <script>
-        (function () {
-            const checkAll = document.getElementById('checkAll');
-            const checks = () => Array.from(document.querySelectorAll('.row-check'));
-            const bulkbar = document.getElementById('bulkbar');
-            const selectedCount = document.getElementById('selectedCount');
-            const bulkIds = document.getElementById('bulkIds');
-            const clearBtn = document.getElementById('clearSelect');
+            (function () {
+                const checkAll = document.getElementById('checkAll');
+                const checks = () => Array.from(document.querySelectorAll('.row-check'));
+                const bulkbar = document.getElementById('bulkbar');
+                const selectedCount = document.getElementById('selectedCount');
+                const bulkIds = document.getElementById('bulkIds');
+                const clearBtn = document.getElementById('clearSelect');
 
-            function refreshBulk() {
-                const selected = checks().filter(x => x.checked).map(x => x.value);
-                selectedCount.textContent = selected.length;
-                bulkIds.value = selected.join(',');
-                bulkbar.classList.toggle('show', selected.length > 0);
-                if (checkAll) checkAll.checked = selected.length > 0 && selected.length === checks().length;
-            }
-
-            if (checkAll) {
-                checkAll.addEventListener('change', function () {
-                    checks().forEach(x => x.checked = checkAll.checked);
-                    refreshBulk();
-                });
-            }
-
-            document.addEventListener('change', function (e) {
-                if (e.target && e.target.classList.contains('row-check')) refreshBulk();
-            });
-
-            if (clearBtn) {
-                clearBtn.addEventListener('click', function () {
-                    checks().forEach(x => x.checked = false);
-                    if (checkAll) checkAll.checked = false;
-                    refreshBulk();
-                });
-            }
-
-            refreshBulk();
-        })();
-
-        (function () {
-            const bar = document.getElementById('confirmBar');
-            const cbText = document.getElementById('cbText');
-            const cbCancel = document.getElementById('cbCancel');
-            const formBulk = document.getElementById('cbFormBulk');
-            const bulkIdsInput = document.getElementById('cbBulkIds');
-            const openBulk = document.getElementById('openBulkHide');
-            const bulkHidden = document.getElementById('bulkIds');
-
-            function showBar() {
-                bar.classList.add('show');
-                bar.setAttribute('aria-hidden', 'false');
-            }
-
-            function hideBar() {
-                bar.classList.remove('show');
-                bar.setAttribute('aria-hidden', 'true');
-                formBulk.style.display = 'none';
-            }
-
-            cbCancel.addEventListener('click', hideBar);
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideBar(); });
-
-            if (openBulk && bulkHidden) {
-                openBulk.addEventListener('click', function () {
-                    const ids = (bulkHidden.value || '').trim();
-                    if (!ids) return;
-
-                    const count = ids.split(',').filter(Boolean).length;
-                    cbText.textContent = `Ẩn ${count} sách đã chọn?`;
-
-                    formBulk.style.display = 'inline-flex';
-                    bulkIdsInput.value = ids;
-
-                    showBar();
-                });
-            }
-
-            document.addEventListener('change', function (e) {
-                if (e.target && (e.target.classList.contains('row-check') || e.target.id === 'checkAll')) {
-                    hideBar();
+                function refreshBulk() {
+                    const selected = checks().filter(x => x.checked).map(x => x.value);
+                    selectedCount.textContent = selected.length;
+                    bulkIds.value = selected.join(',');
+                    bulkbar.classList.toggle('show', selected.length > 0);
+                    if (checkAll) checkAll.checked = selected.length > 0 && selected.length === checks().length;
                 }
-            });
-        })();
+
+                if (checkAll) {
+                    checkAll.addEventListener('change', function () {
+                        checks().forEach(x => x.checked = checkAll.checked);
+                        refreshBulk();
+                    });
+                }
+
+                document.addEventListener('change', function (e) {
+                    if (e.target && e.target.classList.contains('row-check')) refreshBulk();
+                });
+
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', function () {
+                        checks().forEach(x => x.checked = false);
+                        if (checkAll) checkAll.checked = false;
+                        refreshBulk();
+                    });
+                }
+
+                refreshBulk();
+            })();
+
+            (function () {
+                const bar = document.getElementById('confirmBar');
+                const cbText = document.getElementById('cbText');
+                const cbCancel = document.getElementById('cbCancel');
+                const formBulk = document.getElementById('cbFormBulk');
+                const bulkIdsInput = document.getElementById('cbBulkIds');
+                const openBulk = document.getElementById('openBulkHide');
+                const bulkHidden = document.getElementById('bulkIds');
+
+                function showBar() {
+                    bar.classList.add('show');
+                    bar.setAttribute('aria-hidden', 'false');
+                }
+
+                function hideBar() {
+                    bar.classList.remove('show');
+                    bar.setAttribute('aria-hidden', 'true');
+                    formBulk.style.display = 'none';
+                }
+
+                cbCancel.addEventListener('click', hideBar);
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideBar(); });
+
+                if (openBulk && bulkHidden) {
+                    openBulk.addEventListener('click', function () {
+                        const ids = (bulkHidden.value || '').trim();
+                        if (!ids) return;
+
+                        const count = ids.split(',').filter(Boolean).length;
+                        cbText.textContent = `Ẩn ${count} sách đã chọn?`;
+
+                        formBulk.style.display = 'inline-flex';
+                        bulkIdsInput.value = ids;
+
+                        showBar();
+                    });
+                }
+
+                document.addEventListener('change', function (e) {
+                    if (e.target && (e.target.classList.contains('row-check') || e.target.id === 'checkAll')) {
+                        hideBar();
+                    }
+                });
+            })();
     </script>
 }
-

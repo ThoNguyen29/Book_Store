@@ -1,4 +1,6 @@
 @model List<Book_Store.Models.Book>
+@using System.Text.Encodings.Web
+
 @{
     Layout = "~/Views/Shared/_Admin_Layout.cshtml";
     ViewData["Title"] = "Sách đã ẩn";
@@ -16,7 +18,8 @@
         <div class="toolbar">
             <form method="get" class="search-box" asp-action="Hidden">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 21l-4.3-4.3m1.3-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M21 21l-4.3-4.3m1.3-5.2a7 7 0 11-14 0 7 7 0 0114 0z"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                 </svg>
                 <input name="q" value="@q" placeholder="Tìm kiếm theo tên, mô tả, ID" />
             </form>
@@ -36,9 +39,18 @@
         <form id="bulkRestoreForm" method="post" asp-action="BulkRestore">
             @Html.AntiForgeryToken()
             <input type="hidden" name="ids" id="bulkIds" />
-            <button type="button" class="btn btn-primary" id="openBulkRestore">Khôi phục đã chọn</button>
+            <button type="button" class="btn btn-primary" id="openBulkRestore">
+                Khôi phục đã chọn
+            </button>
         </form>
     </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div style="margin-bottom:12px; color:#ef4444; font-weight:700;">
+            @TempData["Error"]
+        </div>
+    }
 
     <div class="card">
         <table class="table">
@@ -68,10 +80,14 @@
                 {
                     foreach (var b in Model)
                     {
+                        var confirmMsg = $"Xóa vĩnh viễn sách \"{b.Title}\" (id#{b.BookID})? Hành động này không thể hoàn tác.";
+                        var confirmMsgJs = JavaScriptEncoder.Default.Encode(confirmMsg);
+
                         <tr>
                             <td class="cell-check">
                                 <input type="checkbox" class="checkbox row-check" value="@b.BookID" />
                             </td>
+
                             <td>
                                 <div class="cat">
                                     <div class="badge">B</div>
@@ -81,30 +97,63 @@
                                     </div>
                                 </div>
                             </td>
+
                             <td style="color:#667085;">
                                 @b.Category?.Name
                             </td>
+
                             <td style="color:#667085;">
                                 @b.Publisher?.Name
                             </td>
+
                             <td>
                                 @b.Price.ToString("N0") ₫
                             </td>
+
                             <td>
                                 @b.Stock
                             </td>
+
                             <td class="cell-actions">
                                 <div class="actions">
+
                                     <form asp-action="Restore" method="post" style="display:inline;">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@b.BookID" />
                                         <button type="submit" class="icon-btn" title="Khôi phục sách">
                                             <svg class="icon" viewBox="0 0 24 24" fill="none">
-                                                <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                                <path d="M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M12 5v14"
+                                                      stroke="currentColor" stroke-width="2"
+                                                      stroke-linecap="round" />
+                                                <path d="M5 12l7-7 7 7"
+                                                      stroke="currentColor" stroke-width="2"
+                                                      stroke-linecap="round"
+                                                      stroke-linejoin="round" />
                                             </svg>
                                         </button>
                                     </form>
+
+                                    <form asp-action="Delete"
+                                          method="post"
+                                          style="display:inline;"
+                                          onsubmit="return confirm('@confirmMsgJs');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@b.BookID" />
+                                        <button type="submit" class="icon-btn" title="Xóa vĩnh viễn">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none">
+                                                <path d="M3 6h18"
+                                                      stroke="currentColor" stroke-width="2"
+                                                      stroke-linecap="round" />
+                                                <path d="M8 6V4h8v2"
+                                                      stroke="currentColor" stroke-width="2"
+                                                      stroke-linecap="round" />
+                                                <path d="M6 6l1 16h10l1-16"
+                                                      stroke="currentColor" stroke-width="2"
+                                                      stroke-linejoin="round" />
+                                            </svg>
+                                        </button>
+                                    </form>
+
                                 </div>
                             </td>
                         </tr>
@@ -130,7 +179,8 @@
                 selectedCount.textContent = selected.length;
                 bulkIds.value = selected.join(',');
                 bulkbar.classList.toggle('show', selected.length > 0);
-                if (checkAll) checkAll.checked = selected.length > 0 && selected.length === checks().length;
+                if (checkAll)
+                    checkAll.checked = selected.length > 0 && selected.length === checks().length;
             }
 
             if (checkAll) {
@@ -141,7 +191,8 @@
             }
 
             document.addEventListener('change', function (e) {
-                if (e.target && e.target.classList.contains('row-check')) refreshBulk();
+                if (e.target && e.target.classList.contains('row-check'))
+                    refreshBulk();
             });
 
             if (clearBtn) {
@@ -163,11 +214,9 @@
                 openBulk.addEventListener('click', function () {
                     const ids = (bulkHidden.value || '').trim();
                     if (!ids) return;
-                    const form = document.getElementById('bulkRestoreForm');
-                    form.submit();
+                    document.getElementById('bulkRestoreForm').submit();
                 });
             }
         })();
     </script>
 }
-
