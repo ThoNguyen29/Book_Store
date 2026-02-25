@@ -2,8 +2,14 @@
 @{
     Layout = "~/Views/Shared/_Admin_Layout.cshtml";
     ViewData["Title"] = "Sửa sản phẩm";
+
     var staticImages = ViewBag.StaticImages as List<string> ?? new List<string>();
     var images = Model.BookImages?.OrderBy(x => x.SortOrder).ToList() ?? new List<Book_Store.Models.BookImage>();
+
+    // giữ lại query để quay lại đúng filter (nếu có)
+    string q = Context.Request.Query["q"];
+    string categoryId = Context.Request.Query["categoryId"];
+    string publisherId = Context.Request.Query["publisherId"];
 }
 
 @section Styles {
@@ -13,7 +19,12 @@
 <div class="admin-page">
     <div class="page-header">
         <h1 class="page-title">Sửa sản phẩm</h1>
-        <a class="btn btn-ghost" asp-action="Index">Quay lại</a>
+
+        <a class="btn btn-ghost"
+           asp-action="Index"
+           asp-route-q="@q"
+           asp-route-categoryId="@categoryId"
+           asp-route-publisherId="@publisherId">Quay lại</a>
     </div>
 
     <div class="card">
@@ -21,52 +32,74 @@
             <form class="form" asp-action="Edit" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="BookID" />
+
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="field">
-                    <div class="label">Trạng thái</div>
-                    <select class="input" asp-for="IsActive">
-                        <option value="true">Hiển thị</option>
-                        <option value="false">Ẩn</option>
-                    </select>
-                </div>
+                <div style="display:grid; grid-template-columns: minmax(0,2fr) minmax(0,1.4fr); gap:24px; align-items:flex-start;">
+                    <div>
+                        <div class="field">
+                            <div class="label">Tên sách</div>
+                            <input class="input" asp-for="Title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
 
-                <div class="field">
-                    <div class="label">Tên sản phẩm</div>
-                    <input class="input" asp-for="Title" />
-                </div>
+                        <div class="field">
+                            <div class="label">Mô tả</div>
+                            <textarea class="input" asp-for="Description" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
 
-                <div class="field">
-                    <div class="label">Danh mục</div>
-                    <select class="input" asp-for="CategoryID" asp-items="ViewBag.CategoryID">
-                        <option value="">-- Chọn danh mục --</option>
-                    </select>
-                </div>
+                        <div class="field">
+                            <div class="label">Tác giả</div>
+                            <select name="authorIds" multiple class="input" asp-items="(MultiSelectList)ViewBag.Authors"></select>
+                            <div class="hint">Giữ Ctrl (hoặc Cmd trên Mac) để chọn nhiều tác giả.</div>
+                        </div>
+                    </div>
 
-                <div class="field">
-                    <div class="label">Nhà xuất bản</div>
-                    <select class="input" asp-for="PublisherID" asp-items="ViewBag.PublisherID">
-                        <option value="">-- Chọn NXB --</option>
-                    </select>
-                </div>
+                    <div>
+                        <div class="field">
+                            <div class="label">Trạng thái</div>
+                            <select class="input" asp-for="IsActive">
+                                <option value="true">Hiển thị</option>
+                                <option value="false">Ẩn</option>
+                            </select>
+                            <span asp-validation-for="IsActive" class="text-danger"></span>
+                        </div>
 
-                <div class="field">
-                    <div class="label">Giá</div>
-                    <input class="input" asp-for="Price" />
-                </div>
+                        <div class="field">
+                            <div class="label">Danh mục</div>
+                            <select class="input" asp-for="CategoryID" asp-items="ViewBag.CategoryID">
+                                <option value="">-- Chọn danh mục --</option>
+                            </select>
+                            <span asp-validation-for="CategoryID" class="text-danger"></span>
+                        </div>
 
-                <div class="field">
-                    <div class="label">Tồn kho</div>
-                    <input class="input" asp-for="Stock" />
-                </div>
+                        <div class="field">
+                            <div class="label">Nhà xuất bản</div>
+                            <select class="input" asp-for="PublisherID" asp-items="ViewBag.PublisherID">
+                                <option value="">-- Chọn NXB --</option>
+                            </select>
+                            <span asp-validation-for="PublisherID" class="text-danger"></span>
+                        </div>
 
-                <div class="field">
-                    <div class="label">Mô tả</div>
-                    <input class="input" asp-for="Description" />
+                        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                            <div class="field" style="flex:1; min-width:140px;">
+                                <div class="label">Giá</div>
+                                <input class="input" asp-for="Price" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="field" style="flex:1; min-width:140px;">
+                                <div class="label">Tồn kho</div>
+                                <input class="input" asp-for="Stock" />
+                                <span asp-validation-for="Stock" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <hr />
 
+                <!-- ẢNH HIỆN CÓ -->
                 <div class="field">
                     <div class="label">Ảnh hiện có (chọn bìa / chọn xóa)</div>
 
@@ -80,12 +113,17 @@
                             @foreach (var img in images)
                             {
                                 <label style="border:1px solid #eaecf0; border-radius:12px; padding:10px; display:grid; gap:8px;">
-                                    <img src="@img.ImagePath" style="width:100%; height:110px; object-fit:cover; border-radius:10px;" />
+                                    <img src="@img.ImagePath"
+                                         style="width:100%; height:110px; object-fit:cover; border-radius:10px;" />
+
                                     <div style="font-size:12px; color:#667085; word-break:break-all;">@img.ImagePath</div>
 
                                     <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:12px;">
                                         <label>
-                                            <input type="radio" name="primaryImageId" value="@img.BookImageID" checked="@(img.IsPrimary)" />
+                                            <input type="radio"
+                                                   name="primaryImageId"
+                                                   value="@img.BookImageID"
+                                                   checked="@(img.IsPrimary)" />
                                             Ảnh bìa
                                         </label>
 
@@ -102,6 +140,7 @@
 
                 <hr />
 
+                <!-- THÊM ẢNH MỚI (GIỐNG TRANG TẠO) -->
                 <div class="field">
                     <div class="label">Thêm ảnh từ thiết bị</div>
                     <input class="input" type="file" name="uploadFiles" multiple accept="image/*" />
@@ -137,13 +176,143 @@
                     }
                 </div>
 
+                <input type="hidden" name="primaryChoice" id="primaryChoice" value="auto" />
+
+                <div class="field">
+                    <div class="label">Ảnh mới (xem trước + chọn làm bìa)</div>
+                    <div id="newPreviewGrid"
+                         style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:10px;">
+                    </div>
+                    <div class="hint">Nếu chọn bìa từ ảnh mới, hệ thống sẽ set bìa theo lựa chọn này sau khi lưu.</div>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Cập nhật</button>
-                    <a class="btn btn-ghost" asp-action="Index">Hủy</a>
+                    <a class="btn btn-ghost"
+                       asp-action="Index"
+                       asp-route-q="@q"
+                       asp-route-categoryId="@categoryId"
+                       asp-route-publisherId="@publisherId">Hủy</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const fileInput = document.querySelector('input[name="uploadFiles"]');
+            const urlTextarea = document.querySelector('textarea[name="imageUrls"]');
+            const staticChecks = () => Array.from(document.querySelectorAll('input[name="staticImages"]:checked'));
+            const urlModeRadios = () => Array.from(document.querySelectorAll('input[name="urlMode"]'));
+            const grid = document.getElementById('newPreviewGrid');
+
+            const primaryChoice = document.getElementById('primaryChoice');
+            const primaryImageIdRadios = () => Array.from(document.querySelectorAll('input[name="primaryImageId"]'));
+
+            function getUrlMode() {
+                const r = urlModeRadios().find(x => x.checked);
+                return r ? r.value : "keep";
+            }
+
+            function parseUrls(raw) {
+                if (!raw) return [];
+                return raw.split(/[\n\r;,]+/g).map(s => s.trim()).filter(Boolean);
+            }
+
+            function clearGrid() { grid.innerHTML = ""; }
+
+            function addCard({ src, label, choiceValue }) {
+                const wrap = document.createElement('label');
+                wrap.style.border = "1px solid #eaecf0";
+                wrap.style.borderRadius = "12px";
+                wrap.style.padding = "10px";
+                wrap.style.display = "grid";
+                wrap.style.gap = "8px";
+
+                const img = document.createElement('img');
+                img.src = src;
+                img.style.width = "100%";
+                img.style.height = "110px";
+                img.style.objectFit = "cover";
+                img.style.borderRadius = "10px";
+
+                const txt = document.createElement('div');
+                txt.style.fontSize = "12px";
+                txt.style.color = "#667085";
+                txt.style.wordBreak = "break-all";
+                txt.textContent = label;
+
+                const rbWrap = document.createElement('div');
+                rbWrap.style.display = "flex";
+                rbWrap.style.gap = "10px";
+                rbWrap.style.fontSize = "12px";
+                rbWrap.style.alignItems = "center";
+
+                const rb = document.createElement('input');
+                rb.type = "radio";
+                rb.name = "primaryNewRadio";
+                rb.value = choiceValue;
+
+                rb.addEventListener('change', () => {
+                    // chọn bìa từ ảnh mới => clear chọn bìa ảnh cũ
+                    primaryImageIdRadios().forEach(r => r.checked = false);
+                    primaryChoice.value = rb.value;
+                });
+
+                const rbLabel = document.createElement('span');
+                rbLabel.textContent = "Chọn làm bìa";
+
+                rbWrap.appendChild(rb);
+                rbWrap.appendChild(rbLabel);
+
+                wrap.appendChild(img);
+                wrap.appendChild(txt);
+                wrap.appendChild(rbWrap);
+
+                grid.appendChild(wrap);
+            }
+
+            function rebuild() {
+                clearGrid();
+                primaryChoice.value = "auto";
+
+                const files = fileInput && fileInput.files ? Array.from(fileInput.files) : [];
+                files.forEach((f, i) => addCard({
+                    src: URL.createObjectURL(f),
+                    label: `[Upload] ${f.name}`,
+                    choiceValue: `upload:${i}`
+                }));
+
+                const urls = parseUrls(urlTextarea ? urlTextarea.value : "");
+                urls.forEach((u, i) => addCard({
+                    src: u,
+                    label: `[URL-${getUrlMode()}] ${u}`,
+                    choiceValue: (getUrlMode() === "download" ? `download:${i}` : `url:${i}`)
+                }));
+
+                const statics = staticChecks().map(x => x.value);
+                statics.forEach((p, i) => addCard({
+                    src: p,
+                    label: `[Static] ${p}`,
+                    choiceValue: `static:${i}`
+                }));
+            }
+
+            if (fileInput) fileInput.addEventListener('change', rebuild);
+            if (urlTextarea) urlTextarea.addEventListener('input', rebuild);
+            urlModeRadios().forEach(r => r.addEventListener('change', rebuild));
+
+            document.addEventListener('change', (e) => {
+                if (e.target && e.target.name === "staticImages") rebuild;
+
+                // user chọn bìa ảnh cũ => ưu tiên primaryImageId, reset primaryChoice
+                if (e.target && e.target.name === "primaryImageId") primaryChoice.value = "auto";
+            });
+
+            rebuild();
+        })();
+    </script>
+}

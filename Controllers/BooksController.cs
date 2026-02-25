@@ -137,7 +137,7 @@ namespace Book_Store.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Hidden));
         }
-                // ====== GET Create ======
+        // ====== GET Create ======
         public async Task<IActionResult> Create()
         {
             await LoadLookups();
@@ -150,6 +150,7 @@ namespace Book_Store.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             Book model,
+            int[]? authorIds,
             List<IFormFile>? uploadFiles,
             string? imageUrls,
             string? urlMode,            // "keep" | "download"
@@ -157,7 +158,7 @@ namespace Book_Store.Controllers
             string? primaryChoice       // "url:0" | "static:0" | "auto"
         )
         {
-            await LoadLookups(model.CategoryID, model.PublisherID);
+            await LoadLookups(model.CategoryID, model.PublisherID, authorIds);
             ViewBag.StaticImages = GetStaticImages();
 
             if (!ModelState.IsValid) return View(model);
@@ -166,6 +167,25 @@ namespace Book_Store.Controllers
 
             _db.Books.Add(model);
             await _db.SaveChangesAsync(); // lấy BookID
+
+            // Gắn tác giả cho sách
+            if (authorIds != null && authorIds.Length > 0)
+            {
+                var distinctAuthorIds = authorIds.Distinct().ToList();
+                var links = distinctAuthorIds
+                    .Select(aid => new BookAuthor
+                    {
+                        BookID = model.BookID,
+                        AuthorID = aid
+                    })
+                    .ToList();
+
+                if (links.Count > 0)
+                {
+                    _db.BookAuthors.AddRange(links);
+                    await _db.SaveChangesAsync();
+                }
+            }
 
             var mode = string.IsNullOrWhiteSpace(urlMode) ? "keep" : urlMode.Trim();
 
@@ -190,7 +210,7 @@ namespace Book_Store.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-                // ====== GET Edit ======
+        // ====== GET Edit ======
         public async Task<IActionResult> Edit(int id)
         {
             var book = await _db.Books
@@ -199,7 +219,12 @@ namespace Book_Store.Controllers
 
             if (book == null) return NotFound();
 
-            await LoadLookups(book.CategoryID, book.PublisherID);
+            var selectedAuthorIds = await _db.BookAuthors
+                .Where(ba => ba.BookID == id)
+                .Select(ba => ba.AuthorID)
+                .ToListAsync();
+
+            await LoadLookups(book.CategoryID, book.PublisherID, selectedAuthorIds);
             ViewBag.StaticImages = GetStaticImages();
             return View(book);
         }
@@ -210,11 +235,13 @@ namespace Book_Store.Controllers
         public async Task<IActionResult> Edit(
             int id,
             Book model,
+            int[]? authorIds,
             List<IFormFile>? uploadFiles,
             string? imageUrls,
             string? urlMode,
             List<string>? staticImages,
             int? primaryImageId,
+            string? primaryChoice,
             List<int>? deleteImageIds
         )
         {
@@ -226,7 +253,7 @@ namespace Book_Store.Controllers
 
             if (book == null) return NotFound();
 
-            await LoadLookups(model.CategoryID, model.PublisherID);
+            await LoadLookups(model.CategoryID, model.PublisherID, authorIds);
             ViewBag.StaticImages = GetStaticImages();
 
             if (!ModelState.IsValid) return View(book);
@@ -239,6 +266,32 @@ namespace Book_Store.Controllers
             book.CategoryID = model.CategoryID;
             book.PublisherID = model.PublisherID;
             book.IsActive = model.IsActive;
+
+            // Cập nhật danh sách tác giả
+            var existingLinks = await _db.BookAuthors
+                .Where(ba => ba.BookID == book.BookID)
+                .ToListAsync();
+            if (existingLinks.Count > 0)
+            {
+                _db.BookAuthors.RemoveRange(existingLinks);
+            }
+
+            if (authorIds != null && authorIds.Length > 0)
+            {
+                var distinctAuthorIds = authorIds.Distinct().ToList();
+                var newLinks = distinctAuthorIds
+                    .Select(aid => new BookAuthor
+                    {
+                        BookID = book.BookID,
+                        AuthorID = aid
+                    })
+                    .ToList();
+
+                if (newLinks.Count > 0)
+                {
+                    _db.BookAuthors.AddRange(newLinks);
+                }
+            }
 
             // 1) Xóa ảnh
             if (deleteImageIds != null && deleteImageIds.Count > 0)
@@ -279,20 +332,34 @@ namespace Book_Store.Controllers
                 foreach (var img in allImages)
                     img.IsPrimary = (img.BookImageID == primaryImageId.Value);
             }
+            // Nếu user chọn bìa từ ảnh mới (primaryChoice != auto) thì set bìa theo choice đó
+            if (!string.IsNullOrWhiteSpace(primaryChoice) && primaryChoice != "auto")
+            {
+                // chỉ apply cho nhóm "ảnh mới" theo thứ tự: upload/url/download/static trong lần submit này
+                // Cách đơn giản: apply lên toàn bộ allImages theo SourceType + SortOrder,
+                // nhưng idx là idx trong nhóm new của request => để đúng tuyệt đối cần tính theo startSort
+                // => làm theo startSortOrder đã dùng khi tạo newImages:
+                foreach (var img in allImages) img.IsPrimary = false;
 
+                // lấy các ảnh mới vừa thêm theo SortOrder >= startSort
+                var newOnly = allImages.Where(x => x.SortOrder >= startSort).ToList();
+
+                ApplyPrimaryChoice(newOnly, primaryChoice); // dùng function ApplyPrimaryChoice đã nâng cấp
+                                                            // nếu ApplyPrimaryChoice set được trong newOnly thì ok, còn không thì sẽ fallback EnsurePrimary
+            }
             EnsurePrimary(allImages);
 
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-                private async Task<List<BookImage>> BuildImagesAsync(
-            int bookId,
-            List<IFormFile>? uploadFiles,
-            string? rawUrls,
-            string urlMode,
-            List<string>? staticImages,
-            int startSortOrder
-        )
+        private async Task<List<BookImage>> BuildImagesAsync(
+    int bookId,
+    List<IFormFile>? uploadFiles,
+    string? rawUrls,
+    string urlMode,
+    List<string>? staticImages,
+    int startSortOrder
+)
         {
             var result = new List<BookImage>();
             var sort = startSortOrder;
@@ -376,20 +443,21 @@ namespace Book_Store.Controllers
             return result;
         }
 
+        // primaryChoice: "upload:0" | "url:0" | "static:0" | "auto"
         private static void ApplyPrimaryChoice(List<BookImage> images, string? primaryChoice)
         {
             if (images.Count == 0) return;
-            if (string.IsNullOrWhiteSpace(primaryChoice)) return;
-            if (primaryChoice == "auto") return;
+            if (string.IsNullOrWhiteSpace(primaryChoice) || primaryChoice == "auto") return;
 
             var parts = primaryChoice.Split(':', 2);
             if (parts.Length != 2) return;
 
-            var type = parts[0];
+            var type = parts[0].Trim(); // upload/url/static/download
             if (!int.TryParse(parts[1], out var idx)) return;
 
             var candidates = images
                 .Where(x => string.Equals(x.SourceType, type, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(x => x.SortOrder)
                 .ToList();
 
             if (idx < 0 || idx >= candidates.Count) return;
@@ -499,13 +567,18 @@ namespace Book_Store.Controllers
                 .ToList();
         }
 
-        private async Task LoadLookups(int? selectedCategoryId = null, int? selectedPublisherId = null)
+        private async Task LoadLookups(
+                int? selectedCategoryId = null,
+                int? selectedPublisherId = null,
+                IEnumerable<int>? selectedAuthorIds = null)
         {
             var categories = await _db.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
             var publishers = await _db.Publishers.AsNoTracking().OrderBy(p => p.Name).ToListAsync();
+            var authors = await _db.Authors.AsNoTracking().OrderBy(a => a.Name).ToListAsync();
 
             ViewBag.CategoryID = new SelectList(categories, "CategoryID", "Name", selectedCategoryId);
             ViewBag.PublisherID = new SelectList(publishers, "PublisherID", "Name", selectedPublisherId);
+            ViewBag.Authors = new MultiSelectList(authors, "AuthorID", "Name", selectedAuthorIds);
         }
 
         private static List<int> ParseIds(string ids)
@@ -518,6 +591,66 @@ namespace Book_Store.Controllers
                       .Select(n => n!.Value)
                       .Distinct()
                       .ToList();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> QuickCreatePublisher(string name)
+        {
+            name = (name ?? "").Trim();
+            if (name.Length == 0) return BadRequest();
+
+            var exists = await _db.Publishers.FirstOrDefaultAsync(x => x.Name == name);
+            if (exists != null) return Json(new { id = exists.PublisherID, text = exists.Name });
+
+            var p = new Publisher { Name = name };
+            _db.Publishers.Add(p);
+            await _db.SaveChangesAsync();
+
+            return Json(new { id = p.PublisherID, text = p.Name });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> QuickCreateCategory(string name)
+        {
+            name = (name ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest(new { message = "Name is required" });
+
+            var exists = await _db.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower());
+            if (exists)
+                return BadRequest(new { message = "Category already exists" });
+
+            var category = new Category
+            {
+                Name = name,
+                Slug = null
+            };
+
+            _db.Categories.Add(category);
+            await _db.SaveChangesAsync();
+
+            return Json(new { id = category.CategoryID, text = category.Name });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> QuickCreateAuthor(string name)
+        {
+            name = (name ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest(new { message = "Name is required" });
+
+            var exists = await _db.Authors.AnyAsync(a => a.Name.ToLower() == name.ToLower());
+            if (exists)
+                return BadRequest(new { message = "Author already exists" });
+
+            var author = new Author { Name = name };
+
+            _db.Authors.Add(author);
+            await _db.SaveChangesAsync();
+
+            return Json(new { id = author.AuthorID, text = author.Name });
         }
     }
 }
