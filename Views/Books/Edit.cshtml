@@ -44,15 +44,38 @@
                         </div>
 
                         <div class="field">
-                            <div class="label">Mô tả</div>
-                            <textarea class="input" asp-for="Description" rows="4"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <div class="label" style="display:flex; justify-content:space-between; align-items:center;">
+                                <span>Tác giả</span>
+                                <button type="button" class="btn btn-ghost" id="btnAddAuthor">+ Thêm</button>
+                            </div>
+
+                            <select id="AuthorSelect"
+                                    name="authorIds"
+                                    multiple
+                                    class="input"
+                                    asp-items="(MultiSelectList)ViewBag.Authors">
+                            </select>
+
+                            <div class="hint">Giữ Ctrl (hoặc Cmd) để chọn nhiều tác giả.</div>
                         </div>
 
-                        <div class="field">
-                            <div class="label">Tác giả</div>
-                            <select name="authorIds" multiple class="input" asp-items="(MultiSelectList)ViewBag.Authors"></select>
-                            <div class="hint">Giữ Ctrl (hoặc Cmd trên Mac) để chọn nhiều tác giả.</div>
+                        <div id="modalAuthor"
+                             style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:9999;">
+                            <div style="max-width:520px; margin:10vh auto; background:#fff; border-radius:14px; padding:18px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <strong>Thêm tác giả</strong>
+                                    <button type="button" class="btn btn-ghost" id="closeAuthor">×</button>
+                                </div>
+
+                                <div style="margin-top:12px;">
+                                    <input class="input" id="authorName" placeholder="Tên tác giả" />
+                                </div>
+
+                                <div style="margin-top:14px; display:flex; gap:10px; justify-content:flex-end;">
+                                    <button type="button" class="btn btn-ghost" id="cancelAuthor">Hủy</button>
+                                    <button type="button" class="btn btn-primary" id="saveAuthor">Lưu</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -67,19 +90,66 @@
                         </div>
 
                         <div class="field">
-                            <div class="label">Danh mục</div>
-                            <select class="input" asp-for="CategoryID" asp-items="ViewBag.CategoryID">
+                            <div class="label" style="display:flex; justify-content:space-between; align-items:center;">
+                                <span>Danh mục</span>
+                                <button type="button" class="btn btn-ghost" id="btnAddCategory">+ Thêm</button>
+                            </div>
+
+                            <select id="CategorySelect"
+                                    class="input"
+                                    asp-for="CategoryID"
+                                    asp-items="ViewBag.CategoryID">
                                 <option value="">-- Chọn danh mục --</option>
                             </select>
                             <span asp-validation-for="CategoryID" class="text-danger"></span>
                         </div>
 
+                        <div id="modalCategory"
+                             style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:9999;">
+                            <div style="max-width:520px; margin:10vh auto; background:#fff; border-radius:14px; padding:18px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <strong>Thêm danh mục</strong>
+                                    <button type="button" class="btn btn-ghost" id="closeCategory">×</button>
+                                </div>
+
+                                <div style="margin-top:12px;">
+                                    <input class="input" id="categoryName" placeholder="Tên danh mục" />
+                                </div>
+
+                                <div style="margin-top:14px; display:flex; gap:10px; justify-content:flex-end;">
+                                    <button type="button" class="btn btn-ghost" id="cancelCategory">Hủy</button>
+                                    <button type="button" class="btn btn-primary" id="saveCategory">Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="field">
-                            <div class="label">Nhà xuất bản</div>
+                            <div class="label" style="display:flex; justify-content:space-between; align-items:center;">
+                                <span>Nhà xuất bản</span>
+                                <button type="button" class="btn btn-ghost" id="btnAddPublisher">+ Thêm</button>
+                            </div>
+
                             <select class="input" asp-for="PublisherID" asp-items="ViewBag.PublisherID">
                                 <option value="">-- Chọn NXB --</option>
                             </select>
                             <span asp-validation-for="PublisherID" class="text-danger"></span>
+                        </div>
+
+                        <div id="modalPublisher"
+                             style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.35);">
+                            <div style="max-width:520px; margin:10vh auto; background:#fff; border-radius:14px; padding:18px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <strong>Thêm nhà xuất bản</strong>
+                                    <button type="button" class="btn btn-ghost" id="closePublisher">×</button>
+                                </div>
+                                <div style="margin-top:12px;">
+                                    <input class="input" id="publisherName" placeholder="Tên nhà xuất bản" />
+                                </div>
+                                <div style="margin-top:14px; display:flex; gap:10px; justify-content:flex-end;">
+                                    <button type="button" class="btn btn-ghost" id="cancelPublisher">Hủy</button>
+                                    <button type="button" class="btn btn-primary" id="savePublisher">Lưu</button>
+                                </div>
+                            </div>
                         </div>
 
                         <div style="display:flex; gap:16px; flex-wrap:wrap;">
@@ -95,6 +165,14 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <hr />
+
+                <div class="field">
+                    <div class="label">Mô tả</div>
+                    <textarea class="input" asp-for="Description" id="DescriptionEditor" rows="6"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
                 <hr />
@@ -156,24 +234,30 @@
                 </div>
 
                 <div class="field">
-                    <div class="label">Thêm ảnh có sẵn trong project</div>
-                    @if (staticImages.Count == 0)
-                    {
-                        <div class="hint">Không có ảnh trong /wwwroot/images/books/</div>
-                    }
-                    else
-                    {
-                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:10px;">
-                            @foreach (var p in staticImages)
-                            {
-                                <label style="border:1px solid #eaecf0; border-radius:12px; padding:10px; display:grid; gap:8px;">
-                                    <input type="checkbox" name="staticImages" value="@p" />
-                                    <img src="@p" style="width:100%; height:90px; object-fit:cover; border-radius:10px;" />
-                                    <div style="font-size:12px; color:#667085; word-break:break-all;">@p</div>
-                                </label>
-                            }
-                        </div>
-                    }
+                    <div class="label" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Thêm ảnh có sẵn trong project</span>
+                        <button type="button" class="btn btn-ghost" id="toggleStaticImages">Chọn ảnh từ project</button>
+                    </div>
+
+                    <div id="staticImagesPanel" style="display:none; margin-top:10px;">
+                        @if (staticImages.Count == 0)
+                        {
+                            <div class="hint">Không có ảnh trong /wwwroot/images/books/</div>
+                        }
+                        else
+                        {
+                            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:10px;">
+                                @foreach (var p in staticImages)
+                                {
+                                    <label style="border:1px solid #eaecf0; border-radius:12px; padding:10px; display:grid; gap:8px;">
+                                        <input type="checkbox" name="staticImages" value="@p" />
+                                        <img src="@p" style="width:100%; height:90px; object-fit:cover; border-radius:10px;" />
+                                        <div style="font-size:12px; color:#667085; word-break:break-all;">@p</div>
+                                    </label>
+                                }
+                            </div>
+                        }
+                    </div>
                 </div>
 
                 <input type="hidden" name="primaryChoice" id="primaryChoice" value="auto" />
@@ -201,6 +285,174 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.config.versionCheck = false;
+        CKEDITOR.replace('DescriptionEditor', {
+            height: 520,
+            removePlugins: 'notification,notificationaggregator',
+            toolbar: [
+                { name: 'clipboard', items: ['Undo', 'Redo'] },
+                { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
+                { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat'] },
+                { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+                { name: 'links', items: ['Link', 'Unlink'] },
+                { name: 'insert', items: ['Table', 'HorizontalRule'] },
+                { name: 'tools', items: ['Maximize', 'Source'] }
+            ]
+        });
+    </script>
+    <script>
+        (function () {
+            const tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+            const token = tokenEl ? tokenEl.value : "";
+
+            // Toggle panel ảnh static
+            const toggleBtn = document.getElementById('toggleStaticImages');
+            const staticPanel = document.getElementById('staticImagesPanel');
+            if (toggleBtn && staticPanel) {
+                toggleBtn.addEventListener('click', () => {
+                    staticPanel.style.display = (staticPanel.style.display === 'none' || !staticPanel.style.display) ? 'block' : 'none';
+                });
+            }
+
+            // Quick create Publisher
+            const modalP = document.getElementById('modalPublisher');
+            const btnOpenP = document.getElementById('btnAddPublisher');
+            const btnCloseP = document.getElementById('closePublisher');
+            const btnCancelP = document.getElementById('cancelPublisher');
+            const btnSaveP = document.getElementById('savePublisher');
+            const inputP = document.getElementById('publisherName');
+            const selectP = document.querySelector('select[name="PublisherID"]');
+
+            function openModal(el) { if (el) el.style.display = 'block'; }
+            function closeModal(el) { if (el) el.style.display = 'none'; }
+
+            if (btnOpenP) btnOpenP.addEventListener('click', () => { openModal(modalP); if (inputP) { inputP.value = ''; inputP.focus(); } });
+            if (btnCloseP) btnCloseP.addEventListener('click', () => closeModal(modalP));
+            if (btnCancelP) btnCancelP.addEventListener('click', () => closeModal(modalP));
+
+            if (btnSaveP) btnSaveP.addEventListener('click', async function () {
+                const name = (inputP?.value || '').trim();
+                if (!name) return;
+
+                const body = new URLSearchParams();
+                body.append('name', name);
+
+                const res = await fetch('/Books/QuickCreatePublisher', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token
+                    },
+                    body: body.toString()
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json(); // {id,text}
+                const opt = Array.from(selectP.options).find(o => o.value == String(data.id));
+                if (!opt) {
+                    const o = document.createElement('option');
+                    o.value = data.id;
+                    o.textContent = data.text;
+                    selectP.appendChild(o);
+                }
+                selectP.value = data.id;
+                closeModal(modalP);
+            });
+
+            // Quick create Author
+            const mA = document.getElementById('modalAuthor');
+            const openA = document.getElementById('btnAddAuthor');
+            const closeA = document.getElementById('closeAuthor');
+            const cancelA = document.getElementById('cancelAuthor');
+            const saveA = document.getElementById('saveAuthor');
+            const authorName = document.getElementById('authorName');
+            const authorSelect = document.getElementById('AuthorSelect');
+
+            if (openA) openA.addEventListener('click', () => { openModal(mA); if (authorName) { authorName.value = ''; authorName.focus(); } });
+            if (closeA) closeA.addEventListener('click', () => closeModal(mA));
+            if (cancelA) cancelA.addEventListener('click', () => closeModal(mA));
+
+            if (saveA) saveA.addEventListener('click', async () => {
+                const name = (authorName?.value || '').trim();
+                if (!name) return;
+
+                const body = new URLSearchParams();
+                body.append('name', name);
+
+                const res = await fetch('/Books/QuickCreateAuthor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token
+                    },
+                    body: body.toString()
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json(); // {id,text}
+
+                let opt = Array.from(authorSelect.options).find(o => o.value === String(data.id));
+                if (!opt) {
+                    opt = document.createElement('option');
+                    opt.value = data.id;
+                    opt.textContent = data.text;
+                    authorSelect.appendChild(opt);
+                }
+                opt.selected = true;
+
+                closeModal(mA);
+            });
+
+            // Quick create Category
+            const mC = document.getElementById('modalCategory');
+            const openC = document.getElementById('btnAddCategory');
+            const closeC = document.getElementById('closeCategory');
+            const cancelC = document.getElementById('cancelCategory');
+            const saveC = document.getElementById('saveCategory');
+            const categoryName = document.getElementById('categoryName');
+            const categorySelect = document.getElementById('CategorySelect');
+
+            if (openC) openC.addEventListener('click', () => { openModal(mC); if (categoryName) { categoryName.value = ''; categoryName.focus(); } });
+            if (closeC) closeC.addEventListener('click', () => closeModal(mC));
+            if (cancelC) cancelC.addEventListener('click', () => closeModal(mC));
+
+            if (saveC) saveC.addEventListener('click', async () => {
+                const name = (categoryName?.value || '').trim();
+                if (!name) return;
+
+                const body = new URLSearchParams();
+                body.append('name', name);
+
+                const res = await fetch('/Books/QuickCreateCategory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token
+                    },
+                    body: body.toString()
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json(); // {id,text}
+
+                let opt = Array.from(categorySelect.options).find(o => o.value === String(data.id));
+                if (!opt) {
+                    opt = document.createElement('option');
+                    opt.value = data.id;
+                    opt.textContent = data.text;
+                    categorySelect.appendChild(opt);
+                }
+                categorySelect.value = String(data.id);
+
+                closeModal(mC);
+            });
+        })();
+    </script>
     <script>
         (function () {
             const fileInput = document.querySelector('input[name="uploadFiles"]');
@@ -306,7 +558,7 @@
             urlModeRadios().forEach(r => r.addEventListener('change', rebuild));
 
             document.addEventListener('change', (e) => {
-                if (e.target && e.target.name === "staticImages") rebuild;
+                if (e.target && e.target.name === "staticImages") rebuild();
 
                 // user chọn bìa ảnh cũ => ưu tiên primaryImageId, reset primaryChoice
                 if (e.target && e.target.name === "primaryImageId") primaryChoice.value = "auto";
