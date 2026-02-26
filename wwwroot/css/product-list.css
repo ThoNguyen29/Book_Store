@@ -1,0 +1,526 @@
+/* ============================================================
+   product-list.css  –  Trang danh sách sản phẩm (ProductList)
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* -------- BASE -------- */
+.product-page {
+    font-family: 'Inter', sans-serif;
+    background: #f4f6fb;
+    min-height: 100vh;
+}
+
+/* ========== HERO BANNER ========== */
+/* .product-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 50px 20px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(229, 57, 53, .15) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 50%, rgba(100, 181, 246, .15) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -.5px;
+}
+
+.hero-title i {
+    color: #e53935;
+    margin-right: 10px;
+}
+
+.hero-subtitle {
+    color: rgba(255, 255, 255, .7);
+    font-size: 1rem;
+    margin: 0;
+} */
+
+/* ========== WRAPPER 2 CỘT ========== */
+.pl-wrapper {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    display: flex;
+    gap: 26px;
+    align-items: flex-start;
+}
+
+/* ========== SIDEBAR BỘ LỌC ========== */
+.pl-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 80px;
+    /* khoảng cách từ sticky header */
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+    padding: 0 0 12px;
+    overflow: hidden;
+}
+
+.sidebar-section {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid #f0f2f8;
+}
+
+.sidebar-section:last-of-type {
+    border-bottom: none;
+}
+
+.sidebar-title {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: #888;
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.sidebar-title i {
+    color: #e53935;
+    font-size: .8rem;
+}
+
+/* inputs */
+.sb-input {
+    width: 100%;
+    border: 1.5px solid #e8ecf4;
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: .88rem;
+    color: #333;
+    background: #f8f9fc;
+    outline: none;
+    transition: border-color .2s;
+    box-sizing: border-box;
+}
+
+.sb-input:focus {
+    border-color: #e53935;
+    background: #fff;
+}
+
+.sb-select {
+    width: 100%;
+    border: 1.5px solid #e8ecf4;
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: .88rem;
+    color: #333;
+    background: #f8f9fc;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .2s;
+    box-sizing: border-box;
+}
+
+.sb-select:focus {
+    border-color: #e53935;
+}
+
+/* price row */
+.sb-price-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sb-price-input {
+    width: 0;
+    flex: 1;
+}
+
+.sb-price-sep {
+    color: #bbb;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* action buttons */
+.sb-actions {
+    padding: 14px 18px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sb-btn-apply {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px;
+    background: linear-gradient(135deg, #e53935, #ff7043);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, .3);
+    transition: all .2s;
+}
+
+.sb-btn-apply:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(229, 57, 53, .4);
+}
+
+.sb-btn-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px;
+    background: #f4f6fb;
+    border: 1.5px solid #e8ecf4;
+    border-radius: 10px;
+    color: #666;
+    font-size: .88rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s;
+}
+
+.sb-btn-clear:hover {
+    background: #ffe0de;
+    border-color: #e53935;
+    color: #e53935;
+}
+
+/* ========== KHU VỰC SẢN PHẨM ========== */
+.pl-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.pl-result-bar {
+    margin-bottom: 16px;
+    color: #666;
+    font-size: .9rem;
+}
+
+.pl-result-count strong {
+    color: #e53935;
+    font-size: 1.05rem;
+}
+
+/* ========== PRODUCT GRID – 4 CỘT ========== */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+/* ========== PRODUCT CARD ========== */
+.product-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .25s, box-shadow .25s;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .12);
+}
+
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    background: #f4f6fb;
+    overflow: hidden;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s;
+}
+
+.product-card:hover .card-image {
+    transform: scale(1.05);
+}
+
+/* badges */
+.badge-out,
+.badge-low {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.badge-out {
+    background: #e53935;
+    color: #fff;
+}
+
+.badge-low {
+    background: #ff9800;
+    color: #fff;
+}
+
+/* card body */
+.card-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.card-category {
+    font-size: .72rem;
+    font-weight: 700;
+    color: #e53935;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+}
+
+.card-title {
+    font-size: .9rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+    flex: 1;
+}
+
+.card-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e53935;
+}
+
+.card-price span {
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+/* card actions */
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.btn-add-cart {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 6px;
+    background: linear-gradient(135deg, #e53935, #ff7043);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s;
+    box-shadow: 0 3px 10px rgba(229, 57, 53, .25);
+}
+
+.btn-add-cart:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(229, 57, 53, .4);
+}
+
+.btn-add-cart:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-add-cart.adding {
+    background: linear-gradient(135deg, #43a047, #66bb6a);
+}
+
+.btn-detail {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f6fb;
+    border: 1.5px solid #e8ecf4;
+    border-radius: 9px;
+    color: #555;
+    font-size: .88rem;
+    flex-shrink: 0;
+    transition: all .2s;
+    text-decoration: none;
+}
+
+.btn-detail:hover {
+    background: #1a1a2e;
+    border-color: #1a1a2e;
+    color: #fff;
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #888;
+}
+
+.empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 14px;
+    display: block;
+    color: #ddd;
+}
+
+.empty-state p {
+    font-size: 1.05rem;
+    margin-bottom: 18px;
+}
+
+.btn-back {
+    display: inline-block;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #e53935, #ff7043);
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s;
+}
+
+.btn-back:hover {
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* ========== PHÂN TRANG ========== */
+.pagination-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 36px;
+}
+
+.pg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: #fff;
+    border: 1.5px solid #e8ecf4;
+    color: #444;
+    font-size: .9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.pg-btn:hover:not(.pg-disabled):not(.pg-active) {
+    background: #f0f2f8;
+    border-color: #e53935;
+    color: #e53935;
+}
+
+.pg-active {
+    background: linear-gradient(135deg, #e53935, #ff7043);
+    color: #fff !important;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, .35);
+}
+
+.pg-disabled {
+    opacity: .38;
+    cursor: not-allowed;
+}
+
+.pg-ellipsis {
+    color: #aaa;
+    font-size: .95rem;
+    padding: 0 4px;
+    line-height: 38px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1100px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .pl-sidebar {
+        width: 220px;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 680px) {
+    .pl-wrapper {
+        flex-direction: column;
+        padding: 16px 14px 40px;
+    }
+
+    .pl-sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+}

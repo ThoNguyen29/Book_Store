@@ -1,0 +1,332 @@
+@model IEnumerable<Book_Store.Models.Book>
+@using Book_Store.Models
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    var categories   = ViewBag.Categories  as List<Category>  ?? new List<Category>();
+    var publishers   = ViewBag.Publishers  as List<Publisher> ?? new List<Publisher>();
+    var authors      = ViewBag.Authors     as List<Author>    ?? new List<Author>();
+    var currentQ           = ViewBag.CurrentQ          as string  ?? "";
+    int? currentCategoryId = ViewBag.CurrentCategoryId as int?;
+    decimal? currentMinPrice  = ViewBag.CurrentMinPrice  as decimal?;
+    decimal? currentMaxPrice  = ViewBag.CurrentMaxPrice  as decimal?;
+    int? currentPublisherId   = ViewBag.CurrentPublisherId as int?;
+    int? currentAuthorId      = ViewBag.CurrentAuthorId   as int?;
+    var currentSort  = ViewBag.CurrentSort as string ?? "newest";
+    int page         = ViewBag.Page        is int p  ? p  : 1;
+    int totalPages   = ViewBag.TotalPages  is int tp ? tp : 1;
+    int totalItems   = ViewBag.TotalItems  is int ti ? ti : 0;
+
+    bool hasFilter = !string.IsNullOrEmpty(currentQ)
+                  || currentCategoryId.HasValue
+                  || currentMinPrice.HasValue
+                  || currentMaxPrice.HasValue
+                  || currentPublisherId.HasValue
+                  || currentAuthorId.HasValue
+                  || (!string.IsNullOrEmpty(currentSort) && currentSort != "newest");
+
+    // Helper tạo URL giữ nguyên param hiện tại, chỉ đổi page
+    string PageUrl(int pg) {
+        var qs = new System.Text.StringBuilder("?page=").Append(pg);
+        if (!string.IsNullOrEmpty(currentQ))          qs.Append("&q=").Append(Uri.EscapeDataString(currentQ));
+        if (currentCategoryId.HasValue)               qs.Append("&categoryId=").Append(currentCategoryId);
+        if (currentMinPrice.HasValue)                 qs.Append("&minPrice=").Append(currentMinPrice);
+        if (currentMaxPrice.HasValue)                 qs.Append("&maxPrice=").Append(currentMaxPrice);
+        if (currentPublisherId.HasValue)              qs.Append("&publisherId=").Append(currentPublisherId);
+        if (currentAuthorId.HasValue)                 qs.Append("&authorId=").Append(currentAuthorId);
+        if (!string.IsNullOrEmpty(currentSort))       qs.Append("&sort=").Append(currentSort);
+        return "/Home/ProductList" + qs;
+    }
+}
+
+<link rel="stylesheet" href="~/css/product-list.css" asp-append-version="true" />
+
+<div class="product-page">
+
+    <!-- ===== HERO BANNER ===== -->
+    @* <div class="product-hero">
+        <div class="hero-content">
+            <h1 class="hero-title"><i class="fas fa-book-open"></i> Khám Phá Sách</h1>
+            <p class="hero-subtitle">Hàng ngàn đầu sách chất lượng – tri thức luôn chờ bạn</p>
+        </div>
+    </div> *@
+
+    <div class="pl-wrapper">
+
+        <!-- ============ SIDEBAR BỘ LỌC ============ -->
+        <aside class="pl-sidebar">
+            <form method="get" asp-controller="Home" asp-action="ProductList" id="filterForm">
+
+                <div class="sidebar-section">
+                    <h4 class="sidebar-title"><i class="fas fa-search"></i> Tìm kiếm</h4>
+                    <div class="sb-search">
+                        <input type="text" name="q" value="@currentQ"
+                               placeholder="Tên sách..." class="sb-input" />
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h4 class="sidebar-title"><i class="fas fa-th-large"></i> Danh mục</h4>
+                    <select name="categoryId" class="sb-select">
+                        <option value="">-- Tất cả --</option>
+                        @foreach (var cat in categories)
+                        {
+                            @if (currentCategoryId == cat.CategoryID)
+                            {
+                                <option value="@cat.CategoryID" selected="selected">@cat.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@cat.CategoryID">@cat.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="sidebar-section">
+                    <h4 class="sidebar-title"><i class="fas fa-tag"></i> Khoảng giá (₫)</h4>
+                    <div class="sb-price-row">
+                        <input type="number" name="minPrice" min="0" step="1000"
+                               value="@(currentMinPrice?.ToString() ?? "")"
+                               placeholder="Từ" class="sb-input sb-price-input" />
+                        <span class="sb-price-sep">—</span>
+                        <input type="number" name="maxPrice" min="0" step="1000"
+                               value="@(currentMaxPrice?.ToString() ?? "")"
+                               placeholder="Đến" class="sb-input sb-price-input" />
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h4 class="sidebar-title"><i class="fas fa-building"></i> Nhà xuất bản</h4>
+                    <select name="publisherId" class="sb-select">
+                        <option value="">-- Tất cả --</option>
+                        @foreach (var pub in publishers)
+                        {
+                            @if (currentPublisherId == pub.PublisherID)
+                            {
+                                <option value="@pub.PublisherID" selected="selected">@pub.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@pub.PublisherID">@pub.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="sidebar-section">
+                    <h4 class="sidebar-title"><i class="fas fa-pen-nib"></i> Tác giả</h4>
+                    <select name="authorId" class="sb-select">
+                        <option value="">-- Tất cả --</option>
+                        @foreach (var author in authors)
+                        {
+                            @if (currentAuthorId == author.AuthorID)
+                            {
+                                <option value="@author.AuthorID" selected="selected">@author.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@author.AuthorID">@author.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="sidebar-section">
+                    <h4 class="sidebar-title"><i class="fas fa-sort"></i> Sắp xếp</h4>
+                    <select name="sort" class="sb-select">
+                        @{
+                            var sortOptions = new[] {
+                                ("newest",    "Mới nhất"),
+                                ("price_asc", "Giá tăng dần"),
+                                ("price_desc","Giá giảm dần"),
+                                ("title_asc", "Tên A → Z"),
+                                ("title_desc","Tên Z → A"),
+                            };
+                        }
+                        @foreach (var (val, label) in sortOptions)
+                        {
+                            @if (currentSort == val)
+                            {
+                                <option value="@val" selected="selected">@label</option>
+                            }
+                            else
+                            {
+                                <option value="@val">@label</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="sb-actions">
+                    <button type="submit" class="sb-btn-apply">
+                        <i class="fas fa-filter"></i> Áp dụng
+                    </button>
+                    @if (hasFilter)
+                    {
+                        <a asp-controller="Home" asp-action="ProductList" class="sb-btn-clear">
+                            <i class="fas fa-times"></i> Xóa bộ lọc
+                        </a>
+                    }
+                </div>
+
+            </form>
+        </aside>
+
+        <!-- ============ KHU VỰC SẢN PHẨM ============ -->
+        <div class="pl-main">
+
+            <!-- Result info -->
+            <div class="pl-result-bar">
+                <span class="pl-result-count">
+                    <strong>@totalItems</strong> sản phẩm
+                    @if (!string.IsNullOrEmpty(currentQ))
+                    {
+                        <span> cho "<em>@currentQ</em>"</span>
+                    }
+                </span>
+            </div>
+
+            <!-- Grid sản phẩm -->
+            @if (!(Model?.Any() ?? false))
+            {
+                <div class="empty-state">
+                    <i class="fas fa-book-open empty-icon"></i>
+                    <p>Không tìm thấy sản phẩm nào.</p>
+                    <a asp-controller="Home" asp-action="ProductList" class="btn-back">Xem tất cả sách</a>
+                </div>
+            }
+            else
+            {
+                <div class="product-grid">
+                    @foreach (var book in Model!)
+                    {
+                        var primaryImage = book.BookImages?
+                            .OrderByDescending(i => i.IsPrimary)
+                            .ThenBy(i => i.SortOrder)
+                            .FirstOrDefault();
+                        var imgSrc = primaryImage?.ImagePath ?? "/images/no-image.png";
+
+                        <div class="product-card">
+                            <div class="card-image-wrapper">
+                                <img src="@imgSrc" alt="@book.Title" class="card-image"
+                                     onerror="this.src='/images/no-image.png'" />
+                                @if (book.Stock == 0)
+                                {
+                                    <span class="badge-out">Hết hàng</span>
+                                }
+                                else if (book.Stock <= 5)
+                                {
+                                    <span class="badge-low">Sắp hết</span>
+                                }
+                            </div>
+
+                            <div class="card-body">
+                                @if (book.Category != null)
+                                {
+                                    <span class="card-category">@book.Category.Name</span>
+                                }
+                                <h3 class="card-title" title="@book.Title">@book.Title</h3>
+                                <div class="card-price">
+                                    @book.Price.ToString("N0") <span>₫</span>
+                                </div>
+                                <div class="card-actions">
+                                    @if (book.Stock == 0)
+                                    {
+                                        <button class="btn-add-cart" disabled>
+                                            <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-add-cart" onclick="addToCart(@book.BookID, this)">
+                                            <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
+                                        </button>
+                                    }
+                                    <a asp-controller="Home" asp-action="ProductDetail"
+                                       asp-route-id="@book.BookID"
+                                       class="btn-detail" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- ===== PHÂN TRANG ===== -->
+                @if (totalPages > 1)
+                {
+                    <nav class="pagination-wrap" aria-label="Phân trang">
+                        @if (page > 1)
+                        {
+                            <a href="@PageUrl(page - 1)" class="pg-btn pg-prev" title="Trang trước">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="pg-btn pg-prev pg-disabled"><i class="fas fa-chevron-left"></i></span>
+                        }
+
+                        @{
+                            int startPg = Math.Max(1, page - 2);
+                            int endPg   = Math.Min(totalPages, page + 2);
+                        }
+
+                        @if (startPg > 1)
+                        {
+                            <a href="@PageUrl(1)" class="pg-btn">1</a>
+                            @if (startPg > 2) { <span class="pg-ellipsis">…</span> }
+                        }
+
+                        @for (int i = startPg; i <= endPg; i++)
+                        {
+                            @if (i == page)
+                            {
+                                <span class="pg-btn pg-active">@i</span>
+                            }
+                            else
+                            {
+                                <a href="@PageUrl(i)" class="pg-btn">@i</a>
+                            }
+                        }
+
+                        @if (endPg < totalPages)
+                        {
+                            @if (endPg < totalPages - 1) { <span class="pg-ellipsis">…</span> }
+                            <a href="@PageUrl(totalPages)" class="pg-btn">@totalPages</a>
+                        }
+
+                        @if (page < totalPages)
+                        {
+                            <a href="@PageUrl(page + 1)" class="pg-btn pg-next" title="Trang sau">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="pg-btn pg-next pg-disabled"><i class="fas fa-chevron-right"></i></span>
+                        }
+                    </nav>
+                }
+            }
+
+        </div><!-- /.pl-main -->
+    </div><!-- /.pl-wrapper -->
+</div><!-- /.product-page -->
+
+@section Scripts {
+<script>
+    function addToCart(bookId, btn) {
+        btn.classList.add('adding');
+        btn.innerHTML = '<i class="fas fa-check"></i> Đã thêm';
+        setTimeout(() => {
+            btn.classList.remove('adding');
+            btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Thêm giỏ hàng';
+        }, 1500);
+        const badge = document.getElementById('cartCount');
+        if (badge) badge.textContent = (parseInt(badge.textContent) || 0) + 1;
+    }
+</script>
+}

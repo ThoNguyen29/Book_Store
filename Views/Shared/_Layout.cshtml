@@ -1,4 +1,7 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿@using Book_Store.Models
+@using Microsoft.EntityFrameworkCore
+@inject Book_Store.Models.ApplicationDbContext _layoutDb
+<!DOCTYPE html>
 <html lang="en">
 <head>
     @* CSS *@
@@ -16,6 +19,7 @@
     <link rel="stylesheet" href="~/css/style_layout.css" asp-append-version="true" />
 </head>
 <body>
+    <div class="sticky-top-bar">
     <header class="site-header">
     <div class="container header-main">
         
@@ -86,22 +90,30 @@
 
             <div class="category-dropdown" id="categoryDropdown">
                 <ul class="category-list">
-    <li><a href="#">Sách kinh doanh</a></li>
-    <li><a href="#">Sách thiếu nhi</a></li>
-    <li><a href="#">Sách tiếng Anh</a></li>
-    <li><a href="#">Sách kỹ năng</a></li>
-    
-</ul>
+                    @{
+                        var navCategories = await _layoutDb.Categories
+                            .AsNoTracking()
+                            .OrderBy(c => c.Name)
+                            .ToListAsync();
+                    }
+                    @foreach (var cat in navCategories)
+                    {
+                        <li>
+                            <a href="/Home/ProductList?categoryId=@cat.CategoryID">@cat.Name</a>
+                        </li>
+                    }
+                </ul>
             </div>
         </div>
 
         <div class="main-nav-links">
-            <a href="/" class="nav-link active">Trang chủ</a>
-            <a href="/cua-hang" class="nav-link">Cửa hàng</a>
+            <a href="/" class="nav-link">Trang chủ</a>
+            <a asp-controller="Home" asp-action="ProductList" class="nav-link">Cửa hàng</a>
             <a asp-controller="Home" asp-action="About" class="nav-link">Giới thiệu</a>
         </div>
     </div>
 </nav>
+    </div><!-- /.sticky-top-bar -->
 
                
 
@@ -121,7 +133,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Về chúng tôi</h3>
-                <p>Nhà Sách Hải An - Nơi hội tụ tri thức, nơi lan tỏa đam mê đọc sách.</p>
+                <p>Nhà Sách \ - Nơi hội tụ tri thức, nơi lan tỏa đam mê đọc sách.</p>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-youtube"></i></a>

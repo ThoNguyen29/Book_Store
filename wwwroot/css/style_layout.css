@@ -1,13 +1,62 @@
-﻿﻿
+﻿﻿/* style_layout.css */
+
+/* ===== STICKY: bọc header + nav dính vào nhau ===== */
+.sticky-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1010;
+}
+
+/* Bỏ sticky riêng lẻ khỏi header và nav khi đã nằm trong wrapper */
+.sticky-top-bar .site-header {
+    position: static !important;
+}
+
+.sticky-top-bar .nav-main {
+    position: static !important;
+}
+
+/* ===== NAV LINKS: căn giữa tuyệt đối theo toàn màn hình ===== */
+.nav-container {
+    position: relative !important;
+}
+
+.main-nav-links {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    gap: 35px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    pointer-events: auto;
+}
+
+.main-nav-links .nav-link {
+    color: #000 !important;
+    /* Màu chữ mặc định: đen */
+    opacity: 1 !important;
+}
+
+.main-nav-links .nav-link:hover,
+.main-nav-links .nav-link.active {
+    color: #fff !important;
+    /* Hover: trắng */
+}
+
+.main-nav-links .nav-link::after {
+    background-color: #fff !important;
+}
+
 
 /* Sidebar list đẹp */
-.category-list{
+.category-list {
     list-style: none;
     margin: 0;
     padding: 10px 0;
 }
 
-.category-list li a{
+.category-list li a {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -19,13 +68,13 @@
     transition: .2s;
 }
 
-.category-list li a:hover{
+.category-list li a:hover {
     background: #f7f7f7;
     color: #ff8e53;
 }
 
 /* icon đồng đều */
-.category-list li a i{
+.category-list li a i {
     width: 18px;
     text-align: center;
     color: #ff8e53;
@@ -91,7 +140,7 @@ footer {
 .social-links a {
     width: 40px;
     height: 40px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     display: flex;
     color: black;
@@ -109,8 +158,8 @@ footer {
 .footer-bottom {
     text-align: center;
     padding-top: 30px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -118,7 +167,7 @@ footer {
     .products-grid {
         grid-template-columns: repeat(4, 1fr);
     }
-    
+
     .category-icons {
         grid-template-columns: repeat(4, 1fr);
     }
@@ -128,21 +177,21 @@ footer {
     .header-main {
         flex-wrap: wrap;
     }
-    
+
     .search-bar {
         order: 3;
         max-width: 100%;
         flex-basis: 100%;
     }
-    
+
     .products-grid {
         grid-template-columns: repeat(3, 1fr);
     }
-    
+
     .promo-banners {
         grid-template-columns: 1fr;
     }
-    
+
     .footer-content {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -152,15 +201,15 @@ footer {
     .main-nav {
         display: none;
     }
-    
+
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .category-icons {
         grid-template-columns: repeat(4, 1fr);
     }
-    
+
     .slide {
         flex-direction: column;
         text-align: center;
@@ -168,15 +217,15 @@ footer {
         height: auto;
         min-height: 400px;
     }
-    
+
     .slide-content h2 {
         font-size: 32px;
     }
-    
+
     .slide-image {
         font-size: 120px;
     }
-    
+
     .newsletter-form {
         flex-direction: column;
     }
@@ -186,20 +235,20 @@ footer {
     .logo span {
         font-size: 18px;
     }
-    
+
     .products-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .category-icons {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .footer-content {
         grid-template-columns: 1fr;
     }
-    
+
     .section-header h2 {
         font-size: 24px;
     }
-} 
+}
