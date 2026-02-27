@@ -18,8 +18,20 @@ public class HomeController : Controller
         _db = db;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        // Fetch latest books for the homepage
+        var latestBooks = await _db.Books
+            .AsNoTracking()
+            .Include(b => b.BookImages)
+            .Include(b => b.Category)
+            .Include(b => b.BookAuthors).ThenInclude(ba => ba.Author)
+            .Where(b => b.IsActive)
+            .OrderByDescending(b => b.CreatedAt)
+            .Take(10)
+            .ToListAsync();
+
+        ViewBag.LatestBooks = latestBooks;
         return View();
     }
 
@@ -133,6 +145,39 @@ public class HomeController : Controller
         ViewBag.TotalItems = totalItems;
 
         return View(books);
+    }
+
+    public async Task<IActionResult> ProductDetail(int id)
+    {
+        var book = await _db.Books
+            .AsNoTracking()
+            .Include(b => b.BookImages.OrderByDescending(i => i.IsPrimary).ThenBy(i => i.SortOrder))
+            .Include(b => b.Category)
+            .Include(b => b.Publisher)
+            .Include(b => b.BookAuthors)
+                .ThenInclude(ba => ba.Author)
+            .FirstOrDefaultAsync(b => b.BookID == id && b.IsActive);
+
+        if (book == null)
+            return RedirectToAction(nameof(ProductList));
+
+        // Similar products: same category, exclude current book, max 10
+        var relatedBooks = new List<Book>();
+        if (book.CategoryID.HasValue)
+        {
+            relatedBooks = await _db.Books
+                .AsNoTracking()
+                .Include(b => b.BookImages)
+                .Include(b => b.Category)
+                .Include(b => b.BookAuthors).ThenInclude(ba => ba.Author)
+                .Where(b => b.IsActive && b.CategoryID == book.CategoryID && b.BookID != book.BookID)
+                .OrderByDescending(b => b.CreatedAt)
+                .Take(10)
+                .ToListAsync();
+        }
+
+        ViewBag.RelatedBooks = relatedBooks;
+        return View(book);
     }
 
     [HttpGet]

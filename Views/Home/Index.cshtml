@@ -60,23 +60,56 @@
 </div>
 
 
+    @{
+        var latestBooks = ViewBag.LatestBooks as List<Book_Store.Models.Book> ?? new List<Book_Store.Models.Book>();
+    }
+
     <div class="container mt-5" style="max-width: 1200px;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary fw-bold">Sách Mới Xuất Bản</h2>
-            <a href="#" class="btn btn-outline-primary btn-sm">Xem tất cả</a>
+            <a asp-controller="Home" asp-action="ProductList" class="btn btn-outline-primary btn-sm">Xem tất cả</a>
         </div>
 
-        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
-            <div class="col">
-                <div class="card h-100 shadow-sm product-card">
-                    <img src="/images/sach-kinh-te-1.jpg" class="card-img-top p-3" alt="Tên sách">
-                    <div class="card-body text-center">
-                        <h6 class="card-title mb-1 text-truncate">Cẩm Nang CEO</h6>
-                        <p class="text-danger fw-bold mb-2">150.000đ</p>
-                        <button class="btn btn-sm btn-primary w-100">Thêm vào giỏ</button>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
+            @if (latestBooks.Any())
+            {
+                @foreach (var book in latestBooks)
+                {
+                    var primaryImg = book.BookImages?
+                        .OrderByDescending(i => i.IsPrimary)
+                        .ThenBy(i => i.SortOrder)
+                        .FirstOrDefault();
+                    var imgSrc = primaryImg?.ImagePath ?? "/images/no-image.png";
+
+                    <div class="col">
+                        <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@book.BookID"
+                           class="text-decoration-none">
+                            <div class="card h-100 shadow-sm product-card" style="cursor:pointer; transition: transform .25s, box-shadow .25s;">
+                                <div style="height:200px; overflow:hidden; background:#f8f9fc;">
+                                    <img src="@imgSrc" class="card-img-top p-2" alt="@book.Title"
+                                         style="width:100%; height:100%; object-fit:contain;"
+                                         onerror="this.src='/images/no-image.png'" />
+                                </div>
+                                <div class="card-body text-center">
+                                    @if (book.Category != null)
+                                    {
+                                        <small class="text-muted d-block mb-1" style="font-size:.72rem; text-transform:uppercase; letter-spacing:.5px;">@book.Category.Name</small>
+                                    }
+                                    <h6 class="card-title mb-1" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:.88rem; color:#1a1a2e;">@book.Title</h6>
+                                    <p class="text-danger fw-bold mb-2">@book.Price.ToString("N0")₫</p>
+                                </div>
+                            </div>
+                        </a>
                     </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Chưa có sản phẩm nào.</p>
                 </div>
-            </div>
+            }
+        </div>
     </div>
 <script src="~/js/Slider.js"></script>
 </body>
