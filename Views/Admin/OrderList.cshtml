@@ -1,18 +1,43 @@
-@{
-    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
-    ViewData["Title"] = "Admin Dashboard";
-    
-}
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - Admin Dashboard</title>
-    <link rel="stylesheet" href="~/Admin/css/admin-style.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head> 
-<body>
-    <h1>hello Order List</h1>
-</body>
-</html>
+@model List<Book_Store.Models.Order>
+
+<h2>Danh sách đơn hàng</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Cập nhật</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderID</td>
+                <td>@order.CustomerName</td>
+                <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                <td>@order.TotalAmount.ToString("N0") đ</td>
+                <td>@order.Status</td>
+                <td>
+                    <a asp-action="UpdateStatus"
+                       asp-route-id="@order.OrderID"
+                       asp-route-status="Processing"
+                       class="btn btn-warning btn-sm">
+                        Xử lý
+                    </a>
+
+                    <a asp-action="UpdateStatus"
+                       asp-route-id="@order.OrderID"
+                       asp-route-status="Completed"
+                       class="btn btn-success btn-sm">
+                        Hoàn thành
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

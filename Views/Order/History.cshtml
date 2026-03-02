@@ -1,0 +1,104 @@
+@model IEnumerable<Book_Store.Models.Order>
+
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+}
+
+<style>
+    .order-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .status-received { background-color: #17a2b8; color: white; }
+    .status-processing { background-color: #ffc107; color: black; }
+    .status-completed { background-color: #28a745; color: white; }
+    .status-cancelled { background-color: #dc3545; color: white; }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 fw-bold">📦 Lịch sử đơn hàng</h2>
+
+    @foreach (var order in Model)
+    {
+        <div class="order-card p-4 mb-4">
+
+            <div class="row text-center mb-3">
+                <div class="col-md-4">
+                    <strong>Mã đơn:</strong><br />
+                    #@order.OrderID
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Ngày đặt:</strong><br />
+                    @order.OrderDate.ToString("dd/MM/yyyy")
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Tổng tiền:</strong><br />
+                    @order.TotalAmount.ToString("N0") đ
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="mb-3">
+                <strong>Sản phẩm:</strong>
+                <ul>
+                    @foreach (var item in order.OrderDetails)
+                    {
+                        <li>@item.Book.Title</li>
+                    }
+                </ul>
+            </div>
+
+            <div class="text-center">
+                @{
+                    string statusText = "";
+                    string statusClass = "";
+
+                    switch (order.Status.ToString())
+                    {
+                        case "Received":
+                            statusText = "Đã nhận đơn";
+                            statusClass = "status-received";
+                            break;
+                        case "Processing":
+                            statusText = "Đang xử lý";
+                            statusClass = "status-processing";
+                            break;
+                        case "Completed":
+                            statusText = "Hoàn thành";
+                            statusClass = "status-completed";
+                            break;
+                        case "Cancelled":
+                            statusText = "Đã hủy";
+                            statusClass = "status-cancelled";
+                            break;
+                        default:
+                            statusText = order.Status.ToString();
+                            break;
+                    }
+                }
+
+                <span class="status-badge @statusClass">
+                    @statusText
+                </span>
+            </div>
+        </div>
+    }
+</div>

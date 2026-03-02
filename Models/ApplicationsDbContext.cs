@@ -7,7 +7,6 @@ namespace Book_Store.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-
         public DbSet<User> Users { get; set; } = default!;
         public DbSet<Category> Categories { get; set; } = default!;
         public DbSet<Publisher> Publishers { get; set; } = default!;

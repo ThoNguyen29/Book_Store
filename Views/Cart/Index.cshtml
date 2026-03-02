@@ -1,0 +1,114 @@
+@model List<Book_Store.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    var total = Model.Sum(x => x.Price * x.Quantity);
+}
+
+<style>
+    .cart-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .cart-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .cart-table img {
+        width: 80px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .quantity-input {
+        width: 60px;
+        text-align: center;
+    }
+
+    .total-section {
+        text-align: right;
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .checkout-btn {
+        display: block;
+        width: 250px;
+        margin: 30px auto 0;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 30px;
+    }
+</style>
+
+<div class="cart-container">
+    <div class="cart-title">🛒 Giỏ hàng của bạn</div>
+
+    @if (!(Model?.Any() ?? false))
+    {
+        <div class="text-center text-muted">
+            Giỏ hàng đang trống 🥲
+        </div>
+    }
+    else
+    {
+        <table class="table align-middle cart-table text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Hình</th>
+                    <th>Tên sách</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tạm tính</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.Image" />
+                        </td>
+                        <td>@item.ProductName</td>
+                        <td>@item.Price.ToString("N0") đ</td>
+                        <td>
+                            <form asp-action="UpdateQuantity" method="post" class="d-flex justify-content-center">
+                                <input type="hidden" name="id" value="@item.ProductId" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control quantity-input" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Cập nhật</button>
+                            </form>
+                        </td>
+                        <td>
+                            @( (item.Price * item.Quantity).ToString("N0") ) đ
+                        </td>
+                        <td>
+                            <a asp-action="Remove" asp-route-id="@item.ProductId" 
+                               class="btn btn-sm btn-danger">
+                               Xoá
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            Tổng cộng: @total.ToString("N0") đ
+        </div>
+
+        <a asp-action="Checkout" class="btn btn-success checkout-btn">
+            Thanh toán ngay
+        </a>
+    }
+</div>

@@ -163,56 +163,8 @@ namespace Book_Store.Models
         public virtual Author Author { get; set; } = default!;
     }
 
-    // 7. Orders
-    [Table("Orders", Schema = "dbo")]
-    public class Order
-    {
-        public Order()
-        {
-            OrderDetails = new HashSet<OrderDetail>();
-            Payments = new HashSet<Payment>();
-        }
 
-        [Key]
-        public int OrderID { get; set; }
-
-        public int UserID { get; set; }
-        [ForeignKey("UserID")]
-        public virtual User User { get; set; } = default!;
-
-        public DateTime OrderDate { get; set; } = DateTime.Now;
-
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalAmount { get; set; }
-
-        [StringLength(50)]
-        public string Status { get; set; } = "Pending";
-
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        public virtual ICollection<Payment> Payments { get; set; }
-    }
-
-    // 8. OrderDetails
-    [Table("OrderDetails", Schema = "dbo")]
-    public class OrderDetail
-    {
-        [Key]
-        public int OrderDetailID { get; set; }
-
-        public int OrderID { get; set; }
-        [ForeignKey("OrderID")]
-        public virtual Order Order { get; set; } = default!;
-
-        public int BookID { get; set; }
-        [ForeignKey("BookID")]
-        public virtual Book Book { get; set; } = default!;
-
-        public int Quantity { get; set; }
-
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal UnitPrice { get; set; }
-    }
-
+   
     // 9. Payments
     [Table("Payments", Schema = "dbo")]
     public class Payment

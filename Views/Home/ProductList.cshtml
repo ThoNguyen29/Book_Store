@@ -320,14 +320,22 @@
 @section Scripts {
 <script>
     function addToCart(bookId, btn) {
-        btn.classList.add('adding');
-        btn.innerHTML = '<i class="fas fa-check"></i> Đã thêm';
-        setTimeout(() => {
-            btn.classList.remove('adding');
-            btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Thêm giỏ hàng';
-        }, 1500);
-        const badge = document.getElementById('cartCount');
-        if (badge) badge.textContent = (parseInt(badge.textContent) || 0) + 1;
-    }
+
+    fetch('/Cart/AddToCart?id=' + bookId)
+        .then(res => res.json())
+        .then(data => {
+
+            btn.classList.add('adding');
+            btn.innerHTML = '<i class="fas fa-check"></i> Đã thêm';
+
+            const badge = document.getElementById('cartCount');
+            if (badge) badge.textContent = data.count;
+
+            setTimeout(() => {
+                btn.classList.remove('adding');
+                btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Thêm giỏ hàng';
+            }, 1200);
+        });
+}
 </script>
 }
