@@ -1,10 +1,21 @@
+
 using Book_Store.Models;
 using Microsoft.EntityFrameworkCore;
 using Book_Store.ViewModel.users;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Book_Store.Models.Momo;
+using Book_Store.Services.Momo;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
+//Connect to MomoAPI
+builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
+builder.Services.AddScoped<IMomoService, MomoService>();
+builder.Services.AddLogging(config =>
+{
+    config.ClearProviders();
+    config.AddConsole();
+});
 // 1. Thêm các dịch vụ vào Container
 builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
@@ -16,6 +27,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 
 // 2. Kết nối Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

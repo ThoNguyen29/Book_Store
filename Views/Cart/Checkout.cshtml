@@ -19,8 +19,6 @@
             <label class="form-label">Phương thức thanh toán</label>
             <select name="paymentMethod" class="form-select" required>
                 <option value="COD">Thanh toán khi nhận hàng</option>
-                <option value="Bank">Chuyển khoản ngân hàng</option>
-                <option value="Momo">Ví MoMo</option>
             </select>
         </div>
 
@@ -32,4 +30,14 @@
             Xác nhận đặt hàng
         </button>
     </form>
+    <p>Total: @total</p>
+    <form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
+        <input type="hidden" name="Amount" value="@total" />
+        <input type="hidden" name="OrderInfo" value="Thanh toán đơn hàng" />
+        <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
+        <input type="hidden" name="FullName" value="HAIANSTORE" />
+    <button class="btn btn-danger"  type="submit">
+        Pay with MoMo
+    </button>
+</form>
 </div>
