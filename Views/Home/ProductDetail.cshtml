@@ -1,10 +1,10 @@
-@model Book_Store.Models.Book
+﻿@model Book_Store.Models.Book
 @using Book_Store.Models
 
 @{
     ViewData["Title"] = Model.Title;
-    var images = Model.BookImages?.OrderByDescending(i => i.IsPrimary).ThenBy(i => i.SortOrder).ToList()
-                 ?? new List<BookImage>();
+    var images = (Model.BookImages ?? new HashSet<BookImage>())
+                 .OrderByDescending(i => i.IsPrimary).ThenBy(i => i.SortOrder).ToList();
     var primaryImage = images.FirstOrDefault()?.ImagePath ?? "/images/no-image.png";
     var authors = Model.BookAuthors?.Select(ba => ba.Author?.Name).Where(n => n != null).ToList()
                   ?? new List<string?>();
@@ -14,8 +14,6 @@
 <link rel="stylesheet" href="~/css/product-detail.css" asp-append-version="true" />
 
 <div class="pd-page">
-
-    <!-- Breadcrumb -->
     <div class="pd-breadcrumb">
         <div class="pd-container">
             <a href="/">Trang chủ</a>
@@ -24,23 +22,18 @@
             <i class="fas fa-chevron-right"></i>
             @if (Model.Category != null)
             {
-                <a asp-controller="Home" asp-action="ProductList"
-                   asp-route-categoryId="@Model.CategoryID">@Model.Category.Name</a>
+                <a asp-controller="Home" asp-action="ProductList" asp-route-categoryId="@Model.CategoryID">@Model.Category.Name</a>
                 <i class="fas fa-chevron-right"></i>
             }
             <span class="current">@Model.Title</span>
         </div>
     </div>
 
-    <!-- ===== MAIN PRODUCT SECTION ===== -->
     <div class="pd-container">
         <div class="pd-main">
-
-            <!-- LEFT: Image Gallery -->
             <div class="pd-gallery">
                 <div class="pd-main-image-wrapper">
-                    <img id="mainImage" src="@primaryImage" alt="@Model.Title"
-                         onerror="this.src='/images/no-image.png'" />
+                    <img id="mainImage" src="@primaryImage" alt="@Model.Title" onerror="this.src='/images/no-image.png'" />
                     @if (images.Count > 1)
                     {
                         <button class="gallery-nav gallery-prev" onclick="changeMainImage(-1)">
@@ -61,10 +54,8 @@
                         <div class="pd-thumbnails" id="thumbnailContainer">
                             @for (int i = 0; i < images.Count; i++)
                             {
-                                <div class="pd-thumb @(i == 0 ? "active" : "")"                             onclick="selectImage(@i, this)"
-                                     data-src="@images[i].ImagePath">
-                                    <img src="@images[i].ImagePath" alt="Ảnh @(i + 1)"
-                                         onerror="this.src='/images/no-image.png'" />
+                                <div class="pd-thumb @(i == 0 ? "active" : "")" onclick="selectImage(@i, this)" data-src="@images[i].ImagePath">
+                                    <img src="@images[i].ImagePath" alt="Ảnh @(i + 1)" onerror="this.src='/images/no-image.png'" />
                                 </div>
                             }
                         </div>
@@ -75,7 +66,6 @@
                 }
             </div>
 
-            <!-- RIGHT: Product Info -->
             <div class="pd-info">
                 <h1 class="pd-title">@Model.Title</h1>
 
@@ -99,25 +89,22 @@
                         <div class="pd-meta-item">
                             <span class="meta-label"><i class="fas fa-th-large"></i> Danh mục</span>
                             <span class="meta-value">
-                                <a asp-controller="Home" asp-action="ProductList"                                   asp-route-categoryId="@Model.CategoryID"
-                                   class="meta-link">@Model.Category.Name</a>
+                                <a asp-controller="Home" asp-action="ProductList" asp-route-categoryId="@Model.CategoryID" class="meta-link">
+                                    @Model.Category.Name
+                                </a>
                             </span>
                         </div>
                     }
                     <div class="pd-meta-item">
                         <span class="meta-label"><i class="fas fa-box"></i> Tình trạng</span>
-                        @if (Model.Stock > 5)
-                        {
-                            <span class="meta-value stock-in">Còn hàng (@Model.Stock)</span>
-                        }
-                        else if (Model.Stock > 0)
-                        {
-                            <span class="meta-value stock-low">Sắp hết (@Model.Stock)</span>
-                        }
-                        else
-                        {
-                            <span class="meta-value stock-out">Hết hàng</span>
-                        }
+                        <stock-badge stock="@Model.Stock"
+                                     low-stock-threshold="5"
+                                     class="meta-value"
+                                     show-quantity="true"
+                                     in-stock-text="Còn hàng"
+                                     incoming-text="Sắp về"
+                                     out-of-stock-text="Hết hàng">
+                        </stock-badge>
                     </div>
                 </div>
 
@@ -125,14 +112,12 @@
                     <span class="pd-price">@Model.Price.ToString("N0") <small>₫</small></span>
                 </div>
 
-                <!-- Quantity + Add to Cart -->
                 <div class="pd-actions">
                     <div class="pd-quantity">
                         <button type="button" class="qty-btn qty-minus" onclick="changeQty(-1)">
                             <i class="fas fa-minus"></i>
                         </button>
-                        <input type="number" id="qtyInput" value="1" min="1"                     max="@Model.Stock" class="qty-input"
-                               readonly />
+                        <input type="number" id="qtyInput" value="1" min="1" max="@Model.Stock" class="qty-input" readonly />
                         <button type="button" class="qty-btn qty-plus" onclick="changeQty(1)">
                             <i class="fas fa-plus"></i>
                         </button>
@@ -152,7 +137,6 @@
                     }
                 </div>
 
-                <!-- Extra info -->
                 <div class="pd-extra">
                     <div class="pd-extra-item">
                         <i class="fas fa-truck"></i>
@@ -168,10 +152,8 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-        </div><!-- /.pd-main -->
-
-        <!-- ===== DESCRIPTION SECTION ===== -->
         <div class="pd-description-section">
             <h2 class="pd-section-title">
                 <i class="fas fa-align-left"></i> Mô tả sản phẩm
@@ -188,7 +170,6 @@
             </div>
         </div>
 
-        <!-- ===== RELATED PRODUCTS ===== -->
         @if (relatedBooks.Any())
         {
             <div class="pd-related-section">
@@ -198,99 +179,93 @@
                 <div class="pd-related-grid">
                     @foreach (var related in relatedBooks)
                     {
-                        var relImg = related.BookImages?
-                            .OrderByDescending(i => i.IsPrimary)
-                            .ThenBy(i => i.SortOrder)
-                            .FirstOrDefault();
-                        var relImgSrc = relImg?.ImagePath ?? "/images/no-image.png";
-
-                        <a asp-controller="Home" asp-action="ProductDetail"                asp-route-id="@related.BookID" class="related-card">
-                            <div class="related-img-wrapper">
-                                <img src="@relImgSrc" alt="@related.Title"  onerror="this.src='/images/no-image.png'" />
-                            </div>
-                            <div class="related-body">
-                                @if (related.Category != null)
-                                {
-                                    <span class="related-category">@related.Category.Name</span>
-                                }
-                                <h4 class="related-title">@related.Title</h4>
-                                <span class="related-price">@related.Price.ToString("N0") ₫</span>
-                            </div>
-                        </a>
+                        <div class="pd-related-item">
+                            @await Html.PartialAsync("_BookCard", new BookCardViewModel
+                            {
+                                Book = related,
+                                ShowStockBadge = false
+                            })
+                        </div>
                     }
                 </div>
             </div>
         }
-
-    </div><!-- /.pd-container -->
-</div><!-- /.pd-page -->
+    </div>
+</div>
 
 @section Scripts {
     <script>
-        // ===== IMAGE GALLERY =====
-        var currentImageIndex = 0;
-        var images = [];
-        @foreach (var img in images)
-        {
-                @:images.push("@img.ImagePath");
-        }
-
-        function selectImage(index, thumbEl) {
-            currentImageIndex = index;
-            document.getElementById('mainImage').src = images[index];
-            // Update active thumbnail
-            document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
-            if (thumbEl) thumbEl.classList.add('active');
-            else document.querySelectorAll('.pd-thumb')[index]?.classList.add('active');
-        }
-
-        function changeMainImage(direction) {
-            if (images.length === 0) return;
-            currentImageIndex += direction;
-            if (currentImageIndex < 0) currentImageIndex = images.length - 1;
-            if (currentImageIndex >= images.length) currentImageIndex = 0;
-            selectImage(currentImageIndex, null);
-            scrollToActiveThumbnail();
-        }
-
-        function scrollThumbnails(direction) {
-            var container = document.getElementById('thumbnailContainer');
-            if (!container) return;
-            var scrollAmount = 90; // px per click
-            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-        }
-
-        function scrollToActiveThumbnail() {
-            var container = document.getElementById('thumbnailContainer');
-            var activeThumb = container?.querySelectorAll('.pd-thumb')[currentImageIndex];
-            if (activeThumb && container) {
-                activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            var currentImageIndex = 0;
+            var images = [];
+            @foreach (var img in images)
+            {
+                        @:images.push("@img.ImagePath");
             }
-        }
 
-        // ===== QUANTITY =====
-        function changeQty(delta) {
-            var input = document.getElementById('qtyInput');
-            var val = parseInt(input.value) || 1;
-            var max = parseInt(input.max) || 999;
-            val += delta;
-            if (val < 1) val = 1;
-            if (val > max) val = max;
-            input.value = val;
-        }
+            function selectImage(index, thumbEl) {
+                currentImageIndex = index;
+                document.getElementById('mainImage').src = images[index];
+                document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
+                if (thumbEl) {
+                    thumbEl.classList.add('active');
+                } else {
+                    document.querySelectorAll('.pd-thumb')[index]?.classList.add('active');
+                }
+            }
 
-        // ===== ADD TO CART =====
-        function addToCartDetail(bookId, btn) {
-            var qty = parseInt(document.getElementById('qtyInput').value) || 1;
-            btn.classList.add('adding');
-            btn.innerHTML = '<i class="fas fa-check"></i> Đã thêm vào giỏ';
-            setTimeout(function () {
-                btn.classList.remove('adding');
-                btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng';
-            }, 1800);
-            // Update cart badge
-            var badge = document.getElementById('cartCount');
-            if (badge) badge.textContent = (parseInt(badge.textContent) || 0) + qty;
-        }
+            function changeMainImage(direction) {
+                if (images.length === 0) return;
+                currentImageIndex += direction;
+                if (currentImageIndex < 0) currentImageIndex = images.length - 1;
+                if (currentImageIndex >= images.length) currentImageIndex = 0;
+                selectImage(currentImageIndex, null);
+                scrollToActiveThumbnail();
+            }
+
+            function scrollThumbnails(direction) {
+                var container = document.getElementById('thumbnailContainer');
+                if (!container) return;
+                container.scrollBy({ left: direction * 90, behavior: 'smooth' });
+            }
+
+            function scrollToActiveThumbnail() {
+                var container = document.getElementById('thumbnailContainer');
+                var activeThumb = container?.querySelectorAll('.pd-thumb')[currentImageIndex];
+                if (activeThumb && container) {
+                    activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+
+            function changeQty(delta) {
+                var input = document.getElementById('qtyInput');
+                var val = parseInt(input.value) || 1;
+                var max = parseInt(input.max) || 999;
+                val += delta;
+                if (val < 1) val = 1;
+                if (val > max) val = max;
+                input.value = val;
+            }
+
+            function addToCartDetail(bookId, btn) {
+                var qty = parseInt(document.getElementById('qtyInput').value) || 1;
+
+                if (window.bookStoreCart && typeof window.bookStoreCart.add === 'function') {
+                    window.bookStoreCart.add(bookId, qty, btn);
+                    return;
+                }
+
+                fetch('/Cart/AddToCart?id=' + bookId + '&qty=' + qty)
+                    .then(res => res.json())
+                    .then(data => {
+                        var badge = document.getElementById('cartCount');
+                        if (badge) badge.textContent = data.count;
+
+                        var totalEl = document.getElementById('cartTotal');
+                        if (totalEl && data.total !== undefined) {
+                            totalEl.textContent = new Intl.NumberFormat('vi-VN').format(data.total) + '₫';
+                        }
+                    });
+            }
     </script>
 }
+

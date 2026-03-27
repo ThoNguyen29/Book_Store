@@ -1,0 +1,64 @@
+﻿@model Book_Store.ViewModel.Admin.AdminUserOrdersViewModel
+
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Đơn hàng của khách hàng";
+    var fullName = Model?.FullName ?? "-";
+    var email = Model?.Email ?? "-";
+    var orders = (IReadOnlyList<Book_Store.ViewModel.Admin.AdminOrderSummaryItemViewModel>?)Model?.Orders ?? Array.Empty<Book_Store.ViewModel.Admin.AdminOrderSummaryItemViewModel>();
+}
+
+<div class="mb-3">
+    <a asp-action="UserManagement" class="btn btn-outline-secondary btn-sm">Quay lại quản lý người dùng</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="card-title mb-1">@fullName</h4>
+        <p class="text-muted mb-0">@email</p>
+    </div>
+</div>
+
+@if (!orders.Any())
+{
+    <div class="alert alert-info">Khách hàng này chưa có đơn hàng.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Tên khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Số lượng sách</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in orders)
+                {
+                    <tr>
+                        <td>#@order.OrderId</td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@order.ItemCount</td>
+                        <td>@order.TotalAmount.ToString("N0") đ</td>
+                        <td>@order.Status</td>
+                        <td class="text-center">
+                            <a asp-action="OrderDetails"
+                               asp-route-id="@order.OrderId"
+                               class="btn btn-sm btn-primary">
+                                Chi tiết đơn hàng
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+

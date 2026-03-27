@@ -1,5 +1,5 @@
-/* ============================================================
-   product-detail.css  –  Trang chi tiết sản phẩm (ProductDetail)
+﻿/* ============================================================
+   product-detail.css  â€“  Trang chi tiáº¿t sáº£n pháº©m (ProductDetail)
    ============================================================ */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
@@ -278,6 +278,14 @@
   color: #e53935;
 }
 
+.pd-meta-item .stock-badge {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
 /* Price box */
 .pd-price-box {
   margin-bottom: 22px;
@@ -467,6 +475,10 @@
   gap: 18px;
 }
 
+.pd-related-item {
+  min-width: 0;
+}
+
 .related-card {
   background: #fff;
   border-radius: 12px;
@@ -623,3 +635,5 @@
     padding: 16px;
   }
 }
+
+

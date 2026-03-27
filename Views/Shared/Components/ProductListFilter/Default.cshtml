@@ -1,0 +1,149 @@
+﻿@model Book_Store.ViewModel.Products.ProductListFilterViewModel
+
+<aside class="pl-sidebar">
+    <form method="get" asp-controller="Home" asp-action="ProductList" id="filterForm">
+
+        <div class="sidebar-section">
+            <h4 class="sidebar-title"><i class="fas fa-search"></i> Tìm kiếm</h4>
+            <div class="sb-search">
+                <input type="text" id="pl-search-input" name="q" value="@Model.CurrentQ" placeholder="Tên sách..."
+                       class="sb-input" list="pl-suggest-list" autocomplete="off" />
+                <datalist id="pl-suggest-list"></datalist>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h4 class="sidebar-title"><i class="fas fa-th-large"></i> Danh mục</h4>
+            <category-dropdown items="Model.Categories"
+                               selected-value="Model.CurrentCategoryId"
+                               name="categoryId"
+                               id="pl-category-select"
+                               class="sb-select"
+                               all-option-text="-- Tất cả --">
+            </category-dropdown>
+        </div>
+
+        <div class="sidebar-section">
+            <h4 class="sidebar-title"><i class="fas fa-tag"></i> Khoảng giá (₫)</h4>
+            <div class="sb-price-row">
+                <input type="number" name="minPrice" min="0" step="1000"
+                       value="@(Model.CurrentMinPrice?.ToString() ?? "")" placeholder="Từ"
+                       class="sb-input sb-price-input" />
+                <span class="sb-price-sep">—</span>
+                <input type="number" name="maxPrice" min="0" step="1000"
+                       value="@(Model.CurrentMaxPrice?.ToString() ?? "")" placeholder="Đến"
+                       class="sb-input sb-price-input" />
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h4 class="sidebar-title"><i class="fas fa-building"></i> Nhà xuất bản</h4>
+            <select name="publisherId" class="sb-select">
+                <option value="">-- Tất cả --</option>
+                @foreach (var pub in Model.Publishers)
+                {
+                    if (Model.CurrentPublisherId == pub.PublisherID)
+                    {
+                        <option value="@pub.PublisherID" selected="selected">@pub.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@pub.PublisherID">@pub.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="sidebar-section">
+            <h4 class="sidebar-title"><i class="fas fa-pen-nib"></i> Tác giả</h4>
+            <select name="authorId" class="sb-select">
+                <option value="">-- Tất cả --</option>
+                @foreach (var author in Model.Authors)
+                {
+                    if (Model.CurrentAuthorId == author.AuthorID)
+                    {
+                        <option value="@author.AuthorID" selected="selected">@author.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@author.AuthorID">@author.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="sidebar-section">
+            <h4 class="sidebar-title"><i class="fas fa-sort"></i> Sắp xếp</h4>
+            <select name="sort" class="sb-select">
+                @{
+                    var sortOptions = new[] {
+                        ("newest", "Mới nhất"),
+                        ("price_asc", "Giá tăng dần"),
+                        ("price_desc", "Giá giảm dần"),
+                        ("title_asc", "Tên A → Z"),
+                        ("title_desc", "Tên Z → A"),
+                    };
+                }
+                @foreach (var (val, label) in sortOptions)
+                {
+                    if (Model.CurrentSort == val)
+                    {
+                        <option value="@val" selected="selected">@label</option>
+                    }
+                    else
+                    {
+                        <option value="@val">@label</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="sb-actions">
+            <button type="submit" class="sb-btn-apply">
+                <i class="fas fa-filter"></i> Áp dụng
+            </button>
+            @if (Model.HasFilter)
+            {
+                <a asp-controller="Home" asp-action="ProductList" class="sb-btn-clear">
+                    <i class="fas fa-times"></i> Xóa bộ lọc
+                </a>
+            }
+        </div>
+
+    </form>
+</aside>
+
+<script>
+    (function () {
+        const input = document.getElementById('pl-search-input');
+        const list = document.getElementById('pl-suggest-list');
+        const cat = document.getElementById('pl-category-select');
+        if (!input || !list) return;
+
+        let timer = null;
+        input.addEventListener('input', () => {
+            const q = input.value.trim();
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(async () => {
+                if (q.length < 2) {
+                    list.innerHTML = '';
+                    return;
+                }
+                const catVal = cat ? cat.value : '';
+                const url = `/Home/SearchSuggest?term=${encodeURIComponent(q)}${catVal ? `&categoryId=${encodeURIComponent(catVal)}` : ''}`;
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    list.innerHTML = '';
+                    for (const item of data) {
+                        const opt = document.createElement('option');
+                        opt.value = item.title;
+                        list.appendChild(opt);
+                    }
+                } catch {
+                }
+            }, 250);
+        });
+    })();
+</script>

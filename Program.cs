@@ -1,14 +1,13 @@
-
-using Book_Store.Models;
+﻿using Book_Store.Models;
 using Microsoft.EntityFrameworkCore;
 using Book_Store.ViewModel.users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Book_Store.Models.Momo;
 using Book_Store.Services.Momo;
 
-
 var builder = WebApplication.CreateBuilder(args);
-//Connect to MomoAPI
+
+// Connect to Momo API
 builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
 builder.Services.AddScoped<IMomoService, MomoService>();
 builder.Services.AddLogging(config =>
@@ -16,9 +15,11 @@ builder.Services.AddLogging(config =>
     config.ClearProviders();
     config.AddConsole();
 });
-// 1. Thêm các dịch vụ vào Container
-builder.Services.AddSession();
+
+// Services
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -28,12 +29,11 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-
-// 2. Kết nối Database
+// Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 3. Cấu hình Cookie Authentication
+// Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -50,7 +50,6 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
-// 4. Cấu hình Pipeline xử lý HTTP (Thứ tự rất quan trọng)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -59,16 +58,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSession();
 app.UseRouting();
-
-// Sử dụng Session trước Authentication
 app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 5. Khởi tạo dữ liệu Admin mẫu nếu chưa có
+// Seed default admin if missing
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -78,8 +74,8 @@ using (var scope = app.Services.CreateScope())
         {
             Email = "admin@bookstore.local",
             FullName = "System Administrator",
-            Username = "admin", 
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), 
+            Username = "admin",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
             Role = "Admin",
             Address = "System",
             IsActive = true,
@@ -89,7 +85,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 6. Cấu hình Route
+app.MapBlazorHub();
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

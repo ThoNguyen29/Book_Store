@@ -1,0 +1,76 @@
+﻿<div class="cart-container js-cart-page">
+    <div class="cart-title">Giỏ hàng của bạn</div>
+
+    @if (!_items.Any())
+    {
+        <div class="cart-empty">
+            Giỏ hàng đang trống
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle cart-table text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Hình</th>
+                        <th class="text-start">Tên sách</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Tạm tính</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in _items)
+                    {
+                        var lineTotal = item.Price * item.Quantity;
+                        <tr data-product-id="@item.ProductId"
+                            data-unit-price="@item.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                            <td>
+                                <img class="cart-item-image" src="@item.Image" alt="@item.ProductName" onerror="this.src='/images/no-image.png'" />
+                            </td>
+                            <td class="text-start fw-semibold">@item.ProductName</td>
+                            <td>@item.Price.ToString("N0") ₫</td>
+                            <td>
+                                <div class="cart-qty-group">
+                                    <button type="button"
+                                            class="cart-qty-btn js-cart-decrease"
+                                            data-product-id="@item.ProductId">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+
+                                    <input class="cart-qty-input"
+                                           type="number"
+                                           min="1"
+                                           value="@item.Quantity"
+                                           data-product-id="@item.ProductId" />
+
+                                    <button type="button"
+                                            class="cart-qty-btn js-cart-increase"
+                                            data-product-id="@item.ProductId">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="fw-bold text-danger js-cart-line-total">@lineTotal.ToString("N0") ₫</td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger js-cart-remove"
+                                        data-product-id="@item.ProductId">
+                                    Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="total-section">
+            Tổng cộng: <span id="cartPageTotal">@Total.ToString("N0") ₫</span>
+        </div>
+
+        <a href="/Cart/Checkout" class="btn btn-success checkout-btn">Thanh toán ngay</a>
+    }
+</div>

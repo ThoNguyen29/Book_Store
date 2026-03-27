@@ -1,43 +1,72 @@
-@model List<Book_Store.Models.Order>
+﻿@model List<Book_Store.Models.Order>
 
-<h2>Danh sách đơn hàng</h2>
+@{
+    Layout = "~/Views/Shared/_Admin_Layout.cshtml";
+    ViewData["Title"] = "Danh sách đơn hàng";
+    var orders = (IReadOnlyList<Book_Store.Models.Order>?)Model ?? Array.Empty<Book_Store.Models.Order>();
+}
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Mã đơn</th>
-            <th>Khách hàng</th>
-            <th>Ngày đặt</th>
-            <th>Tổng tiền</th>
-            <th>Trạng thái</th>
-            <th>Cập nhật</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model)
-        {
-            <tr>
-                <td>@order.OrderID</td>
-                <td>@order.CustomerName</td>
-                <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
-                <td>@order.TotalAmount.ToString("N0") đ</td>
-                <td>@order.Status</td>
-                <td>
-                    <a asp-action="UpdateStatus"
-                       asp-route-id="@order.OrderID"
-                       asp-route-status="Processing"
-                       class="btn btn-warning btn-sm">
-                        Xử lý
-                    </a>
+<h2 class="mb-3">Danh sách đơn hàng</h2>
 
-                    <a asp-action="UpdateStatus"
-                       asp-route-id="@order.OrderID"
-                       asp-route-status="Completed"
-                       class="btn btn-success btn-sm">
-                        Hoàn thành
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (!orders.Any())
+{
+    <div class="alert alert-info">Chưa có đơn hàng nào.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in orders)
+                {
+                    <tr>
+                        <td>#@order.OrderID</td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@order.TotalAmount.ToString("N0") đ</td>
+                        <td>@order.Status</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                <a asp-action="OrderDetails"
+                                   asp-route-id="@order.OrderID"
+                                   class="btn btn-info btn-sm text-white">
+                                    Chi tiết
+                                </a>
+
+                                <form asp-action="UpdateStatus" method="post" class="d-flex gap-2">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@order.OrderID" />
+                                    <select name="status" class="form-select form-select-sm">
+                                        @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                                        {
+                                            if (status == order.Status)
+                                            {
+                                                <option value="@status" selected>@status</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@status">@status</option>
+                                            }
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-warning btn-sm">Lưu</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+

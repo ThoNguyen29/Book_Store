@@ -1,0 +1,67 @@
+﻿@model Book_Store.ViewModel.Products.BookCardViewModel
+
+@{
+    var book = Model?.Book ?? throw new InvalidOperationException("BookCardViewModel.Book is required.");
+    var primaryImage = book.BookImages?
+        .OrderByDescending(i => i.IsPrimary)
+        .ThenBy(i => i.SortOrder)
+        .FirstOrDefault();
+    var imgSrc = primaryImage?.ImagePath ?? "/images/no-image.png";
+}
+
+<article class="book-card">
+    <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@book.BookID" class="book-card__image-link">
+        <img src="@imgSrc" alt="@book.Title" class="book-card__image" onerror="this.src='/images/no-image.png'" />
+
+        @if (Model.ShowStockBadge)
+        {
+            <stock-badge stock="@book.Stock"
+                         low-stock-threshold="5"
+                         class="book-card__badge"
+                         in-stock-text="Còn hàng"
+                         incoming-text="Sắp về"
+                         out-of-stock-text="Hết hàng">
+            </stock-badge>
+        }
+    </a>
+
+    <div class="book-card__body">
+        @if (Model.ShowCategory && book.Category != null)
+        {
+            <span class="book-card__category">@book.Category.Name</span>
+        }
+
+        <h3 class="book-card__title" title="@book.Title">
+            <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@book.BookID">@book.Title</a>
+        </h3>
+
+        <div class="book-card__footer">
+            <div class="book-card__price">@book.Price.ToString("N0") <small>₫</small></div>
+
+            @if (Model.AllowAddToCart)
+            {
+                if (book.Stock > 0)
+                {
+                    <button type="button"
+                            class="book-card__add-btn js-add-to-cart"
+                            data-book-id="@book.BookID"
+                            data-default-label="Thêm vào giỏ hàng"
+                            data-added-label="Đã thêm"
+                            title="Thêm vào giỏ hàng"
+                            aria-label="Thêm @book.Title vào giỏ hàng">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                }
+                else
+                {
+                    <button type="button" class="book-card__add-btn" disabled title="Hết hàng" aria-label="Hết hàng">
+                        <i class="fas fa-ban"></i>
+                    </button>
+                }
+            }
+        </div>
+    </div>
+</article>
+
+
+

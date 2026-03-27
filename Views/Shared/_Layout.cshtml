@@ -3,6 +3,7 @@
 @inject Book_Store.Models.ApplicationDbContext _layoutDb
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     @* CSS *@
     @* HeaderCSS *@
@@ -14,104 +15,107 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
     <title>@ViewData["Title"] - Book_Store</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/style_layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/book-card.css" asp-append-version="true" />
 </head>
+
 <body>
     <div class="sticky-top-bar">
-    <header class="site-header">
-    <div class="container header-main">
+        <header class="site-header">
+            <div class="container header-main">
         
-        <a href="/" class="logo-wrapper">
-            <img src="~/images/logo.png" alt="Nhà Sách Hải An" class="logo-img">
-        </a>
+                <a href="/" class="logo-wrapper">
+                    <img src="~/images/logo.png" alt="Nhà Sách Hải An" class="logo-img">
+                </a>
 
-        <div class="search-wrapper">
-            <form action="/Search" method="get" class="search-box">
-                <input type="text" name="q" placeholder="Bạn muốn tìm sách gì?">
-                <button type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
-        </div>
+                <div class="search-wrapper">
+                    <form action="/Search" method="get" class="search-box">
+                        <input type="text" name="q" placeholder="Bạn muốn tìm sách gì?">
+                        <button type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
 
-        <div class="actions-wrapper">
+                <div class="actions-wrapper">
             
-            <div class="auth-section">
-                @if (User.Identity?.IsAuthenticated ?? false)
-                {
-                    <div class="dropdown">
-                        <a href="#" class="user-name dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> @User.Identity?.Name
-                        </a>
-                        <ul class="dropdown-menu">
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Quản trị</a></li>
-                            }
-                            <li><a class="dropdown-item" href="/Order/History">Đơn hàng</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form asp-controller="Account" asp-action="Logout" method="post">
-                                    <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
-                                </form>
-                            </li>
-                        </ul>
+                    <div class="auth-section">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <div class="dropdown">
+                                <a href="#" class="user-name dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle"></i> @User.Identity?.Name
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Quản trị</a></li>
+                                    }
+                                    <li><a class="dropdown-item" href="/Order/History">Đơn hàng</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="guest-links">
+                                <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                                <span class="divider">|</span>
+                                <a asp-controller="Account" asp-action="Register">Đăng ký</a>
+                            </div>
+                        }
                     </div>
-                }
-                else
-                {
-                    <div class="guest-links">
-                        <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                        <span class="divider">|</span>
-                        <a asp-controller="Account" asp-action="Register">Đăng ký</a>
-                    </div>
-                }
+
+                    @await Component.InvokeAsync("MiniCart")
+
+                </div>
             </div>
-
- <a asp-controller="Cart" asp-action="Index">
-    <i class="fa fa-shopping-cart"></i>
-</a>
-
-        </div>
-    </div>
-</header>
+        </header>
 
         <nav class="nav-main">
-    <div class="container nav-container">
+            <div class="container nav-container">
         
-        <div class="category-wrapper">
-            <div class="category-menu" onclick="toggleCategoryDropdown(event)">
-                <i class="fas fa-bars"></i>
-                <span>DANH MỤC SẢN PHẨM</span>
-            </div>
+                <div class="category-wrapper">
+                    <div class="category-menu" onclick="toggleCategoryDropdown(event)">
+                        <i class="fas fa-bars"></i>
+                        <span>DANH MỤC SẢN PHẨM</span>
+                    </div>
 
-            <div class="category-dropdown" id="categoryDropdown">
-                <ul class="category-list">
-                    @{
-                        var navCategories = await _layoutDb.Categories
-                            .AsNoTracking()
-                            .OrderBy(c => c.Name)
-                            .ToListAsync();
-                    }
-                    @foreach (var cat in navCategories)
-                    {
-                        <li>
-                            <a href="/Home/ProductList?categoryId=@cat.CategoryID">@cat.Name</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
+                    <div class="category-dropdown" id="categoryDropdown">
+                        <ul class="category-list">
+                            @{
+                                var navCategories = await _layoutDb.Categories
+                                    .AsNoTracking()
+                                    .OrderBy(c => c.Name)
+                                    .ToListAsync();
+                            }
+                            @foreach (var cat in navCategories)
+                            {
+                                <li>
+                                    <a href="/Home/ProductList?categoryId=@cat.CategoryID">@cat.Name</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
 
-        <div class="main-nav-links">
-            <a href="/" class="nav-link">Trang chủ</a>
-            <a asp-controller="Home" asp-action="ProductList" class="nav-link">Cửa hàng</a>
-            <a asp-controller="Home" asp-action="About" class="nav-link">Giới thiệu</a>
-        </div>
-    </div>
-</nav>
+                <div class="main-nav-links">
+                    <a href="/" class="nav-link">Trang chủ</a>
+                    <a asp-controller="Home" asp-action="ProductList" class="nav-link">Cửa hàng</a>
+                    <a asp-page="/About" class="nav-link">Giới thiệu</a>
+                </div>
+            </div>
+        </nav>
     </div><!-- /.sticky-top-bar -->
 
                
@@ -175,6 +179,9 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/book-card.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
+

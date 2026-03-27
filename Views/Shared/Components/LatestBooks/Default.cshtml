@@ -1,0 +1,47 @@
+﻿@model List<Book_Store.Models.Book>
+
+@{
+    const string trackId = "latest-books-track";
+}
+
+<section class="book-section">
+    <div class="book-section__header">
+        <h2 class="book-section__title">Sách mới xuất bản</h2>
+        <a asp-controller="Home" asp-action="ProductList" class="book-section__all">Xem tất cả</a>
+    </div>
+
+    @if (Model?.Any() == true)
+    {
+        <div class="book-carousel">
+            <button type="button"
+                    class="book-carousel__nav js-carousel-nav"
+                    data-target="@trackId"
+                    data-direction="prev"
+                    aria-label="Xem sách trước">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="book-carousel__track" id="@trackId">
+                @foreach (var book in Model)
+                {
+                    <div class="book-carousel__item">
+                        @await Html.PartialAsync("_BookCard", new BookCardViewModel { Book = book })
+                    </div>
+                }
+            </div>
+
+            <button type="button"
+                    class="book-carousel__nav js-carousel-nav"
+                    data-target="@trackId"
+                    data-direction="next"
+                    aria-label="Xem sách tiếp theo">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Chưa có sản phẩm nào.</p>
+    }
+</section>
+

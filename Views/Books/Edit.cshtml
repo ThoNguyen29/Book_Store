@@ -55,8 +55,6 @@
                                     class="input"
                                     asp-items="(MultiSelectList)ViewBag.Authors">
                             </select>
-
-                            <div class="hint">Giữ Ctrl (hoặc Cmd) để chọn nhiều tác giả.</div>
                         </div>
 
                         <div id="modalAuthor"
@@ -285,6 +283,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/searchable-select.js" asp-append-version="true"></script>
     <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
     <script>
         CKEDITOR.config.versionCheck = false;
@@ -303,9 +302,31 @@
         });
     </script>
     <script>
+        // ===== Initialize SearchableSelect components =====
+        var ssAuthor = new SearchableSelect({
+            targetSelect: '#AuthorSelect',
+            multiple: true,
+            placeholder: 'Tìm tác giả...'
+        });
+
+        var ssCategory = new SearchableSelect({
+            targetSelect: '#CategorySelect',
+            multiple: false,
+            placeholder: 'Tìm danh mục...'
+        });
+
+        var ssPublisher = new SearchableSelect({
+            targetSelect: 'select[name="PublisherID"]',
+            multiple: false,
+            placeholder: 'Tìm nhà xuất bản...'
+        });
+
         (function () {
             const tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
             const token = tokenEl ? tokenEl.value : "";
+
+            function openModal(el) { if (el) el.style.display = 'block'; }
+            function closeModal(el) { if (el) el.style.display = 'none'; }
 
             // Toggle panel ảnh static
             const toggleBtn = document.getElementById('toggleStaticImages');
@@ -323,10 +344,6 @@
             const btnCancelP = document.getElementById('cancelPublisher');
             const btnSaveP = document.getElementById('savePublisher');
             const inputP = document.getElementById('publisherName');
-            const selectP = document.querySelector('select[name="PublisherID"]');
-
-            function openModal(el) { if (el) el.style.display = 'block'; }
-            function closeModal(el) { if (el) el.style.display = 'none'; }
 
             if (btnOpenP) btnOpenP.addEventListener('click', () => { openModal(modalP); if (inputP) { inputP.value = ''; inputP.focus(); } });
             if (btnCloseP) btnCloseP.addEventListener('click', () => closeModal(modalP));
@@ -349,16 +366,8 @@
                 });
 
                 if (!res.ok) return;
-
-                const data = await res.json(); // {id,text}
-                const opt = Array.from(selectP.options).find(o => o.value == String(data.id));
-                if (!opt) {
-                    const o = document.createElement('option');
-                    o.value = data.id;
-                    o.textContent = data.text;
-                    selectP.appendChild(o);
-                }
-                selectP.value = data.id;
+                const data = await res.json();
+                ssPublisher.addOption(data.id, data.text, true);
                 closeModal(modalP);
             });
 
@@ -368,15 +377,14 @@
             const closeA = document.getElementById('closeAuthor');
             const cancelA = document.getElementById('cancelAuthor');
             const saveA = document.getElementById('saveAuthor');
-            const authorName = document.getElementById('authorName');
-            const authorSelect = document.getElementById('AuthorSelect');
+            const authorNameInput = document.getElementById('authorName');
 
-            if (openA) openA.addEventListener('click', () => { openModal(mA); if (authorName) { authorName.value = ''; authorName.focus(); } });
+            if (openA) openA.addEventListener('click', () => { openModal(mA); if (authorNameInput) { authorNameInput.value = ''; authorNameInput.focus(); } });
             if (closeA) closeA.addEventListener('click', () => closeModal(mA));
             if (cancelA) cancelA.addEventListener('click', () => closeModal(mA));
 
             if (saveA) saveA.addEventListener('click', async () => {
-                const name = (authorName?.value || '').trim();
+                const name = (authorNameInput?.value || '').trim();
                 if (!name) return;
 
                 const body = new URLSearchParams();
@@ -392,18 +400,8 @@
                 });
 
                 if (!res.ok) return;
-
-                const data = await res.json(); // {id,text}
-
-                let opt = Array.from(authorSelect.options).find(o => o.value === String(data.id));
-                if (!opt) {
-                    opt = document.createElement('option');
-                    opt.value = data.id;
-                    opt.textContent = data.text;
-                    authorSelect.appendChild(opt);
-                }
-                opt.selected = true;
-
+                const data = await res.json();
+                ssAuthor.addOption(data.id, data.text, true);
                 closeModal(mA);
             });
 
@@ -413,15 +411,14 @@
             const closeC = document.getElementById('closeCategory');
             const cancelC = document.getElementById('cancelCategory');
             const saveC = document.getElementById('saveCategory');
-            const categoryName = document.getElementById('categoryName');
-            const categorySelect = document.getElementById('CategorySelect');
+            const categoryNameInput = document.getElementById('categoryName');
 
-            if (openC) openC.addEventListener('click', () => { openModal(mC); if (categoryName) { categoryName.value = ''; categoryName.focus(); } });
+            if (openC) openC.addEventListener('click', () => { openModal(mC); if (categoryNameInput) { categoryNameInput.value = ''; categoryNameInput.focus(); } });
             if (closeC) closeC.addEventListener('click', () => closeModal(mC));
             if (cancelC) cancelC.addEventListener('click', () => closeModal(mC));
 
             if (saveC) saveC.addEventListener('click', async () => {
-                const name = (categoryName?.value || '').trim();
+                const name = (categoryNameInput?.value || '').trim();
                 if (!name) return;
 
                 const body = new URLSearchParams();
@@ -437,18 +434,8 @@
                 });
 
                 if (!res.ok) return;
-
-                const data = await res.json(); // {id,text}
-
-                let opt = Array.from(categorySelect.options).find(o => o.value === String(data.id));
-                if (!opt) {
-                    opt = document.createElement('option');
-                    opt.value = data.id;
-                    opt.textContent = data.text;
-                    categorySelect.appendChild(opt);
-                }
-                categorySelect.value = String(data.id);
-
+                const data = await res.json();
+                ssCategory.addOption(data.id, data.text, true);
                 closeModal(mC);
             });
         })();

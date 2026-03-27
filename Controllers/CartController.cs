@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
 using Book_Store.Models;
 
@@ -15,28 +16,30 @@ namespace Book_Store.Controllers
             _context = context;
         }
 
-        // ===========================
-        // HIỂN THỊ GIỎ HÀNG
-        // ===========================
         public IActionResult Index()
         {
             var cart = GetCart();
             return View(cart);
         }
 
-        // ===========================
-        // THÊM SẢN PHẨM (AJAX)
-        // ===========================
-        public IActionResult AddToCart(int id)
+        public IActionResult AddToCart(int id, int qty = 1)
         {
             var cart = GetCart();
+            if (qty < 1)
+            {
+                qty = 1;
+            }
 
             var book = _context.Books
                 .Include(b => b.BookImages)
                 .FirstOrDefault(b => b.BookID == id);
 
             if (book == null)
-                return Json(new { count = cart.Sum(x => x.Quantity) });
+            {
+                var emptyCount = cart.Sum(x => x.Quantity);
+                var emptyTotal = cart.Sum(x => x.Price * x.Quantity);
+                return Json(new { count = emptyCount, total = emptyTotal });
+            }
 
             var item = cart.FirstOrDefault(p => p.ProductId == id);
 
@@ -50,22 +53,21 @@ namespace Book_Store.Controllers
                     Image = book.BookImages?
                                 .FirstOrDefault(i => i.IsPrimary)?.ImagePath
                                 ?? "/images/no-image.png",
-                    Quantity = 1
+                    Quantity = qty
                 });
             }
             else
             {
-                item.Quantity++;
+                item.Quantity += qty;
             }
 
             SaveCart(cart);
 
-            return Json(new { count = cart.Sum(x => x.Quantity) });
+            var count = cart.Sum(x => x.Quantity);
+            var total = cart.Sum(x => x.Price * x.Quantity);
+            return Json(new { count, total });
         }
 
-        // ===========================
-        // CẬP NHẬT SỐ LƯỢNG
-        // ===========================
         [HttpPost]
         public IActionResult UpdateQuantity(int id, int quantity)
         {
@@ -81,9 +83,29 @@ namespace Book_Store.Controllers
             return RedirectToAction("Index");
         }
 
-        // ===========================
-        // XOÁ SẢN PHẨM
-        // ===========================
+        [HttpPost]
+        public IActionResult UpdateQuantityAjax(int id, int quantity)
+        {
+            var cart = GetCart();
+            var item = cart.FirstOrDefault(p => p.ProductId == id);
+
+            if (item == null)
+            {
+                return Json(BuildCartResponse(cart, removed: true));
+            }
+
+            if (quantity <= 0)
+            {
+                cart.RemoveAll(p => p.ProductId == id);
+                SaveCart(cart);
+                return Json(BuildCartResponse(cart, removed: true));
+            }
+
+            item.Quantity = quantity;
+            SaveCart(cart);
+            return Json(BuildCartResponse(cart, item));
+        }
+
         public IActionResult Remove(int id)
         {
             var cart = GetCart();
@@ -93,9 +115,21 @@ namespace Book_Store.Controllers
             return RedirectToAction("Index");
         }
 
-        // ===========================
-        // CHECKOUT
-        // ===========================
+        [HttpPost]
+        public IActionResult RemoveAjax(int id)
+        {
+            var cart = GetCart();
+            var exists = cart.Any(p => p.ProductId == id);
+
+            if (exists)
+            {
+                cart.RemoveAll(p => p.ProductId == id);
+                SaveCart(cart);
+            }
+
+            return Json(BuildCartResponse(cart, removed: exists));
+        }
+
         public IActionResult Checkout()
         {
             var cart = GetCart();
@@ -103,45 +137,67 @@ namespace Book_Store.Controllers
         }
 
         [HttpPost]
-[HttpPost]
-public IActionResult PlaceOrder(string address, string paymentMethod)
-{
-    var cart = GetCart();
-    if (!cart.Any())
-        return RedirectToAction("Index");
-
-    var order = new Order
-    {
-        OrderDate = DateTime.Now,
-        ShippingAddress = address,
-        PaymentMethod = paymentMethod,
-        Status = OrderStatus.Pending,
-        TotalAmount = cart.Sum(x => x.Price * x.Quantity)
-    };
-
-    _context.Orders.Add(order);
-    _context.SaveChanges();
-
-    foreach (var item in cart)
-    {
-        _context.OrderDetails.Add(new OrderDetail
+        public IActionResult PlaceOrder(string address, string paymentMethod)
         {
-            OrderID = order.OrderID,
-            BookID = item.ProductId,
-            Quantity = item.Quantity,
-            Price = item.Price
-        });
-    }
+            var cart = GetCart();
+            if (!cart.Any())
+            {
+                return RedirectToAction("Index");
+            }
 
-    _context.SaveChanges();
+            int? userId = null;
+            var customerName = "Khách vãng lai";
 
-    HttpContext.Session.Remove("cart");
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(userIdClaim, out var parsedUserId))
+                {
+                    userId = parsedUserId;
+                }
 
-    return RedirectToAction("Success");
-}
-        // ===========================
-        // SESSION HELPER
-        // ===========================
+                customerName = User.FindFirstValue(ClaimTypes.Name)
+                    ?? User.FindFirstValue(ClaimTypes.Email)
+                    ?? "Khách hàng";
+            }
+
+            var order = new Order
+            {
+                UserID = userId,
+                CustomerName = customerName,
+                OrderDate = DateTime.Now,
+                ShippingAddress = address,
+                PaymentMethod = paymentMethod,
+                Status = OrderStatus.Pending,
+                TotalAmount = cart.Sum(x => x.Price * x.Quantity)
+            };
+
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+
+            foreach (var item in cart)
+            {
+                _context.OrderDetails.Add(new OrderDetail
+                {
+                    OrderID = order.OrderID,
+                    BookID = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                });
+            }
+
+            _context.SaveChanges();
+
+            HttpContext.Session.Remove(CARTKEY);
+
+            return RedirectToAction("Success");
+        }
+
+        public IActionResult Success()
+        {
+            return View();
+        }
+
         private List<CartItem> GetCart()
         {
             var session = HttpContext.Session.GetString(CARTKEY);
@@ -162,9 +218,23 @@ public IActionResult PlaceOrder(string address, string paymentMethod)
                 JsonSerializer.Serialize(cart)
             );
         }
-        public IActionResult Success()
-{
-    return View();
-}
+
+        private object BuildCartResponse(List<CartItem> cart, CartItem? item = null, bool removed = false, bool success = true)
+        {
+            var count = cart.Sum(x => x.Quantity);
+            var total = cart.Sum(x => x.Price * x.Quantity);
+            var quantity = item?.Quantity ?? 0;
+
+            return new
+            {
+                success,
+                count,
+                total,
+                quantity,
+                removed
+            };
+        }
     }
 }
+
+

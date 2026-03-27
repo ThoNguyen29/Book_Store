@@ -1,18 +1,64 @@
+﻿@model Book_Store.ViewModel.Admin.AdminUserManagementViewModel
+
 @{
     Layout = "~/Views/Shared/_Admin_Layout.cshtml";
-    ViewData["Title"] = "Admin Dashboard";
-    
+    ViewData["Title"] = "Quản lý người dùng";
+    var users = (IReadOnlyList<Book_Store.ViewModel.Admin.AdminUserItemViewModel>?)Model?.Users ?? Array.Empty<Book_Store.ViewModel.Admin.AdminUserItemViewModel>();
 }
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - Admin Dashboard</title>
-    <link rel="stylesheet" href="~/Admin/css/admin-style.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head> 
-<body>
-    <h1>hello User Management</h1>
-</body>
-</html>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Quản lý người dùng</h2>
+    <span class="text-muted">Tổng người dùng: @users.Count</span>
+</div>
+
+@if (!users.Any())
+{
+    <div class="alert alert-info">Chưa có người dùng nào.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                    <th>Số đơn hàng</th>
+                    <th>Đơn gần nhất</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < users.Count; i++)
+                {
+                    var user = users[i];
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td class="fw-semibold">@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td>@user.Role</td>
+                        <td>@user.OrderCount</td>
+                        <td>@(user.LastOrderDate?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                        <td class="text-center">
+                            @if (user.OrderCount > 0)
+                            {
+                                <a asp-action="UserOrders"
+                                   asp-route-id="@user.UserId"
+                                   class="btn btn-sm btn-primary">
+                                    Chi tiết đơn hàng
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không có đơn</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+

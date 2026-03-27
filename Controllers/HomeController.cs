@@ -18,20 +18,8 @@ public class HomeController : Controller
         _db = db;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        // Fetch latest books for the homepage
-        var latestBooks = await _db.Books
-            .AsNoTracking()
-            .Include(b => b.BookImages)
-            .Include(b => b.Category)
-            .Include(b => b.BookAuthors).ThenInclude(ba => ba.Author)
-            .Where(b => b.IsActive)
-            .OrderByDescending(b => b.CreatedAt)
-            .Take(10)
-            .ToListAsync();
-
-        ViewBag.LatestBooks = latestBooks;
         return View();
     }
 
@@ -39,11 +27,6 @@ public class HomeController : Controller
     {
         return View();
     }
-    public IActionResult About()
-    {
-        return View();
-    }
-
     public async Task<IActionResult> ProductList(
         string? q,
         int? categoryId,
@@ -145,6 +128,32 @@ public class HomeController : Controller
         ViewBag.TotalItems = totalItems;
 
         return View(books);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SearchSuggest(string? term, int? categoryId)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+            return Json(Array.Empty<object>());
+
+        term = term.Trim();
+        if (term.Length < 2)
+            return Json(Array.Empty<object>());
+
+        var query = _db.Books
+            .AsNoTracking()
+            .Where(b => b.IsActive && b.Title.Contains(term));
+
+        if (categoryId.HasValue)
+            query = query.Where(b => b.CategoryID == categoryId.Value);
+
+        var result = await query
+            .OrderBy(b => b.Title)
+            .Select(b => new { id = b.BookID, title = b.Title })
+            .Take(8)
+            .ToListAsync();
+
+        return Json(result);
     }
 
     public async Task<IActionResult> ProductDetail(int id)

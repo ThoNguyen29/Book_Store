@@ -121,6 +121,31 @@
     color: #f36f21;
 }
 
+.mini-cart {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-total {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    font-size: 12px;
+    color: #444;
+}
+
+.cart-total-label {
+    text-transform: uppercase;
+    font-size: 10px;
+    color: #888;
+}
+
+.cart-total-value {
+    font-weight: 600;
+    color: #f36f21;
+}
+
 .cart-badge {
     position: absolute;
     top: -5px;
