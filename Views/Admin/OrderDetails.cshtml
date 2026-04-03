@@ -1,35 +1,46 @@
-﻿@model Book_Store.ViewModel.Admin.AdminOrderDetailsViewModel
+@model Book_Store.ViewModel.Admin.AdminOrderDetailsViewModel
 
 @{
     Layout = "~/Views/Shared/_Admin_Layout.cshtml";
-    ViewData["Title"] = "Chi tiết đơn hàng";
+    ViewData["Title"] = "Chi tiet don hang";
     var vm = Model ?? new Book_Store.ViewModel.Admin.AdminOrderDetailsViewModel();
 }
 
 <div class="mb-3 d-flex gap-2">
-    <a asp-action="UserManagement" class="btn btn-outline-secondary btn-sm">Danh sách người dùng</a>
+    <a asp-action="UserManagement" class="btn btn-outline-secondary btn-sm">Danh sach nguoi dung</a>
     @if (vm.UserId.HasValue)
     {
-        <a asp-action="UserOrders" asp-route-id="@vm.UserId.Value" class="btn btn-outline-primary btn-sm">Danh sách đơn của khách</a>
+        <a asp-action="UserOrders" asp-route-id="@vm.UserId.Value" class="btn btn-outline-primary btn-sm">
+            Danh sach don cua khach
+        </a>
     }
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white">
-        <h4 class="mb-0">Chi tiết đơn hàng #@vm.OrderId</h4>
+        <h4 class="mb-0">Chi tiet don hang #@vm.OrderId</h4>
     </div>
     <div class="card-body">
         <div class="row g-3">
             <div class="col-md-6">
-                <div><strong>Tên khách hàng:</strong> @vm.CustomerName</div>
+                <div><strong>Ten khach hang:</strong> @vm.CustomerName</div>
                 <div><strong>Email:</strong> @vm.CustomerEmail</div>
-                <div><strong>Địa chỉ giao hàng:</strong> @vm.ShippingAddress</div>
+                <div><strong>Dia chi giao hang:</strong> @vm.ShippingAddress</div>
             </div>
             <div class="col-md-6">
-                <div><strong>Ngày đặt:</strong> @vm.OrderDate.ToString("dd/MM/yyyy HH:mm")</div>
-                <div><strong>Phương thức thanh toán:</strong> @vm.PaymentMethod</div>
-                <div><strong>Trạng thái:</strong> @vm.Status</div>
-                <div><strong>Tổng tiền:</strong> @vm.TotalAmount.ToString("N0") đ</div>
+                <div>
+                    <strong>Ngay dat:</strong>
+                    <date-time value="@vm.OrderDate"></date-time>
+                </div>
+                <div><strong>Phuong thuc thanh toan:</strong> @vm.PaymentMethod</div>
+                <div>
+                    <strong>Trang thai:</strong>
+                    <order-status-badge status="@vm.Status"></order-status-badge>
+                </div>
+                <div>
+                    <strong>Tong tien:</strong>
+                    <money value="@vm.TotalAmount" currency="d"></money>
+                </div>
             </div>
         </div>
     </div>
@@ -39,10 +50,10 @@
     <table class="table table-bordered table-hover align-middle bg-white">
         <thead class="table-light">
             <tr>
-                <th>Sách</th>
-                <th class="text-center">Số lượng</th>
-                <th class="text-end">Đơn giá</th>
-                <th class="text-end">Thành tiền</th>
+                <th>Sach</th>
+                <th class="text-center">So luong</th>
+                <th class="text-end">Don gia</th>
+                <th class="text-end">Thanh tien</th>
             </tr>
         </thead>
         <tbody>
@@ -51,8 +62,12 @@
                 <tr>
                     <td>@item.BookTitle</td>
                     <td class="text-center">@item.Quantity</td>
-                    <td class="text-end">@item.UnitPrice.ToString("N0") đ</td>
-                    <td class="text-end fw-semibold">@item.LineTotal.ToString("N0") đ</td>
+                    <td class="text-end">
+                        <money value="@item.UnitPrice" currency="d"></money>
+                    </td>
+                    <td class="text-end fw-semibold">
+                        <money value="@item.LineTotal" currency="d"></money>
+                    </td>
                 </tr>
             }
         </tbody>

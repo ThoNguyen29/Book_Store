@@ -17,8 +17,7 @@ namespace Book_Store.Pages
         {
             if (!TryGetCurrentUserId(out var userId))
             {
-                var loginUrl = Url.Action("Login", "Account", new { returnUrl = ResolveReturnUrl() }) ?? "/Account/Login";
-                return Redirect(loginUrl);
+                return LocalRedirect(BuildLoginUrl(ResolveReturnUrl()));
             }
 
             CartItems = GetCart(userId);
@@ -43,6 +42,16 @@ namespace Book_Store.Pages
             userId = 0;
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(userIdClaim, out userId);
+        }
+
+        private static string BuildLoginUrl(string? returnUrl)
+        {
+            if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                return "/Account/Login";
+            }
+
+            return $"/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}";
         }
 
         private string ResolveReturnUrl() => $"{Request.Path}{Request.QueryString}";

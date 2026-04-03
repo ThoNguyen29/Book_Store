@@ -40,7 +40,9 @@ else
                         <td>@user.Email</td>
                         <td>@user.Role</td>
                         <td>@user.OrderCount</td>
-                        <td>@(user.LastOrderDate?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                        <td>
+                            <date-time value="@user.LastOrderDate" null-text="-"></date-time>
+                        </td>
                         <td class="text-center">
                             @if (user.OrderCount > 0)
                             {

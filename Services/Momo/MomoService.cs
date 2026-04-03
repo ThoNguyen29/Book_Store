@@ -23,7 +23,7 @@ namespace Book_Store.Services.Momo
 
    public async Task<MomoCreatePaymentResponseModel> CreatePaymentMomo(OrderInfoModel model)
 {
-    model.OrderId = DateTime.UtcNow.Ticks.ToString();
+    model.OrderId ??= DateTime.UtcNow.Ticks.ToString();
     model.OrderInfo = "Khách hàng: " + model.FullName + ". Nội dung: " + model.OrderInfo;
 
     // xử lý amount - chuyển từ decimal sang long
@@ -103,44 +103,136 @@ namespace Book_Store.Services.Momo
                 var orderId = collection.FirstOrDefault(s => s.Key == "orderId").Value.ToString();
                 var orderInfo = collection.FirstOrDefault(s => s.Key == "orderInfo").Value.ToString();
                 var requestType = collection.FirstOrDefault(s => s.Key == "requestType").Value.ToString();
+                var orderType = collection.FirstOrDefault(s => s.Key == "orderType").Value.ToString();
                 var transId = collection.FirstOrDefault(s => s.Key == "transId").Value.ToString();
                 var responseTime = collection.FirstOrDefault(s => s.Key == "responseTime").Value.ToString();
                 var errorCode = collection.FirstOrDefault(s => s.Key == "errorCode").Value.ToString();
                 var message = collection.FirstOrDefault(s => s.Key == "message").Value.ToString();
+                var localMessage = collection.FirstOrDefault(s => s.Key == "localMessage").Value.ToString();
+                var payType = collection.FirstOrDefault(s => s.Key == "payType").Value.ToString();
+                var extraData = collection.FirstOrDefault(s => s.Key == "extraData").Value.ToString();
                 var signature = collection.FirstOrDefault(s => s.Key == "signature").Value.ToString();
 
-                // Verify signature
-                var rawData = $"partnerCode={partnerCode}" +
-                    $"&accessKey={accessKey}" +
-                    $"&requestId={requestId}" +
-                    $"&amount={amount}" +
-                    $"&orderId={orderId}" +
-                    $"&orderInfo={orderInfo}" +
-                    $"&transId={transId}" +
-                    $"&responseTime={responseTime}" +
-                    $"&errorCode={errorCode}" +
-                    $"&message={message}";
-
-                var computedSignature = ComputeHmacSha256(rawData, _options.Value.SecretKey ?? "");
-
-                if (signature != computedSignature)
-                {
-                    _logger.LogError($"Signature mismatch. Received: {signature}, Computed: {computedSignature}");
-                    return new MomoExecuteResponseModel() { Amount = amount, OrderId = orderId, OrderInfo = orderInfo };
-                }
-
-                return new MomoExecuteResponseModel()
+                var result = new MomoExecuteResponseModel
                 {
                     Amount = amount,
                     OrderId = orderId,
-                    OrderInfo = orderInfo
+                    OrderInfo = orderInfo,
+                    ErrorCode = errorCode,
+                    Message = !string.IsNullOrWhiteSpace(localMessage) ? localMessage : message,
+                    SignatureValid = true
                 };
+
+                var candidateRawData = BuildSignatureCandidates(
+                    partnerCode,
+                    accessKey,
+                    requestId,
+                    amount,
+                    orderId,
+                    orderInfo,
+                    requestType,
+                    orderType,
+                    transId,
+                    responseTime,
+                    errorCode,
+                    message,
+                    localMessage,
+                    payType,
+                    extraData);
+
+                var signatureMatched = candidateRawData.Any(raw =>
+                    string.Equals(
+                        signature,
+                        ComputeHmacSha256(raw, _options.Value.SecretKey ?? ""),
+                        StringComparison.OrdinalIgnoreCase));
+
+                if (!signatureMatched)
+                {
+                    var computedSignatures = candidateRawData
+                        .Select(raw => ComputeHmacSha256(raw, _options.Value.SecretKey ?? ""))
+                        .ToList();
+
+                    _logger.LogError(
+                        "Signature mismatch. Received: {ReceivedSignature}, Computed candidates: {ComputedSignatures}",
+                        signature,
+                        string.Join(", ", computedSignatures));
+                    result.SignatureValid = false;
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"PaymentExecuteAsync Error: {ex.Message}");
-                return new MomoExecuteResponseModel();
+                return new MomoExecuteResponseModel
+                {
+                    ErrorCode = "EXCEPTION",
+                    Message = "Khong the xu ly ket qua thanh toan."
+                };
             }
+        }
+
+        private static List<string> BuildSignatureCandidates(
+            string partnerCode,
+            string accessKey,
+            string requestId,
+            string amount,
+            string orderId,
+            string orderInfo,
+            string requestType,
+            string orderType,
+            string transId,
+            string responseTime,
+            string errorCode,
+            string message,
+            string localMessage,
+            string payType,
+            string extraData)
+        {
+            var normalizedOrderType = !string.IsNullOrWhiteSpace(orderType) ? orderType : requestType;
+
+            return new List<string>
+            {
+                $"partnerCode={partnerCode}" +
+                $"&accessKey={accessKey}" +
+                $"&requestId={requestId}" +
+                $"&amount={amount}" +
+                $"&orderId={orderId}" +
+                $"&orderInfo={orderInfo}" +
+                $"&transId={transId}" +
+                $"&responseTime={responseTime}" +
+                $"&errorCode={errorCode}" +
+                $"&message={message}",
+
+                $"partnerCode={partnerCode}" +
+                $"&accessKey={accessKey}" +
+                $"&requestId={requestId}" +
+                $"&amount={amount}" +
+                $"&orderId={orderId}" +
+                $"&orderInfo={orderInfo}" +
+                $"&orderType={normalizedOrderType}" +
+                $"&transId={transId}" +
+                $"&message={message}" +
+                $"&localMessage={localMessage}" +
+                $"&responseTime={responseTime}" +
+                $"&errorCode={errorCode}" +
+                $"&payType={payType}" +
+                $"&extraData={extraData}",
+
+                $"accessKey={accessKey}" +
+                $"&amount={amount}" +
+                $"&extraData={extraData}" +
+                $"&message={message}" +
+                $"&orderId={orderId}" +
+                $"&orderInfo={orderInfo}" +
+                $"&orderType={normalizedOrderType}" +
+                $"&partnerCode={partnerCode}" +
+                $"&payType={payType}" +
+                $"&requestId={requestId}" +
+                $"&responseTime={responseTime}" +
+                $"&errorCode={errorCode}" +
+                $"&transId={transId}"
+            };
         }
 
         private string ComputeHmacSha256(string message, string secretKey)

@@ -88,6 +88,14 @@ using (var scope = app.Services.CreateScope())
 app.MapBlazorHub();
 app.MapRazorPages();
 app.MapControllerRoute(
+    name: "momo-checkout-callback",
+    pattern: "Checkout/PaymentCallBack",
+    defaults: new { controller = "Payment", action = "PaymentCallBack" });
+app.MapControllerRoute(
+    name: "momo-checkout-notify",
+    pattern: "Checkout/MomoNotify",
+    defaults: new { controller = "Payment", action = "MomoNotify" });
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 

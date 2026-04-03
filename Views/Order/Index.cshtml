@@ -1,30 +1,38 @@
 @model IEnumerable<Book_Store.Models.Order>
 
+@{
+    var orders = Model ?? Enumerable.Empty<Book_Store.Models.Order>();
+}
+
 <div class="container mt-5">
-    <h3>Đơn hàng của tôi</h3>
+    <h3>Don hang cua toi</h3>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Mã đơn</th>
-                <th>Ngày</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
+                <th>Ma don</th>
+                <th>Ngay</th>
+                <th>Tong tien</th>
+                <th>Trang thai</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var order in Model)
+            @foreach (var order in orders)
             {
                 <tr>
                     <td>#@order.OrderID</td>
-                    <td>@order.OrderDate.ToShortDateString()</td>
-                    <td>@order.TotalAmount.ToString("N0") đ</td>
-                    <td>@order.Status</td>
                     <td>
-                        <a asp-action="Details" asp-route-id="@order.OrderID">
-                            Xem
-                        </a>
+                        <date-time value="@order.OrderDate"></date-time>
+                    </td>
+                    <td>
+                        <money value="@order.TotalAmount" currency="d"></money>
+                    </td>
+                    <td>
+                        <order-status-badge status="@order.Status"></order-status-badge>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@order.OrderID">Xem</a>
                     </td>
                 </tr>
             }

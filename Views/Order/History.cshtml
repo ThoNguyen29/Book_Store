@@ -30,32 +30,16 @@
                 <tbody>
                     @foreach (var order in orders)
                     {
-                        var statusClass = order.Status switch
-                        {
-                            Book_Store.Models.OrderStatus.Pending => "bg-secondary",
-                            Book_Store.Models.OrderStatus.Confirmed => "bg-info text-dark",
-                            Book_Store.Models.OrderStatus.Shipping => "bg-primary",
-                            Book_Store.Models.OrderStatus.Completed => "bg-success",
-                            Book_Store.Models.OrderStatus.Cancelled => "bg-danger",
-                            _ => "bg-secondary"
-                        };
-
-                        var statusText = order.Status switch
-                        {
-                            Book_Store.Models.OrderStatus.Pending => "Cho xac nhan",
-                            Book_Store.Models.OrderStatus.Confirmed => "Da xac nhan",
-                            Book_Store.Models.OrderStatus.Shipping => "Dang giao",
-                            Book_Store.Models.OrderStatus.Completed => "Hoan thanh",
-                            Book_Store.Models.OrderStatus.Cancelled => "Da huy",
-                            _ => order.Status.ToString()
-                        };
-
                         <tr>
                             <td>#@order.OrderID</td>
-                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td class="text-end">@order.TotalAmount.ToString("N0") d</td>
                             <td>
-                                <span class="badge @statusClass">@statusText</span>
+                                <date-time value="@order.OrderDate"></date-time>
+                            </td>
+                            <td class="text-end">
+                                <money value="@order.TotalAmount" currency="d"></money>
+                            </td>
+                            <td>
+                                <order-status-badge status="@order.Status"></order-status-badge>
                             </td>
                             <td class="text-center">
                                 <a asp-action="Details"
@@ -64,9 +48,7 @@
                                     Xem chi tiet
                                 </a>
 
-                                <form asp-action="Reorder"
-                                      method="post"
-                                      class="d-inline">
+                                <form asp-action="Reorder" method="post" class="d-inline">
                                     <input type="hidden" name="id" value="@order.OrderID" />
                                     <button type="submit" class="btn btn-sm btn-warning">
                                         Mua lai

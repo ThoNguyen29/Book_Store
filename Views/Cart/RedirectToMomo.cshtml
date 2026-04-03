@@ -1,0 +1,51 @@
+﻿@using System.Globalization
+@model Book_Store.ViewModel.Cart.MomoCheckoutRedirectViewModel
+
+@{
+    ViewData["Title"] = "Chuyen sang MoMo";
+    var redirectModel = Model ?? new Book_Store.ViewModel.Cart.MomoCheckoutRedirectViewModel();
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <div class="spinner-border text-success mb-3" role="status" aria-hidden="true"></div>
+                    <h1 class="h4 mb-3">Đang chuyển bạn sang cổng thanh toán MoMo</h1>
+                    <p class="text-muted mb-4">
+                        Hệ thống đang tạo liên kết thanh toán cho đơn hàng của bạn. Nếu trang không tự động chuyển, bấm
+                        nút bên dưới.
+                    </p>
+
+                    <form id="momoRedirectForm" asp-controller="Payment" asp-action="CreatePaymentMomo" method="post"
+                          class="d-grid gap-2">
+                        <input type="hidden" name="address" value="@redirectModel.Address" />
+                        <input type="hidden" name="Amount"
+                               value="@redirectModel.Amount.ToString("0", CultureInfo.InvariantCulture)" />
+                        <input type="hidden" name="OrderInfo" value="@redirectModel.OrderInfo" />
+                        <input type="hidden" name="FullName" value="@redirectModel.FullName" />
+
+                        <button type="submit" class="btn btn-success">
+                            Tiếp tục đến MoMo
+                        </button>
+                        <a asp-controller="Cart" asp-action="Checkout" class="btn btn-outline-secondary">
+                            Quay lại trang thanh toán
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('load', function () {
+        var form = document.getElementById('momoRedirectForm');
+        if (form) {
+            window.setTimeout(function () {
+                form.submit();
+            }, 150);
+        }
+    });
+</script>

@@ -1,15 +1,16 @@
-﻿@model Book_Store.ViewModel.Admin.AdminUserOrdersViewModel
+@model Book_Store.ViewModel.Admin.AdminUserOrdersViewModel
 
 @{
     Layout = "~/Views/Shared/_Admin_Layout.cshtml";
-    ViewData["Title"] = "Đơn hàng của khách hàng";
+    ViewData["Title"] = "Don hang cua khach hang";
     var fullName = Model?.FullName ?? "-";
     var email = Model?.Email ?? "-";
-    var orders = (IReadOnlyList<Book_Store.ViewModel.Admin.AdminOrderSummaryItemViewModel>?)Model?.Orders ?? Array.Empty<Book_Store.ViewModel.Admin.AdminOrderSummaryItemViewModel>();
+    var orders = (IReadOnlyList<Book_Store.ViewModel.Admin.AdminOrderSummaryItemViewModel>?)Model?.Orders
+        ?? Array.Empty<Book_Store.ViewModel.Admin.AdminOrderSummaryItemViewModel>();
 }
 
 <div class="mb-3">
-    <a asp-action="UserManagement" class="btn btn-outline-secondary btn-sm">Quay lại quản lý người dùng</a>
+    <a asp-action="UserManagement" class="btn btn-outline-secondary btn-sm">Quay lai quan ly nguoi dung</a>
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
@@ -21,7 +22,7 @@
 
 @if (!orders.Any())
 {
-    <div class="alert alert-info">Khách hàng này chưa có đơn hàng.</div>
+    <div class="alert alert-info">Khach hang nay chua co don hang.</div>
 }
 else
 {
@@ -29,13 +30,13 @@ else
         <table class="table table-bordered table-hover align-middle bg-white">
             <thead class="table-light">
                 <tr>
-                    <th>Mã đơn</th>
-                    <th>Tên khách hàng</th>
-                    <th>Ngày đặt</th>
-                    <th>Số lượng sách</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                    <th class="text-center">Thao tác</th>
+                    <th>Ma don</th>
+                    <th>Ten khach hang</th>
+                    <th>Ngay dat</th>
+                    <th>So luong sach</th>
+                    <th>Tong tien</th>
+                    <th>Trang thai</th>
+                    <th class="text-center">Thao tac</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,15 +45,21 @@ else
                     <tr>
                         <td>#@order.OrderId</td>
                         <td>@order.CustomerName</td>
-                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <date-time value="@order.OrderDate"></date-time>
+                        </td>
                         <td>@order.ItemCount</td>
-                        <td>@order.TotalAmount.ToString("N0") đ</td>
-                        <td>@order.Status</td>
+                        <td>
+                            <money value="@order.TotalAmount" currency="d"></money>
+                        </td>
+                        <td>
+                            <order-status-badge status="@order.Status"></order-status-badge>
+                        </td>
                         <td class="text-center">
                             <a asp-action="OrderDetails"
                                asp-route-id="@order.OrderId"
                                class="btn btn-sm btn-primary">
-                                Chi tiết đơn hàng
+                                Chi tiet don hang
                             </a>
                         </td>
                     </tr>
@@ -61,4 +68,3 @@ else
         </table>
     </div>
 }
-

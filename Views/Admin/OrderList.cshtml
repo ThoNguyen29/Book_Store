@@ -1,16 +1,16 @@
-﻿@model List<Book_Store.Models.Order>
+@model List<Book_Store.Models.Order>
 
 @{
     Layout = "~/Views/Shared/_Admin_Layout.cshtml";
-    ViewData["Title"] = "Danh sách đơn hàng";
+    ViewData["Title"] = "Danh sach don hang";
     var orders = (IReadOnlyList<Book_Store.Models.Order>?)Model ?? Array.Empty<Book_Store.Models.Order>();
 }
 
-<h2 class="mb-3">Danh sách đơn hàng</h2>
+<h2 class="mb-3">Danh sach don hang</h2>
 
 @if (!orders.Any())
 {
-    <div class="alert alert-info">Chưa có đơn hàng nào.</div>
+    <div class="alert alert-info">Chua co don hang nao.</div>
 }
 else
 {
@@ -18,12 +18,12 @@ else
         <table class="table table-bordered table-hover align-middle bg-white">
             <thead class="table-light">
                 <tr>
-                    <th>Mã đơn</th>
-                    <th>Khách hàng</th>
-                    <th>Ngày đặt</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                    <th class="text-center">Thao tác</th>
+                    <th>Ma don</th>
+                    <th>Khach hang</th>
+                    <th>Ngay dat</th>
+                    <th>Tong tien</th>
+                    <th>Trang thai</th>
+                    <th class="text-center">Thao tac</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,15 +32,21 @@ else
                     <tr>
                         <td>#@order.OrderID</td>
                         <td>@order.CustomerName</td>
-                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@order.TotalAmount.ToString("N0") đ</td>
-                        <td>@order.Status</td>
+                        <td>
+                            <date-time value="@order.OrderDate"></date-time>
+                        </td>
+                        <td>
+                            <money value="@order.TotalAmount" currency="d"></money>
+                        </td>
+                        <td>
+                            <order-status-badge status="@order.Status"></order-status-badge>
+                        </td>
                         <td>
                             <div class="d-flex flex-wrap gap-2 justify-content-center">
                                 <a asp-action="OrderDetails"
                                    asp-route-id="@order.OrderID"
                                    class="btn btn-info btn-sm text-white">
-                                    Chi tiết
+                                    Chi tiet
                                 </a>
 
                                 <form asp-action="UpdateStatus" method="post" class="d-flex gap-2">
@@ -59,7 +65,7 @@ else
                                             }
                                         }
                                     </select>
-                                    <button type="submit" class="btn btn-warning btn-sm">Lưu</button>
+                                    <button type="submit" class="btn btn-warning btn-sm">Luu</button>
                                 </form>
                             </div>
                         </td>
@@ -69,4 +75,3 @@ else
         </table>
     </div>
 }
-

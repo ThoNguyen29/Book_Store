@@ -1,9 +1,7 @@
 using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
+using Book_Store.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Book_Store.Models;
 
 namespace Book_Store.Controllers;
 
@@ -27,6 +25,7 @@ public class HomeController : Controller
     {
         return View();
     }
+
     public async Task<IActionResult> ProductList(
         string? q,
         int? categoryId,
@@ -107,7 +106,6 @@ public class HomeController : Controller
             .Take(pageSize)
             .ToListAsync();
 
-        // Danh mục để lọc
         var categories = await _db.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
         var publishers = await _db.Publishers.AsNoTracking().OrderBy(p => p.Name).ToListAsync();
         var authors = await _db.Authors.AsNoTracking().OrderBy(a => a.Name).ToListAsync();
@@ -170,7 +168,6 @@ public class HomeController : Controller
         if (book == null)
             return RedirectToAction(nameof(ProductList));
 
-        // Similar products: same category, exclude current book, max 10
         var relatedBooks = new List<Book>();
         if (book.CategoryID.HasValue)
         {
@@ -190,78 +187,43 @@ public class HomeController : Controller
     }
 
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string? returnUrl = null)
     {
-        return View();
+        return LocalRedirect(BuildAccountPageUrl("/Account/Login", returnUrl));
     }
 
     [HttpPost]
-    public IActionResult Login(object _)
+    [ActionName("Login")]
+    public IActionResult LoginPost(string? returnUrl = null)
     {
-        // TODO: implement login logic
-        return View();
+        return LocalRedirect(BuildAccountPageUrl("/Account/Login", returnUrl));
     }
 
     [HttpGet]
     public IActionResult Register()
     {
-        return View("~/Views/Account/Register.cshtml");
+        return LocalRedirect("/Account/Register");
     }
 
     [HttpPost]
-    public IActionResult Register(string firstName, string lastName, string email, string password, string confirmPassword)
+    [ActionName("Register")]
+    public IActionResult RegisterPost()
     {
-        // 1. Kiểm tra validation thủ công
-        if (string.IsNullOrWhiteSpace(firstName)) ModelState.AddModelError("firstName", "Tên là bắt buộc");
-        if (string.IsNullOrWhiteSpace(lastName)) ModelState.AddModelError("lastName", "Họ là bắt buộc");
-        if (string.IsNullOrWhiteSpace(email)) ModelState.AddModelError("email", "Email là bắt buộc");
-        else if (!new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(email))
-            ModelState.AddModelError("email", "Email không hợp lệ");
-
-        if (string.IsNullOrWhiteSpace(password)) ModelState.AddModelError("password", "Mật khẩu là bắt buộc");
-        else if (password.Length < 6) ModelState.AddModelError("password", "Mật khẩu phải từ 6 ký tự trở lên");
-
-        if (password != confirmPassword) ModelState.AddModelError("confirmPassword", "Mật khẩu xác nhận không khớp");
-
-        if (!ModelState.IsValid)
-        {
-            return View("~/Views/Account/Register.cshtml");
-        }
-
-        // 2. Tạo đối tượng User mới
-        var user = new User
-        {
-            Email = email.Trim(),
-            Username = email.Trim(), // Thêm Username vì model User yêu cầu
-            PasswordHash = HashPassword(password), // Đã sửa tên gọi hàm cho đúng
-            FullName = $"{lastName} {firstName}".Trim(),
-            CreatedAt = DateTime.UtcNow,
-            IsActive = true
-        };
-
-        _db.Users!.Add(user);
-        _db.SaveChanges();
-
-        TempData["SuccessMessage"] = "Đăng ký thành công. Vui lòng đăng nhập.";
-        return RedirectToAction("Login");
+        return LocalRedirect("/Account/Register");
     }
 
-    // Hàm băm mật khẩu
-    private static string HashPassword(string password)
-    {
-        using var sha = SHA256.Create();
-        var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-        var sb = new StringBuilder(bytes.Length * 2);
-        foreach (var b in bytes)
-        {
-            sb.Append(b.ToString("x2"));
-        }
-        return sb.ToString();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    private static string BuildAccountPageUrl(string pagePath, string? returnUrl)
+    {
+        if (string.IsNullOrWhiteSpace(returnUrl))
+        {
+            return pagePath;
+        }
+
+        return $"{pagePath}?returnUrl={Uri.EscapeDataString(returnUrl)}";
     }
 }

@@ -1,0 +1,87 @@
+@model Book_Store.Models.Momo.MomoExecuteResponseModel
+
+@{
+    ViewData["Title"] = "Kết quả thanh toán";
+    var isSuccess = Model?.IsSuccess == true;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="h3 mb-3 @(isSuccess ? "text-success" : "text-danger")">
+                        @(isSuccess ? "Thanh toán thành công" : "Thanh toán chưa thành công")
+                    </h1>
+
+                    <p class="text-muted mb-4">
+                        @(Model?.Message ?? "Hệ thống đã nhận callback từ MoMo.")
+                    </p>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table align-middle mb-0">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="w-25">Mã đơn</th>
+                                    <td>@(Model?.OrderId ?? "Khong co")</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Số tiền</th>
+                                    <td>@(string.IsNullOrWhiteSpace(Model?.Amount) ? "Khong co" : $"{Model!.Amount} VND")</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Nội dung</th>
+                                    <td>@(Model?.OrderInfo ?? "Khong co")</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Mã lỗi</th>
+                                    <td>@(Model?.ErrorCode ?? "Khong co")</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Đơn hàng hệ thống</th>
+                                    <td>
+                                        @if (Model?.LocalOrderId != null)
+                                        {
+                                            <span>#@Model.LocalOrderId</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Chưa tạo được đơn hàng</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Xác thực chữ ký</th>
+                                    <td>
+                                        @if (Model?.SignatureValid == false)
+                                        {
+                                            <span class="text-warning">Không xác minh được</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-success">Hợp lệ</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Về trang chủ</a>
+                        <a asp-controller="Order" asp-action="History" class="btn btn-outline-secondary">Xem đơn
+                            hàng</a>
+                            @if (Model?.LocalOrderId != null)
+                            {
+                                <a asp-controller="Order" asp-action="Details" asp-route-id="@Model.LocalOrderId"
+                                       class="btn btn-outline-success">
+                                    Xem đơn vừa tạo
+                                </a>
+                            }
+                            <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary">Về giỏ hàng</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

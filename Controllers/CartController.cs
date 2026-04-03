@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
 using Book_Store.Models;
+using Book_Store.ViewModel.Cart;
 
 namespace Book_Store.Controllers
 {
@@ -225,13 +226,45 @@ namespace Book_Store.Controllers
                 return RedirectToAction("Index");
             }
 
+            address = address?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                TempData["CheckoutError"] = "Vui lòng nhập địa chỉ giao hàng.";
+                return RedirectToAction("Checkout");
+            }
+
+            var normalizedPaymentMethod = string.IsNullOrWhiteSpace(paymentMethod)
+                ? "COD"
+                : paymentMethod.Trim();
+
             var user = _context.Users
                 .AsNoTracking()
                 .FirstOrDefault(u => u.ID == userId);
 
             var customerName = !string.IsNullOrWhiteSpace(user?.FullName)
                 ? user.FullName
-                : user?.Email ?? User.FindFirstValue(ClaimTypes.Name) ?? "Khach hang";
+                : user?.Email ?? User.FindFirstValue(ClaimTypes.Name) ?? "Khách hàng";
+
+            var totalAmount = cart.Sum(x => x.Price * x.Quantity);
+
+            if (string.Equals(normalizedPaymentMethod, "MoMo", StringComparison.OrdinalIgnoreCase))
+            {
+                var redirectModel = new MomoCheckoutRedirectViewModel
+                {
+                    Address = address,
+                    FullName = customerName,
+                    Amount = totalAmount,
+                    OrderInfo = "Thanh toán đơn hàng"
+                };
+
+                return View("RedirectToMomo", redirectModel);
+            }
+
+            if (!string.Equals(normalizedPaymentMethod, "COD", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["CheckoutError"] = "Phương thức thanh toán không hợp lệ.";
+                return RedirectToAction("Checkout");
+            }
 
             var order = new Order
             {
@@ -239,9 +272,9 @@ namespace Book_Store.Controllers
                 CustomerName = customerName,
                 OrderDate = DateTime.Now,
                 ShippingAddress = address,
-                PaymentMethod = paymentMethod,
+                PaymentMethod = "COD",
                 Status = OrderStatus.Pending,
-                TotalAmount = cart.Sum(x => x.Price * x.Quantity)
+                TotalAmount = totalAmount
             };
 
             _context.Orders.Add(order);
@@ -311,13 +344,13 @@ namespace Book_Store.Controllers
         private IActionResult RedirectToLogin()
         {
             var returnUrl = ResolveReturnUrl();
-            return RedirectToAction("Login", "Account", new { returnUrl });
+            return LocalRedirect(BuildLoginUrl(returnUrl));
         }
 
         private IActionResult BuildLoginRequiredJson()
         {
             var returnUrl = ResolveReturnUrl();
-            var loginUrl = Url.Action("Login", "Account", new { returnUrl }) ?? "/Account/Login";
+            var loginUrl = BuildLoginUrl(returnUrl);
 
             return Json(new
             {
@@ -340,6 +373,16 @@ namespace Book_Store.Controllers
             }
 
             return $"{Request.Path}{Request.QueryString}";
+        }
+
+        private static string BuildLoginUrl(string? returnUrl)
+        {
+            if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                return "/Account/Login";
+            }
+
+            return $"/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}";
         }
 
         private static string GetCartKey(int userId) => $"{CartKeyPrefix}{userId}";

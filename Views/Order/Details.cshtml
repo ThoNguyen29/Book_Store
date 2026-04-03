@@ -17,15 +17,15 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <strong>Ngay dat:</strong><br />
-                    @(order?.OrderDate.ToString("dd/MM/yyyy HH:mm"))
+                    <date-time value="@order?.OrderDate"></date-time>
                 </div>
                 <div class="col-md-4">
                     <strong>Trang thai:</strong><br />
-                    @order?.Status
+                    <order-status-badge status="@order?.Status"></order-status-badge>
                 </div>
                 <div class="col-md-4">
                     <strong>Tong tien:</strong><br />
-                    <span class="text-danger fw-semibold">@((order?.TotalAmount ?? 0).ToString("N0")) d</span>
+                    <money value="@order?.TotalAmount" currency="d" class="text-danger fw-semibold"></money>
                 </div>
                 <div class="col-md-6">
                     <strong>Dia chi giao hang:</strong><br />
@@ -59,9 +59,7 @@
                             <td>
                                 @if (item.Book != null)
                                 {
-                                    <a asp-controller="Home"
-                                       asp-action="ProductDetail"
-                                       asp-route-id="@item.BookID">
+                                    <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@item.BookID">
                                         @item.Book.Title
                                     </a>
                                 }
@@ -71,8 +69,12 @@
                                 }
                             </td>
                             <td class="text-center">@item.Quantity</td>
-                            <td class="text-end">@item.Price.ToString("N0") d</td>
-                            <td class="text-end fw-semibold">@lineTotal.ToString("N0") d</td>
+                            <td class="text-end">
+                                <money value="@item.Price" currency="d"></money>
+                            </td>
+                            <td class="text-end fw-semibold">
+                                <money value="@lineTotal" currency="d"></money>
+                            </td>
                         </tr>
                     }
                 </tbody>

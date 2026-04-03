@@ -1,15 +1,23 @@
-@model List<Book_Store.Models.CartItem>
+﻿@model List<Book_Store.Models.CartItem>
 
 @{
     ViewData["Title"] = "Thanh toán";
     var cartItems = Model ?? new List<Book_Store.Models.CartItem>();
     var total = cartItems.Sum(x => x.Price * x.Quantity);
+    var checkoutError = TempData["CheckoutError"] as string ?? TempData["MomoError"] as string;
 }
 
 <div class="checkout-container">
     <h2 class="checkout-title">
         <i class="bi bi-cart-check"></i> Thanh toán
     </h2>
+
+    @if (!string.IsNullOrWhiteSpace(checkoutError))
+    {
+        <div class="alert alert-danger">
+            @checkoutError
+        </div>
+    }
 
     @if (!cartItems.Any())
     {
@@ -24,7 +32,6 @@
     else
     {
         <div class="checkout-content">
-            <!-- Order Summary Section -->
             <div class="checkout-order-summary">
                 <div class="checkout-section-header">
                     <i class="bi bi-bag-check"></i> Sản phẩm đang mua
@@ -48,28 +55,32 @@
                             </div>
                             <div class="checkout-item-details">
                                 <div class="checkout-item-name">@item.ProductName</div>
-                                <div class="checkout-item-price">@item.Price.ToString("N0") ₫</div>
+                                <div class="checkout-item-price">
+                                    <money value="@item.Price" currency="d"></money>
+                                </div>
                                 <div class="checkout-item-quantity">
                                     <span>Số lượng:</span> @item.Quantity
                                 </div>
                             </div>
                             <div class="checkout-item-total">
-                                @lineTotal.ToString("N0") ₫
+                                <money value="@lineTotal" currency="d"></money>
                             </div>
                         </div>
                     }
                 </div>
                 <div class="checkout-total">
                     <span>Tổng cộng:</span>
-                    <span class="checkout-total-amount">@total.ToString("N0") ₫</span>
+                    <span class="checkout-total-amount">
+                        <money value="@total" currency="d"></money>
+                    </span>
                 </div>
             </div>
 
-            <!-- Payment Form Section -->
             <div class="checkout-form-section">
                 <div class="checkout-section-header">
-                    <i class="bi bi-truck"></i> Thông tin giao hàng
+                    <i class="bi bi-truck"></i> Thong tin giao hang
                 </div>
+
                 <form asp-action="PlaceOrder" method="post" class="checkout-form">
                     <div class="mb-3">
                         <label class="form-label">
@@ -85,21 +96,29 @@
                         </label>
                         <select name="paymentMethod" class="form-select" required>
                             <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                            <option value="MoMo">Ví điện tử MoMo</option>
                         </select>
+                        <div class="form-text mt-2">
+                            Nếu chọn MoMo, hệ thống sẽ chuyển bạn sang cổng thanh toán sau khi nhận xác nhận đặt hàng.
+                        </div>
                     </div>
 
                     <div class="checkout-summary-box">
                         <div class="checkout-summary-row">
                             <span>Tạm tính:</span>
-                            <span>@total.ToString("N0") ₫</span>
+                            <span>
+                                <money value="@total" currency="d"></money>
+                            </span>
                         </div>
                         <div class="checkout-summary-row">
                             <span>Phí vận chuyển:</span>
-                            <span>Miễn phí</span>
+                            <span>Mien phi</span>
                         </div>
                         <div class="checkout-summary-row checkout-summary-total">
                             <span>Tổng tiền:</span>
-                            <span>@total.ToString("N0") ₫</span>
+                            <span>
+                                <money value="@total" currency="d"></money>
+                            </span>
                         </div>
                     </div>
 
@@ -107,22 +126,6 @@
                         <i class="bi bi-check-circle"></i> Xác nhận đặt hàng
                     </button>
                 </form>
-
-                <!-- MoMo Payment -->
-                <div class="checkout-momo-section">
-                    <div class="checkout-divider">
-                        <span>hoặc</span>
-                    </div>
-                    <form method="post" asp-action="CreatePaymentMomo" asp-controller="Payment">
-                        <input type="hidden" name="Amount" value="@total" />
-                        <input type="hidden" name="OrderInfo" value="Thanh toán đơn hàng" />
-                        <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
-                        <input type="hidden" name="FullName" value="HAIANSTORE" />
-                        <button class="btn btn-momo" type="submit">
-                            <i class="bi bi-wallet2"></i> Thanh toán với MoMo
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
     }
