@@ -1,0 +1,16 @@
+@page "/gio-hang"
+@model Book_Store.Pages.CartPageModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+
+<component type="typeof(Book_Store.Components.Cart.CartRealtime)"
+           render-mode="ServerPrerendered"
+           param-InitialItems="Model.CartItems" />
+
+@section Scripts {
+    <script src="~/js/cart-blazor.js" asp-append-version="true"></script>
+    <script src="~/_framework/blazor.server.js"></script>
+}

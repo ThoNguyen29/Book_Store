@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
@@ -18,13 +18,7 @@ namespace Book_Store.Controllers
 
         public IActionResult Index()
         {
-            if (!TryGetCurrentUserId(out _))
-            {
-                return RedirectToLogin();
-            }
-
-            var cart = GetCart();
-            return View(cart);
+            return LocalRedirect("/gio-hang");
         }
 
         public IActionResult AddToCart(int id, int qty = 1)
@@ -126,6 +120,46 @@ namespace Book_Store.Controllers
             return Json(BuildCartResponse(cart, item));
         }
 
+        [HttpPost]
+        public IActionResult IncreaseQuantity(int id)
+        {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return RedirectToLogin();
+            }
+
+            var cart = GetCart();
+            var item = cart.FirstOrDefault(p => p.ProductId == id);
+
+            if (item != null)
+            {
+                item.Quantity += 1;
+                SaveCart(cart);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult DecreaseQuantity(int id)
+        {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return RedirectToLogin();
+            }
+
+            var cart = GetCart();
+            var item = cart.FirstOrDefault(p => p.ProductId == id);
+
+            if (item != null)
+            {
+                item.Quantity = Math.Max(1, item.Quantity - 1);
+                SaveCart(cart);
+            }
+
+            return RedirectToAction("Index");
+        }
+
         public IActionResult Remove(int id)
         {
             if (!TryGetCurrentUserId(out _))
@@ -158,6 +192,12 @@ namespace Book_Store.Controllers
             }
 
             return Json(BuildCartResponse(cart, removed: exists));
+        }
+
+        [HttpPost]
+        public IActionResult RemoveItemForm(int id)
+        {
+            return Remove(id);
         }
 
         public IActionResult Checkout()

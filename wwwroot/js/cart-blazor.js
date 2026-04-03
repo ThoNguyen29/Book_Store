@@ -56,6 +56,12 @@
     }
 
     window.cartApi = window.cartApi || {};
+    window.cartApi.isBlazorConnected = false;
+
+    window.cartApi.markConnected = function () {
+        window.cartApi.isBlazorConnected = true;
+        document.documentElement.setAttribute("data-cart-blazor", "connected");
+    };
 
     window.cartApi.setQuantity = function (id, quantity) {
         const safeQty = !quantity || quantity < 1 ? 1 : quantity;
@@ -77,6 +83,10 @@
             totalEl.textContent = formatter.format(total || 0) + "₫";
         }
     };
+
+    function hasBlazorConnection() {
+        return window.cartApi.isBlazorConnected === true;
+    }
 
     function findRow(productId) {
         return document.querySelector('tr[data-product-id="' + productId + '"]');
@@ -188,8 +198,15 @@
     }
 
     document.addEventListener("click", function (event) {
+        if (hasBlazorConnection()) {
+            return;
+        }
+
         const decreaseBtn = event.target.closest(".js-cart-decrease");
         if (decreaseBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+
             const productId = toInt(decreaseBtn.getAttribute("data-product-id"), 0);
             if (productId > 0) {
                 const row = findRow(productId);
@@ -202,6 +219,9 @@
 
         const increaseBtn = event.target.closest(".js-cart-increase");
         if (increaseBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+
             const productId = toInt(increaseBtn.getAttribute("data-product-id"), 0);
             if (productId > 0) {
                 const row = findRow(productId);
@@ -214,6 +234,9 @@
 
         const removeBtn = event.target.closest(".js-cart-remove");
         if (removeBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+
             const productId = toInt(removeBtn.getAttribute("data-product-id"), 0);
             if (productId > 0) {
                 removeItem(productId);
@@ -222,6 +245,10 @@
     });
 
     document.addEventListener("change", function (event) {
+        if (hasBlazorConnection()) {
+            return;
+        }
+
         const qtyInput = event.target.closest(".js-cart-page .cart-qty-input");
         if (!qtyInput) {
             return;

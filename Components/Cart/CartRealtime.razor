@@ -25,7 +25,8 @@
                     @foreach (var item in _items)
                     {
                         var lineTotal = item.Price * item.Quantity;
-                        <tr data-product-id="@item.ProductId"
+                        <tr @key="item.ProductId"
+                            data-product-id="@item.ProductId"
                             data-unit-price="@item.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)">
                             <td>
                                 <img class="cart-item-image" src="@item.Image" alt="@item.ProductName" onerror="this.src='/images/no-image.png'" />
@@ -34,32 +35,48 @@
                             <td>@item.Price.ToString("N0") ₫</td>
                             <td>
                                 <div class="cart-qty-group">
-                                    <button type="button"
-                                            class="cart-qty-btn js-cart-decrease"
-                                            data-product-id="@item.ProductId">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
+                                    <form method="post" action="/Cart/DecreaseQuantity" class="cart-action-form">
+                                        <input type="hidden" name="id" value="@item.ProductId" />
+                                        <button type="submit"
+                                                class="cart-qty-btn js-cart-decrease"
+                                                data-product-id="@item.ProductId"
+                                                @onclick="() => Decrease(item.ProductId)"
+                                                @onclick:preventDefault="true">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </form>
 
                                     <input class="cart-qty-input"
                                            type="number"
                                            min="1"
                                            value="@item.Quantity"
-                                           data-product-id="@item.ProductId" />
+                                           data-product-id="@item.ProductId"
+                                           @onchange="e => HandleQuantityInput(e, item.ProductId)" />
 
-                                    <button type="button"
-                                            class="cart-qty-btn js-cart-increase"
-                                            data-product-id="@item.ProductId">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                    <form method="post" action="/Cart/IncreaseQuantity" class="cart-action-form">
+                                        <input type="hidden" name="id" value="@item.ProductId" />
+                                        <button type="submit"
+                                                class="cart-qty-btn js-cart-increase"
+                                                data-product-id="@item.ProductId"
+                                                @onclick="() => Increase(item.ProductId)"
+                                                @onclick:preventDefault="true">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                             <td class="fw-bold text-danger js-cart-line-total">@lineTotal.ToString("N0") ₫</td>
                             <td>
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-danger js-cart-remove"
-                                        data-product-id="@item.ProductId">
-                                    Xóa
-                                </button>
+                                <form method="post" action="/Cart/RemoveItemForm" class="cart-remove-form">
+                                    <input type="hidden" name="id" value="@item.ProductId" />
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger js-cart-remove"
+                                            data-product-id="@item.ProductId"
+                                            @onclick="() => Remove(item.ProductId)"
+                                            @onclick:preventDefault="true">
+                                        Xóa
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     }

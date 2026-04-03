@@ -48,6 +48,19 @@
     background: #fff;
 }
 
+.cart-action-form {
+    margin: 0;
+}
+
+.cart-qty-group .cart-action-form {
+    display: flex;
+}
+
+.cart-remove-form {
+    margin: 0;
+    display: inline-block;
+}
+
 .cart-qty-btn {
     width: 32px;
     height: 36px;

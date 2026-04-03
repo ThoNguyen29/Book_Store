@@ -1,13 +1,14 @@
-@model Book_Store.ViewModel.Cart.MiniCartViewModel
+﻿@model Book_Store.ViewModel.Cart.MiniCartViewModel
 
 <div class="mini-cart">
-    <a asp-controller="Cart" asp-action="Index" class="cart-icon-wrapper" aria-label="Giỏ hàng">
+    <a asp-page="/CartPage" class="cart-icon-wrapper" aria-label="Giá» hÃ ng">
         <i class="fa fa-shopping-cart"></i>
         <span id="cartCount" class="cart-badge">@Model.Count</span>
     </a>
     <div class="cart-total">
         <span class="cart-total-label">Tổng</span>
-        <span id="cartTotal" class="cart-total-value">@Model.Total.ToString("N0")₫</span>
+        <span id="cartTotal" class="cart-total-value">@Model.Total.ToString("N0") VNĐ</span>
     </div>
 </div>
+
 

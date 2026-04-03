@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Book_Store.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Book_Store.Models;
+using System.Text.Json.Serialization;
 
 namespace Book_Store.Components.Cart;
 
@@ -35,6 +36,16 @@ public partial class CartRealtime : ComponentBase
             .ToList() ?? new List<CartItem>();
 
         _initialized = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        await JS.InvokeVoidAsync("cartApi.markConnected");
     }
 
     private bool IsUpdating(int id) => _updating.TryGetValue(id, out var running) && running;
@@ -161,11 +172,19 @@ public partial class CartRealtime : ComponentBase
 
     private sealed class CartSyncResponse
     {
+        [JsonPropertyName("success")]
         public bool Success { get; set; }
+
+        [JsonPropertyName("count")]
         public int Count { get; set; }
+
+        [JsonPropertyName("total")]
         public decimal Total { get; set; }
+
+        [JsonPropertyName("quantity")]
         public int Quantity { get; set; }
+
+        [JsonPropertyName("removed")]
         public bool Removed { get; set; }
     }
 }
-
