@@ -3,17 +3,25 @@ using Book_Store.Models;
 using Book_Store.ViewModel.Cart;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Book_Store.ViewComponents
 {
     public class MiniCartViewComponent : ViewComponent
     {
-        private const string CartKey = "cart";
+        private const string CartKeyPrefix = "cart_user_";
 
         public IViewComponentResult Invoke()
         {
             var cart = new List<CartItem>();
-            var session = HttpContext.Session.GetString(CartKey);
+
+            var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return View(new MiniCartViewModel());
+            }
+
+            var session = HttpContext.Session.GetString($"{CartKeyPrefix}{userId}");
 
             if (!string.IsNullOrEmpty(session))
             {

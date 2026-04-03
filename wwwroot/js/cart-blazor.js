@@ -29,11 +29,27 @@
                 }
             });
 
+            if (response.redirected) {
+                window.location.href = response.url;
+                return { success: false, count: 0, total: 0, quantity: 0, removed: false, requiresLogin: true };
+            }
+
             if (!response.ok) {
                 throw new Error("Request failed");
             }
 
-            return await response.json();
+            const contentType = response.headers.get("content-type") || "";
+            if (!contentType.includes("application/json")) {
+                window.location.href = "/Account/Login";
+                return { success: false, count: 0, total: 0, quantity: 0, removed: false, requiresLogin: true };
+            }
+
+            const data = await response.json();
+            if (data && data.requiresLogin) {
+                window.location.href = data.loginUrl || "/Account/Login";
+            }
+
+            return data;
         } catch {
             return { success: false, count: 0, total: 0, quantity: 0, removed: false };
         }

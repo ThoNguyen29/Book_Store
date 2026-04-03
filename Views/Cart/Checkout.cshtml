@@ -2,42 +2,128 @@
 
 @{
     ViewData["Title"] = "Thanh toán";
-    var total = Model.Sum(x => x.Price * x.Quantity);
+    var cartItems = Model ?? new List<Book_Store.Models.CartItem>();
+    var total = cartItems.Sum(x => x.Price * x.Quantity);
 }
 
-<div class="container mt-5" style="max-width:700px;">
-    <h3 class="text-center mb-4">Thanh toán</h3>
+<div class="checkout-container">
+    <h2 class="checkout-title">
+        <i class="bi bi-cart-check"></i> Thanh toán
+    </h2>
 
-    <form asp-action="PlaceOrder" method="post">
-
-        <div class="mb-3">
-            <label class="form-label">Địa chỉ giao hàng</label>
-            <input type="text" name="address" class="form-control" required />
+    @if (!cartItems.Any())
+    {
+        <div class="checkout-empty">
+            <i class="bi bi-cart-x"></i>
+            <p>Giỏ hàng đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.</p>
+            <a class="btn btn-primary" asp-controller="Cart" asp-action="Index">
+                <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
+            </a>
         </div>
+    }
+    else
+    {
+        <div class="checkout-content">
+            <!-- Order Summary Section -->
+            <div class="checkout-order-summary">
+                <div class="checkout-section-header">
+                    <i class="bi bi-bag-check"></i> Sản phẩm đang mua
+                </div>
+                <div class="checkout-items">
+                    @foreach (var item in cartItems)
+                    {
+                        var lineTotal = item.Price * item.Quantity;
+                        <div class="checkout-item">
+                            <div class="checkout-item-image">
+                                @if (!string.IsNullOrEmpty(item.Image))
+                                {
+                                    <img src="@item.Image" alt="@item.ProductName" />
+                                }
+                                else
+                                {
+                                    <div class="checkout-item-no-image">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="checkout-item-details">
+                                <div class="checkout-item-name">@item.ProductName</div>
+                                <div class="checkout-item-price">@item.Price.ToString("N0") ₫</div>
+                                <div class="checkout-item-quantity">
+                                    <span>Số lượng:</span> @item.Quantity
+                                </div>
+                            </div>
+                            <div class="checkout-item-total">
+                                @lineTotal.ToString("N0") ₫
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="checkout-total">
+                    <span>Tổng cộng:</span>
+                    <span class="checkout-total-amount">@total.ToString("N0") ₫</span>
+                </div>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Phương thức thanh toán</label>
-            <select name="paymentMethod" class="form-select" required>
-                <option value="COD">Thanh toán khi nhận hàng</option>
-            </select>
+            <!-- Payment Form Section -->
+            <div class="checkout-form-section">
+                <div class="checkout-section-header">
+                    <i class="bi bi-truck"></i> Thông tin giao hàng
+                </div>
+                <form asp-action="PlaceOrder" method="post" class="checkout-form">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Địa chỉ giao hàng
+                        </label>
+                        <input type="text" name="address" class="form-control" placeholder="Nhập địa chỉ giao hàng của bạn"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-credit-card"></i> Phương thức thanh toán
+                        </label>
+                        <select name="paymentMethod" class="form-select" required>
+                            <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                        </select>
+                    </div>
+
+                    <div class="checkout-summary-box">
+                        <div class="checkout-summary-row">
+                            <span>Tạm tính:</span>
+                            <span>@total.ToString("N0") ₫</span>
+                        </div>
+                        <div class="checkout-summary-row">
+                            <span>Phí vận chuyển:</span>
+                            <span>Miễn phí</span>
+                        </div>
+                        <div class="checkout-summary-row checkout-summary-total">
+                            <span>Tổng tiền:</span>
+                            <span>@total.ToString("N0") ₫</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-checkout">
+                        <i class="bi bi-check-circle"></i> Xác nhận đặt hàng
+                    </button>
+                </form>
+
+                <!-- MoMo Payment -->
+                <div class="checkout-momo-section">
+                    <div class="checkout-divider">
+                        <span>hoặc</span>
+                    </div>
+                    <form method="post" asp-action="CreatePaymentMomo" asp-controller="Payment">
+                        <input type="hidden" name="Amount" value="@total" />
+                        <input type="hidden" name="OrderInfo" value="Thanh toán đơn hàng" />
+                        <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
+                        <input type="hidden" name="FullName" value="HAIANSTORE" />
+                        <button class="btn btn-momo" type="submit">
+                            <i class="bi bi-wallet2"></i> Thanh toán với MoMo
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <strong>Tổng tiền: @total.ToString("N0") đ</strong>
-        </div>
-
-        <button type="submit" class="btn btn-success w-100">
-            Xác nhận đặt hàng
-        </button>
-    </form>
-    <p>Total: @total</p>
-    <form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
-        <input type="hidden" name="Amount" value="@total" />
-        <input type="hidden" name="OrderInfo" value="Thanh toán đơn hàng" />
-        <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
-        <input type="hidden" name="FullName" value="HAIANSTORE" />
-    <button class="btn btn-danger"  type="submit">
-        Pay with MoMo
-    </button>
-</form>
+    }
 </div>

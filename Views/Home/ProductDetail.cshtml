@@ -255,8 +255,19 @@
                 }
 
                 fetch('/Cart/AddToCart?id=' + bookId + '&qty=' + qty)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (res.redirected) {
+                            window.location.href = res.url;
+                            return null;
+                        }
+                        return res.json();
+                    })
                     .then(data => {
+                        if (!data) return;
+                        if (data.requiresLogin) {
+                            window.location.href = data.loginUrl || '/Account/Login';
+                            return;
+                        }
                         var badge = document.getElementById('cartCount');
                         if (badge) badge.textContent = data.count;
 

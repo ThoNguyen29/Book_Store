@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
@@ -9,7 +9,7 @@ namespace Book_Store.Controllers
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private const string CARTKEY = "cart";
+        private const string CartKeyPrefix = "cart_user_";
 
         public CartController(ApplicationDbContext context)
         {
@@ -18,12 +18,22 @@ namespace Book_Store.Controllers
 
         public IActionResult Index()
         {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return RedirectToLogin();
+            }
+
             var cart = GetCart();
             return View(cart);
         }
 
         public IActionResult AddToCart(int id, int qty = 1)
         {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return BuildLoginRequiredJson();
+            }
+
             var cart = GetCart();
             if (qty < 1)
             {
@@ -38,7 +48,7 @@ namespace Book_Store.Controllers
             {
                 var emptyCount = cart.Sum(x => x.Quantity);
                 var emptyTotal = cart.Sum(x => x.Price * x.Quantity);
-                return Json(new { count = emptyCount, total = emptyTotal });
+                return Json(new { success = false, count = emptyCount, total = emptyTotal });
             }
 
             var item = cart.FirstOrDefault(p => p.ProductId == id);
@@ -65,12 +75,17 @@ namespace Book_Store.Controllers
 
             var count = cart.Sum(x => x.Quantity);
             var total = cart.Sum(x => x.Price * x.Quantity);
-            return Json(new { count, total });
+            return Json(new { success = true, count, total });
         }
 
         [HttpPost]
         public IActionResult UpdateQuantity(int id, int quantity)
         {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return RedirectToLogin();
+            }
+
             var cart = GetCart();
             var item = cart.FirstOrDefault(p => p.ProductId == id);
 
@@ -86,6 +101,11 @@ namespace Book_Store.Controllers
         [HttpPost]
         public IActionResult UpdateQuantityAjax(int id, int quantity)
         {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return BuildLoginRequiredJson();
+            }
+
             var cart = GetCart();
             var item = cart.FirstOrDefault(p => p.ProductId == id);
 
@@ -108,6 +128,11 @@ namespace Book_Store.Controllers
 
         public IActionResult Remove(int id)
         {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return RedirectToLogin();
+            }
+
             var cart = GetCart();
             cart.RemoveAll(p => p.ProductId == id);
             SaveCart(cart);
@@ -118,6 +143,11 @@ namespace Book_Store.Controllers
         [HttpPost]
         public IActionResult RemoveAjax(int id)
         {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return BuildLoginRequiredJson();
+            }
+
             var cart = GetCart();
             var exists = cart.Any(p => p.ProductId == id);
 
@@ -132,6 +162,11 @@ namespace Book_Store.Controllers
 
         public IActionResult Checkout()
         {
+            if (!TryGetCurrentUserId(out _))
+            {
+                return RedirectToLogin();
+            }
+
             var cart = GetCart();
             return View(cart);
         }
@@ -139,27 +174,24 @@ namespace Book_Store.Controllers
         [HttpPost]
         public IActionResult PlaceOrder(string address, string paymentMethod)
         {
+            if (!TryGetCurrentUserId(out var userId))
+            {
+                return RedirectToLogin();
+            }
+
             var cart = GetCart();
             if (!cart.Any())
             {
                 return RedirectToAction("Index");
             }
 
-            int? userId = null;
-            var customerName = "Khách vãng lai";
+            var user = _context.Users
+                .AsNoTracking()
+                .FirstOrDefault(u => u.ID == userId);
 
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (int.TryParse(userIdClaim, out var parsedUserId))
-                {
-                    userId = parsedUserId;
-                }
-
-                customerName = User.FindFirstValue(ClaimTypes.Name)
-                    ?? User.FindFirstValue(ClaimTypes.Email)
-                    ?? "Khách hàng";
-            }
+            var customerName = !string.IsNullOrWhiteSpace(user?.FullName)
+                ? user.FullName
+                : user?.Email ?? User.FindFirstValue(ClaimTypes.Name) ?? "Khach hang";
 
             var order = new Order
             {
@@ -188,7 +220,7 @@ namespace Book_Store.Controllers
 
             _context.SaveChanges();
 
-            HttpContext.Session.Remove(CARTKEY);
+            HttpContext.Session.Remove(GetCartKey(userId));
 
             return RedirectToAction("Success");
         }
@@ -200,12 +232,17 @@ namespace Book_Store.Controllers
 
         private List<CartItem> GetCart()
         {
-            var session = HttpContext.Session.GetString(CARTKEY);
+            if (!TryGetCurrentUserId(out var userId))
+            {
+                return new List<CartItem>();
+            }
+
+            var session = HttpContext.Session.GetString(GetCartKey(userId));
 
             if (!string.IsNullOrEmpty(session))
             {
                 return JsonSerializer.Deserialize<List<CartItem>>(session)
-                       ?? new List<CartItem>();
+                    ?? new List<CartItem>();
             }
 
             return new List<CartItem>();
@@ -213,11 +250,59 @@ namespace Book_Store.Controllers
 
         private void SaveCart(List<CartItem> cart)
         {
+            if (!TryGetCurrentUserId(out var userId))
+            {
+                return;
+            }
+
             HttpContext.Session.SetString(
-                CARTKEY,
+                GetCartKey(userId),
                 JsonSerializer.Serialize(cart)
             );
         }
+
+        private bool TryGetCurrentUserId(out int userId)
+        {
+            userId = 0;
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(userIdClaim, out userId);
+        }
+
+        private IActionResult RedirectToLogin()
+        {
+            var returnUrl = ResolveReturnUrl();
+            return RedirectToAction("Login", "Account", new { returnUrl });
+        }
+
+        private IActionResult BuildLoginRequiredJson()
+        {
+            var returnUrl = ResolveReturnUrl();
+            var loginUrl = Url.Action("Login", "Account", new { returnUrl }) ?? "/Account/Login";
+
+            return Json(new
+            {
+                success = false,
+                requiresLogin = true,
+                loginUrl,
+                count = 0,
+                total = 0,
+                quantity = 0,
+                removed = false
+            });
+        }
+
+        private string ResolveReturnUrl()
+        {
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrWhiteSpace(referer) && Uri.TryCreate(referer, UriKind.Absolute, out var refererUri))
+            {
+                return refererUri.PathAndQuery;
+            }
+
+            return $"{Request.Path}{Request.QueryString}";
+        }
+
+        private static string GetCartKey(int userId) => $"{CartKeyPrefix}{userId}";
 
         private object BuildCartResponse(List<CartItem> cart, CartItem? item = null, bool removed = false, bool success = true)
         {
@@ -236,5 +321,3 @@ namespace Book_Store.Controllers
         }
     }
 }
-
-

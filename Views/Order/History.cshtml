@@ -1,104 +1,82 @@
 @model IEnumerable<Book_Store.Models.Order>
 
 @{
-    ViewData["Title"] = "Lịch sử đơn hàng";
+    ViewData["Title"] = "Lich su don hang";
+    var orders = Model ?? Enumerable.Empty<Book_Store.Models.Order>();
 }
 
-<style>
-    .order-card {
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
-        background: white;
-    }
+<div class="container mt-4 mb-5">
+    <h3 class="mb-4">Lich su don hang</h3>
 
-    .order-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-
-    .status-badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-weight: 500;
-        font-size: 14px;
-    }
-
-    .status-received { background-color: #17a2b8; color: white; }
-    .status-processing { background-color: #ffc107; color: black; }
-    .status-completed { background-color: #28a745; color: white; }
-    .status-cancelled { background-color: #dc3545; color: white; }
-</style>
-
-<div class="container mt-4">
-    <h2 class="text-center mb-4 fw-bold">📦 Lịch sử đơn hàng</h2>
-
-    @foreach (var order in Model)
+    @if (!orders.Any())
     {
-        <div class="order-card p-4 mb-4">
-
-            <div class="row text-center mb-3">
-                <div class="col-md-4">
-                    <strong>Mã đơn:</strong><br />
-                    #@order.OrderID
-                </div>
-
-                <div class="col-md-4">
-                    <strong>Ngày đặt:</strong><br />
-                    @order.OrderDate.ToString("dd/MM/yyyy")
-                </div>
-
-                <div class="col-md-4">
-                    <strong>Tổng tiền:</strong><br />
-                    @order.TotalAmount.ToString("N0") đ
-                </div>
-            </div>
-
-            <hr />
-
-            <div class="mb-3">
-                <strong>Sản phẩm:</strong>
-                <ul>
-                    @foreach (var item in order.OrderDetails)
+        <div class="alert alert-info">
+            Ban chua co don hang nao.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ma don</th>
+                        <th>Ngay dat</th>
+                        <th class="text-end">Tong tien</th>
+                        <th>Trang thai</th>
+                        <th class="text-center">Hanh dong</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in orders)
                     {
-                        <li>@item.Book.Title</li>
+                        var statusClass = order.Status switch
+                        {
+                            Book_Store.Models.OrderStatus.Pending => "bg-secondary",
+                            Book_Store.Models.OrderStatus.Confirmed => "bg-info text-dark",
+                            Book_Store.Models.OrderStatus.Shipping => "bg-primary",
+                            Book_Store.Models.OrderStatus.Completed => "bg-success",
+                            Book_Store.Models.OrderStatus.Cancelled => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+
+                        var statusText = order.Status switch
+                        {
+                            Book_Store.Models.OrderStatus.Pending => "Cho xac nhan",
+                            Book_Store.Models.OrderStatus.Confirmed => "Da xac nhan",
+                            Book_Store.Models.OrderStatus.Shipping => "Dang giao",
+                            Book_Store.Models.OrderStatus.Completed => "Hoan thanh",
+                            Book_Store.Models.OrderStatus.Cancelled => "Da huy",
+                            _ => order.Status.ToString()
+                        };
+
+                        <tr>
+                            <td>#@order.OrderID</td>
+                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-end">@order.TotalAmount.ToString("N0") d</td>
+                            <td>
+                                <span class="badge @statusClass">@statusText</span>
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Details"
+                                   asp-route-id="@order.OrderID"
+                                   class="btn btn-sm btn-outline-primary me-1">
+                                    Xem chi tiet
+                                </a>
+
+                                <form asp-action="Reorder"
+                                      method="post"
+                                      class="d-inline">
+                                    <input type="hidden" name="id" value="@order.OrderID" />
+                                    <button type="submit" class="btn btn-sm btn-warning">
+                                        Mua lai
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                     }
-                </ul>
-            </div>
-
-            <div class="text-center">
-                @{
-                    string statusText = "";
-                    string statusClass = "";
-
-                    switch (order.Status.ToString())
-                    {
-                        case "Received":
-                            statusText = "Đã nhận đơn";
-                            statusClass = "status-received";
-                            break;
-                        case "Processing":
-                            statusText = "Đang xử lý";
-                            statusClass = "status-processing";
-                            break;
-                        case "Completed":
-                            statusText = "Hoàn thành";
-                            statusClass = "status-completed";
-                            break;
-                        case "Cancelled":
-                            statusText = "Đã hủy";
-                            statusClass = "status-cancelled";
-                            break;
-                        default:
-                            statusText = order.Status.ToString();
-                            break;
-                    }
-                }
-
-                <span class="status-badge @statusClass">
-                    @statusText
-                </span>
-            </div>
+                </tbody>
+            </table>
         </div>
     }
 </div>

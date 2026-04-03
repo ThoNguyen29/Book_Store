@@ -1,0 +1,87 @@
+@model Book_Store.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiet don hang";
+    var order = Model;
+    var details = order?.OrderDetails ?? new List<Book_Store.Models.OrderDetail>();
+}
+
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Chi tiet don hang #@order?.OrderID</h3>
+        <a asp-action="History" class="btn btn-outline-secondary">Quay lai</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <strong>Ngay dat:</strong><br />
+                    @(order?.OrderDate.ToString("dd/MM/yyyy HH:mm"))
+                </div>
+                <div class="col-md-4">
+                    <strong>Trang thai:</strong><br />
+                    @order?.Status
+                </div>
+                <div class="col-md-4">
+                    <strong>Tong tien:</strong><br />
+                    <span class="text-danger fw-semibold">@((order?.TotalAmount ?? 0).ToString("N0")) d</span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Dia chi giao hang:</strong><br />
+                    @order?.ShippingAddress
+                </div>
+                <div class="col-md-6">
+                    <strong>Phuong thuc thanh toan:</strong><br />
+                    @order?.PaymentMethod
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header fw-semibold">Danh sach san pham</div>
+        <div class="table-responsive">
+            <table class="table table-striped mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>San pham</th>
+                        <th class="text-center">So luong</th>
+                        <th class="text-end">Don gia</th>
+                        <th class="text-end">Thanh tien</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in details)
+                    {
+                        var lineTotal = item.Price * item.Quantity;
+                        <tr>
+                            <td>
+                                @if (item.Book != null)
+                                {
+                                    <a asp-controller="Home"
+                                       asp-action="ProductDetail"
+                                       asp-route-id="@item.BookID">
+                                        @item.Book.Title
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span>San pham #@item.BookID</span>
+                                }
+                            </td>
+                            <td class="text-center">@item.Quantity</td>
+                            <td class="text-end">@item.Price.ToString("N0") d</td>
+                            <td class="text-end fw-semibold">@lineTotal.ToString("N0") d</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <form asp-action="Reorder" method="post" class="mt-3">
+        <input type="hidden" name="id" value="@order?.OrderID" />
+        <button type="submit" class="btn btn-warning">Mua lai don nay</button>
+    </form>
+</div>

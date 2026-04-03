@@ -45,12 +45,34 @@
         }
 
         try {
-            const response = await fetch("/Cart/AddToCart?id=" + bookId + "&qty=" + quantity);
+            const response = await fetch("/Cart/AddToCart?id=" + bookId + "&qty=" + quantity, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+                return false;
+            }
+
             if (!response.ok) {
                 throw new Error("Cannot add to cart");
             }
 
+            const contentType = response.headers.get("content-type") || "";
+            if (!contentType.includes("application/json")) {
+                window.location.href = "/Account/Login";
+                return false;
+            }
+
             const data = await response.json();
+
+            if (data && data.requiresLogin) {
+                window.location.href = data.loginUrl || "/Account/Login";
+                return false;
+            }
+
             updateMiniCart(data);
             markButtonAdded(button);
             return true;
