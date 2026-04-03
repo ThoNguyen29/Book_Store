@@ -142,7 +142,7 @@ namespace Book_Store.Controllers
 
             var fallbackName = !string.IsNullOrWhiteSpace(order.User?.FullName)
                 ? order.User.FullName
-                : order.User?.Email ?? "Khách vãng lai";
+                : order.User?.Email ?? "Khach vang lai";
 
             var model = new AdminOrderDetailsViewModel
             {
@@ -154,12 +154,14 @@ namespace Book_Store.Controllers
                 ShippingAddress = order.ShippingAddress,
                 PaymentMethod = order.PaymentMethod,
                 Status = order.Status,
+                NextStatus = GetNextStatus(order.Status),
+                CanCancel = CanCancel(order.Status),
                 TotalAmount = order.TotalAmount,
                 Items = order.OrderDetails
                     .Select(od => new AdminOrderProductItemViewModel
                     {
                         BookId = od.BookID,
-                        BookTitle = od.Book != null ? od.Book.Title : $"Sách #{od.BookID}",
+                        BookTitle = od.Book != null ? od.Book.Title : $"Sach #{od.BookID}",
                         Quantity = od.Quantity,
                         UnitPrice = od.Price,
                         LineTotal = od.Price * od.Quantity
@@ -184,7 +186,7 @@ namespace Book_Store.Controllers
                 {
                     order.CustomerName = !string.IsNullOrWhiteSpace(order.User?.FullName)
                         ? order.User.FullName
-                        : order.User?.Email ?? "Khách vãng lai";
+                        : order.User?.Email ?? "Khach vang lai";
                 }
             }
 
@@ -193,17 +195,113 @@ namespace Book_Store.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public IActionResult AdvanceStatus(int id)
+        {
+            var order = _context.Orders.Find(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var nextStatus = GetNextStatus(order.Status);
+            if (!nextStatus.HasValue)
+            {
+                TempData["OrderStatusError"] = "Don hang khong the chuyen tiep trang thai.";
+                return RedirectToAction(nameof(OrderDetails), new { id });
+            }
+
+            order.Status = nextStatus.Value;
+            _context.SaveChanges();
+
+            TempData["OrderStatusSuccess"] = $"Da cap nhat trang thai sang {GetStatusLabel(order.Status)}.";
+            return RedirectToAction(nameof(OrderDetails), new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelOrder(int id)
+        {
+            var order = _context.Orders.Find(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            if (!CanCancel(order.Status))
+            {
+                TempData["OrderStatusError"] = "Don hang nay khong the huy.";
+                return RedirectToAction(nameof(OrderDetails), new { id });
+            }
+
+            order.Status = OrderStatus.Cancelled;
+            _context.SaveChanges();
+
+            TempData["OrderStatusSuccess"] = "Da huy don hang.";
+            return RedirectToAction(nameof(OrderDetails), new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult UpdateStatus(int id, OrderStatus status)
         {
             var order = _context.Orders.Find(id);
 
-            if (order != null)
+            if (order == null)
             {
-                order.Status = status;
-                _context.SaveChanges();
+                return RedirectToAction(nameof(OrderList));
             }
 
-            return RedirectToAction("OrderList");
+            if (!IsValidTransition(order.Status, status))
+            {
+                TempData["OrderStatusError"] = "Chi duoc cap nhat theo thu tu trang thai. Neu can, hay dung nut Huy don.";
+                return RedirectToAction(nameof(OrderList));
+            }
+
+            order.Status = status;
+            _context.SaveChanges();
+
+            TempData["OrderStatusSuccess"] = $"Da cap nhat trang thai sang {GetStatusLabel(status)}.";
+            return RedirectToAction(nameof(OrderList));
+        }
+
+        private static OrderStatus? GetNextStatus(OrderStatus currentStatus)
+        {
+            return currentStatus switch
+            {
+                OrderStatus.Pending => OrderStatus.Confirmed,
+                OrderStatus.Confirmed => OrderStatus.Shipping,
+                OrderStatus.Shipping => OrderStatus.Completed,
+                _ => null
+            };
+        }
+
+        private static bool CanCancel(OrderStatus currentStatus)
+        {
+            return currentStatus != OrderStatus.Completed && currentStatus != OrderStatus.Cancelled;
+        }
+
+        private static bool IsValidTransition(OrderStatus currentStatus, OrderStatus targetStatus)
+        {
+            if (targetStatus == OrderStatus.Cancelled)
+            {
+                return CanCancel(currentStatus);
+            }
+
+            var nextStatus = GetNextStatus(currentStatus);
+            return nextStatus.HasValue && nextStatus.Value == targetStatus;
+        }
+
+        private static string GetStatusLabel(OrderStatus status)
+        {
+            return status switch
+            {
+                OrderStatus.Pending => "Cho xac nhan",
+                OrderStatus.Confirmed => "Da xac nhan",
+                OrderStatus.Shipping => "Dang giao",
+                OrderStatus.Completed => "Hoan thanh",
+                OrderStatus.Cancelled => "Da huy",
+                _ => status.ToString()
+            };
         }
     }
 }

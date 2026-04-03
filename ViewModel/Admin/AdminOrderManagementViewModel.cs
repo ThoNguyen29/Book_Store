@@ -47,6 +47,8 @@ namespace Book_Store.ViewModel.Admin
         public string ShippingAddress { get; set; } = string.Empty;
         public string PaymentMethod { get; set; } = string.Empty;
         public OrderStatus Status { get; set; }
+        public OrderStatus? NextStatus { get; set; }
+        public bool CanCancel { get; set; }
         public decimal TotalAmount { get; set; }
         public List<AdminOrderProductItemViewModel> Items { get; set; } = new();
     }
@@ -60,4 +62,3 @@ namespace Book_Store.ViewModel.Admin
         public decimal LineTotal { get; set; }
     }
 }
-

@@ -1,9 +1,24 @@
-@model Book_Store.ViewModel.Admin.AdminOrderDetailsViewModel
+﻿@model Book_Store.ViewModel.Admin.AdminOrderDetailsViewModel
 
 @{
     Layout = "~/Views/Shared/_Admin_Layout.cshtml";
     ViewData["Title"] = "Chi tiet don hang";
     var vm = Model ?? new Book_Store.ViewModel.Admin.AdminOrderDetailsViewModel();
+    var statusSuccess = TempData["OrderStatusSuccess"] as string;
+    var statusError = TempData["OrderStatusError"] as string;
+
+    string GetStatusLabel(Book_Store.Models.OrderStatus status)
+    {
+        return status switch
+        {
+            Book_Store.Models.OrderStatus.Pending => "Cho xac nhan",
+            Book_Store.Models.OrderStatus.Confirmed => "Da xac nhan",
+            Book_Store.Models.OrderStatus.Shipping => "Dang giao",
+            Book_Store.Models.OrderStatus.Completed => "Hoan thanh",
+            Book_Store.Models.OrderStatus.Cancelled => "Da huy",
+            _ => status.ToString()
+        };
+    }
 }
 
 <div class="mb-3 d-flex gap-2">
@@ -15,6 +30,16 @@
         </a>
     }
 </div>
+
+@if (!string.IsNullOrWhiteSpace(statusSuccess))
+{
+    <div class="alert alert-success">@statusSuccess</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(statusError))
+{
+    <div class="alert alert-danger">@statusError</div>
+}
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white">
@@ -42,6 +67,38 @@
                     <money value="@vm.TotalAmount" currency="d"></money>
                 </div>
             </div>
+        </div>
+
+        <hr />
+
+        <div class="d-flex flex-wrap gap-2">
+            @if (vm.NextStatus.HasValue)
+            {
+                <form asp-action="AdvanceStatus" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@vm.OrderId" />
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Chuyen sang @GetStatusLabel(vm.NextStatus.Value)
+                    </button>
+                </form>
+            }
+
+            @if (vm.CanCancel)
+            {
+                <form asp-action="CancelOrder" method="post" class="d-inline"
+                      onsubmit="return confirm('Ban co chac chan muon huy don hang nay khong?');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@vm.OrderId" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        Huy don hang
+                    </button>
+                </form>
+            }
+
+            @if (!vm.NextStatus.HasValue && !vm.CanCancel)
+            {
+                <span class="text-muted">Don hang da o trang thai cuoi, khong the cap nhat them.</span>
+            }
         </div>
     </div>
 </div>
