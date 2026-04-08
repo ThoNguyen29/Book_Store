@@ -18,6 +18,7 @@
     <base href="~/" />
     <title>@ViewData["Title"] - Book_Store</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style_layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/book-card.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true" />
@@ -177,6 +178,57 @@
             </div>
         </div>
     </div>
+
+    <div class="store-chat-widget">
+        <button type="button"
+                class="store-chat-toggle"
+                id="storeChatToggle"
+                onclick="toggleStoreChatWidget(event)"
+                aria-expanded="false"
+                aria-controls="storeChatPanel"
+                aria-label="Mo tro ly nha sach">
+            <i class="fas fa-comments"></i>
+        </button>
+
+        <section class="store-chat-panel"
+                 id="storeChatPanel"
+                 aria-hidden="true"
+                 aria-label="Tro ly nha sach AI">
+            <div class="store-chat-panel__header">
+                <div>
+                    <p class="store-chat-panel__eyebrow">Tro ly AI</p>
+                    <h3>Ho tro tim sach nhanh</h3>
+                </div>
+                <button type="button" class="store-chat-close" id="storeChatClose" onclick="toggleStoreChatWidget(event)" aria-label="Dong tro ly">
+                    <span class="visually-hidden">Dong tro ly</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="store-chat-body" id="storeChatBody">
+                <div class="store-chat-message bot">
+                    <div class="store-chat-avatar">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="store-chat-bubble">
+                        Chao ban, minh co the giup tim sach, goi y theo the loai, tac gia hoac muc gia phu hop.
+                    </div>
+                </div>
+            </div>
+
+            <form class="store-chat-form" id="storeChatForm">
+                <input type="text"
+                       id="storeChatInput"
+                       class="store-chat-input"
+                       placeholder="Hoi ve sach, the loai, tac gia..."
+                       autocomplete="off" />
+                <button type="submit" class="store-chat-send" id="storeChatSend" aria-label="Gui cau hoi">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+            </form>
+        </section>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
